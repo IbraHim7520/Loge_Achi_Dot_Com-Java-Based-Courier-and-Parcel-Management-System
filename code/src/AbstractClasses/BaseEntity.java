@@ -1,3 +1,5 @@
+package AbstractClasses;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -5,7 +7,7 @@ public abstract class BaseEntity {
     private String id;
     private String createdAt;
 
-   
+
     public BaseEntity(String id) {
         this.id = id;
         this.createdAt = generateTime();
