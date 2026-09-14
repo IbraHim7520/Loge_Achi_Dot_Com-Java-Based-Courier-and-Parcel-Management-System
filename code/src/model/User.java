@@ -1,5 +1,7 @@
 package model;
 
+import file.UserFile;
+
 public class User extends Authentication {
     private String user_name;
     private String user_email;
@@ -14,7 +16,7 @@ public class User extends Authentication {
         this.user_email = user_email;
         this.user_pass = user_pass;
         this.user_role = user_role;
-        this.user_id = user_id;
+        this.user_id = generateID();
     }
 
     public User(String user_email , String user_pass){
@@ -36,13 +38,15 @@ public class User extends Authentication {
     }
     public void setUser_name(String user_name) {
         this.user_name = user_name;
-        
+    }
+    public String getUserPassword(){
+        return this.user_pass;
     }
 
     public void setUser_email(String user_email) {
         this.user_email = user_email;
     }
-
+    public void setPassword(String user_pass) {this.user_pass = user_pass;}
     public void setUser_pass(String user_pass) {
         this.user_pass = user_pass;
     }
@@ -56,11 +60,33 @@ public class User extends Authentication {
 
     @Override 
     public String login(User user) {
-        return "User logged in successfully";
+        String email = user.getUser_email();
+        String password = user.getUserPassword();
+        UserFile ufl = new UserFile();
+        boolean loginRes = ufl.userRegisteredCheck(email, password);
+        if(loginRes){
+            return "User login successfull.";
+        }else{
+            return "Failed to Login.\nInvalid Email or Password \nOr, No User found! Please Register.";
+        }
     }
 
     @Override
     public String register(User user) {
-        return "User registered successfully";
+        UserFile ufl = new UserFile();
+        boolean registerResult = ufl.createNewUser(user);
+        if(registerResult){
+            return "User Registered in successfully";
+        }
+
+        return  "Failed to Register User, Please try again!";
     }
+
+    private String generateID(){
+        int UserCount = 100;
+        UserCount = UserCount+1;
+        String id = new String("USER"+UserCount);
+        return  id;
+    }
+
 }
