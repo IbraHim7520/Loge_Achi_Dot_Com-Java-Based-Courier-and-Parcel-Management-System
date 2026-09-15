@@ -5,9 +5,11 @@ import model.User;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class UserFile {
+    ArrayList<String> usersList = new ArrayList<>();
 
     private static final String USER_FILE =
             "code/src/database/users_db.txt";
@@ -67,4 +69,8 @@ public class UserFile {
             return false;
         }
     }
+
+
+
+
 }
