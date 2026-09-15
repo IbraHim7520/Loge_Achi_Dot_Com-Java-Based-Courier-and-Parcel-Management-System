@@ -70,6 +70,23 @@ public class UserFile {
         }
     }
 
+    public static String getCurrentUser(String email) {
+        File fl = new File(USER_FILE);
+        try {
+            Scanner scn = new Scanner(fl);
+            while (scn.hasNextLine()) {
+                String data = scn.nextLine();
+                if (data.contains(email)) {
+                    scn.close();
+                    return data;
+                }
+            }
+            scn.close();
+        } catch (IOException e) {
+            return null;
+        }
+        return null;
+    }
 
 
 

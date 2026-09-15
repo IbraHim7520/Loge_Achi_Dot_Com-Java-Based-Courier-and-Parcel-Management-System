@@ -9,8 +9,11 @@ public class User extends Authentication {
     private String user_pass;
     private String user_role;
     private String user_id;
+    public String USER_EXISTS = null;
 
     private static int userCount = 100;
+
+
 
     // Constructor for Registration
     public User(String user_name, String user_email, String user_pass, String user_role) {
@@ -110,6 +113,7 @@ public class User extends Authentication {
         boolean loginRes = ufl.userRegisteredCheck(email, password);
 
         if (loginRes) {
+            USER_EXISTS = UserFile.getCurrentUser(email);
             return "User login successful.";
         } else {
             return "Failed to Login.\n"
@@ -134,6 +138,7 @@ public class User extends Authentication {
         boolean registerResult = ufl.createNewUser(user);
 
         if (registerResult) {
+            USER_EXISTS = UserFile.getCurrentUser(user.getUser_email());
             return "User registered successfully.";
         }
 
