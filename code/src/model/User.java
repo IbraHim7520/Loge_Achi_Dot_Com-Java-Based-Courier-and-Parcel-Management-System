@@ -7,7 +7,9 @@ public class User extends Authentication {
     private String user_role;
     private String user_id;
 
-  
+    // WELCOME TO THIKANA
+    // A PARCEL & COURIER MANAGEMENT SYSTEM
+    // BUILD IN JAVA
 
     public User(String user_name, String user_email , String user_pass, String user_role, String user_id){
         this.user_name = user_name;
