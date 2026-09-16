@@ -1,5 +1,6 @@
 package model;
 
+
 public class Parcel {
 
 
@@ -13,10 +14,35 @@ public class Parcel {
     private String parcel_status;
     private String rider_id;
 
-    public void calculateDeliveryCharge(){}
-    public void assignRider(){}
+
+    Parcel(String sender_id, String receiver_name, String receiver_phone, String receiver_address, double weight){
+        this.sender_id = sender_id;
+        this.receiver_name = receiver_name;
+        this.receiver_phone = receiver_phone;
+        this.receiver_address = receiver_address;
+        this.weight = weight;
+        this.delivery_charge = calculateDeliveryCharge(weight);
+        this.rider_id = null;
+        this.parcel_status = "Pending";
+    }
+
+    public double calculateDeliveryCharge(double weight){
+        return weight * 5.0;
+    }
+    
     public void updateStatus(){}
-    public void cancelParcel(){}
+    
+    public String[] getMyParcels(String sender_id){
+
+        return new String[]{};
+    }
+
+
+    public boolean SendParcel(){
+
+        return true;
+    }
+    
 
     public String getParcel_id(){
         return this.parcel_id;
