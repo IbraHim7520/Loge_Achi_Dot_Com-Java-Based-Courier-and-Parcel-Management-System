@@ -1,4 +1,4 @@
-package Database;
+package file;
 
 public class AdminFile {
 }
