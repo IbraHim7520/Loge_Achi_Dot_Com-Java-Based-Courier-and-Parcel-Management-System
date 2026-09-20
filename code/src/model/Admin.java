@@ -1,36 +1,44 @@
 package model;
+import java.util.*;
 
-
-
-import java.util.List;
+import file.UserFile;
 
 public class Admin {
 
     private String admin_id;
-    private String admin_name;
+    private String admin_email;
 
-    public Admin(String admin_id, String admin_name) {
-        this.admin_id = admin_id;
-        this.admin_name = admin_name;
+    public Admin() {
+        User user = new User();
+        String userEmail = user.getUser_email();
+        if(!userEmail.endsWith("@admin.com")) {
+            throw new IllegalArgumentException("Invalid Admin email or Youre not a Admin");
+        }
+        String userId = UserFile.getCurrentUser(userEmail);
+        if(!userId.equals(admin_id)) {
+            throw new IllegalArgumentException("Invalid Admin ID or Youre not a Admin");
+        }
+        this.admin_id = userId;
+        this.admin_email = userEmail;
     }
 
     public String getAdmin_id() {
         return admin_id;
     }
 
-    public String getAdmin_name() {
-        return admin_name;
+    public String getAdmin_email() {
+        return admin_email;
     }
 
     public void setAdmin_id(String admin_id) {
         this.admin_id = admin_id;
     }
 
-    public void setAdmin_name(String admin_name) {
-        this.admin_name = admin_name;
+    public void setAdmin_email(String admin_email) {
+        this.admin_email = admin_email;
     }
 
-    public List<User> getAllUsers() {
+    public ArrayList<User> getAllUsers() {
         return null;
     }
 

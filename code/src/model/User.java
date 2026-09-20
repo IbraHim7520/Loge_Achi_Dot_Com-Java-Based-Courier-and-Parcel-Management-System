@@ -19,6 +19,9 @@ public class User extends Authentication {
         this.user_id = generateID();
     }
 
+    public User(){
+        
+    }
 
     public User(String user_email, String user_pass) {
         this.user_email = user_email;
