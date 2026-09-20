@@ -1,5 +1,8 @@
-
 package model;
+
+import file.ParcelFile;
+
+import java.util.ArrayList;
 
 public class Parcel {
 
@@ -39,9 +42,13 @@ public class Parcel {
 
 
     // Send Parcel
-    public boolean sendParcel() {
+    public boolean sendParcel(String userId) {
 
-        if (sender_id == null || sender_id.isEmpty()) {
+        if (userId == null || userId.isEmpty()) {
+            return false;
+        }
+
+        if (!userId.equals(this.sender_id)) {
             return false;
         }
 
@@ -63,21 +70,33 @@ public class Parcel {
 
         this.parcel_status = "Pending";
 
-        return true;
+        ParcelFile parcelFile = new ParcelFile();
+
+        return parcelFile.createNewParcel(this);
     }
 
 
     // Get all parcels sent by a specific user
-    public String[] getMyParcels(String sender_id) {
+    public ArrayList<Parcel> getMyParcels(String sender_id) {
+
+        ParcelFile parcelFile = new ParcelFile();
+
+        return parcelFile.getMyParcels(sender_id);
+    }
 
 
-        return new String[]{};
+    // Search Parcel by ID
+    public Parcel searchParcelById(String parcel_id) {
+
+        ParcelFile parcelFile = new ParcelFile();
+
+        return parcelFile.searchParcelById(parcel_id);
     }
 
 
     // Assign Rider
     public void assignRider(String rider_id) {
-        
+
         this.rider_id = rider_id;
         this.parcel_status = "Assigned";
     }
@@ -169,4 +188,3 @@ public class Parcel {
         this.rider_id = rider_id;
     }
 }
-

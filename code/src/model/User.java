@@ -1,21 +1,16 @@
 package model;
-
 import file.UserFile;
-
 public class User extends Authentication {
-
     private String user_name;
     private String user_email;
     private String user_pass;
     private String user_role;
     private String user_id;
-    public String USER_EXISTS = null;
 
+    public String USER_EXISTS = null;
     private static int userCount = 100;
 
 
-
-    // Constructor for Registration
     public User(String user_name, String user_email, String user_pass, String user_role) {
         this.user_name = user_name;
         this.user_email = user_email;
@@ -24,11 +19,12 @@ public class User extends Authentication {
         this.user_id = generateID();
     }
 
-    // Constructor for Login
+
     public User(String user_email, String user_pass) {
         this.user_email = user_email;
         this.user_pass = user_pass;
     }
+
 
     public String getUser_name() {
         return user_name;
@@ -49,6 +45,7 @@ public class User extends Authentication {
     public String getUserPassword() {
         return user_pass;
     }
+
 
     public void setUser_name(String user_name) {
         this.user_name = user_name;
@@ -74,6 +71,7 @@ public class User extends Authentication {
         this.user_id = user_id;
     }
 
+
     @Override
     public boolean validateEmail(String email) {
 
@@ -81,8 +79,10 @@ public class User extends Authentication {
             return false;
         }
 
-        return email.contains("@") && email.contains(".com");
+        return email.contains("@")
+                && email.contains(".com");
     }
+
 
     @Override
     public boolean validatePassword(String pass) {
@@ -94,6 +94,7 @@ public class User extends Authentication {
         return true;
     }
 
+
     @Override
     public String login(User user) {
 
@@ -101,49 +102,75 @@ public class User extends Authentication {
         String password = user.getUserPassword();
 
         if (!validateEmail(email)) {
+
             return "This email is invalid. Please enter a valid email!";
         }
 
         if (!validatePassword(password)) {
+
             return "Password must be at least 6 characters long.";
         }
 
+
         UserFile ufl = new UserFile();
 
-        boolean loginRes = ufl.userRegisteredCheck(email, password);
+        boolean loginRes =
+                ufl.userRegisteredCheck(email, password);
+
 
         if (loginRes) {
-            USER_EXISTS = UserFile.getCurrentUser(email);
+
+            USER_EXISTS =
+                    UserFile.getCurrentUser(email);
+
+            this.user_id = USER_EXISTS;
+
             return "User login successful.";
+
         } else {
+
             return "Failed to Login.\n"
                     + "Invalid Email or Password\n"
                     + "Or, No User found! Please Register.";
         }
     }
 
+
     @Override
     public String register(User user) {
 
         if (!validateEmail(user.getUser_email())) {
+
             return "Invalid email!";
         }
 
         if (!validatePassword(user.getUserPassword())) {
+
             return "Password must be at least 6 characters long.";
         }
 
+
         UserFile ufl = new UserFile();
 
-        boolean registerResult = ufl.createNewUser(user);
+        boolean registerResult =
+                ufl.createNewUser(user);
+
 
         if (registerResult) {
-            USER_EXISTS = UserFile.getCurrentUser(user.getUser_email());
+
+            USER_EXISTS =
+                    UserFile.getCurrentUser(
+                            user.getUser_email()
+                    );
+
+            this.user_id = USER_EXISTS;
+
             return "User registered successfully.";
         }
 
         return "Failed to Register User. Please try again!";
     }
+
 
     private String generateID() {
 

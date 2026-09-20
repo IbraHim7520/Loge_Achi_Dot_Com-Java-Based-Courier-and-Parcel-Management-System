@@ -1,3 +1,4 @@
+
 package file;
 
 import model.User;
@@ -9,11 +10,14 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class UserFile {
+
     ArrayList<String> usersList = new ArrayList<>();
 
     private static final String USER_FILE =
             "code/src/database/users_db.txt";
 
+
+    // Create New User
     public boolean createNewUser(User user) {
 
         String name = user.getUser_name();
@@ -30,10 +34,19 @@ public class UserFile {
                 file.createNewFile();
             }
 
-            String newUser = name+" "+email+" "+pass+" "+role+" "+userid+"#\n";
-            FileWriter fwtr = new FileWriter(USER_FILE, true);
+            String newUser =
+                    name + " " +
+                            email + " " +
+                            pass + " " +
+                            role + " " +
+                            userid + "#\n";
+
+            FileWriter fwtr =
+                    new FileWriter(USER_FILE, true);
+
             fwtr.write(newUser);
             fwtr.close();
+
             return true;
 
         } catch (IOException e) {
@@ -44,50 +57,101 @@ public class UserFile {
     }
 
 
-    public boolean userRegisteredCheck(String email, String password){
+    // Check User Login
+    public boolean userRegisteredCheck(
+            String email,
+            String password) {
 
         File fl = new File(USER_FILE);
-        boolean isExists = false;
+
         try {
+
+            if (!fl.exists()) {
+                return false;
+            }
+
             Scanner scn = new Scanner(fl);
-            while(scn.hasNextLine()){
+
+            while (scn.hasNextLine()) {
+
                 String data = scn.nextLine();
-                if(data.contains(email) && data.contains(password)){
-                    isExists = true;
-                    break;
+
+                String[] userData = data.split(" ");
+
+                if (userData.length >= 5) {
+
+                    String storedEmail = userData[1];
+                    String storedPassword = userData[2];
+
+                    if (storedEmail.equals(email)
+                            && storedPassword.equals(password)) {
+
+                        scn.close();
+                        return true;
+                    }
                 }
             }
-            scn.close();
-            if(isExists){
 
-                return true;
-            }
-            return false;
-        } catch (IOException e){
-            System.out.println("Something wrong happend!");
+            scn.close();
+
+        } catch (IOException e) {
+
+            System.out.println(
+                    "Something wrong happened!"
+            );
+
             System.out.println(e.getMessage());
-            return false;
         }
+
+        return false;
     }
 
+
+    // Get Current User ID
     public static String getCurrentUser(String email) {
+
         File fl = new File(USER_FILE);
+
         try {
+
+            if (!fl.exists()) {
+                return null;
+            }
+
             Scanner scn = new Scanner(fl);
+
             while (scn.hasNextLine()) {
+
                 String data = scn.nextLine();
-                if (data.contains(email)) {
-                    scn.close();
-                    return data;
+
+                String[] userData = data.split(" ");
+
+                if (userData.length >= 5) {
+
+                    String storedEmail = userData[1];
+
+                    if (storedEmail.equals(email)) {
+
+                        String userId = userData[4];
+
+                        // Remove # from USER ID
+                        userId = userId.replace("#", "");
+
+                        scn.close();
+
+                        return userId;
+                    }
                 }
             }
+
             scn.close();
+
         } catch (IOException e) {
-            return null;
+
+            System.out.println(e.getMessage());
         }
+
         return null;
     }
-
-
-
 }
+

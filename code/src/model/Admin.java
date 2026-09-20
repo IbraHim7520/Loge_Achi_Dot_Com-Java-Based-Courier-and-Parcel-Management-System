@@ -1,6 +1,6 @@
-import model.Parcel;
-import model.Rider;
-import model.User;
+package model;
+
+
 
 import java.util.List;
 
