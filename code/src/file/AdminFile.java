@@ -13,15 +13,11 @@ public class AdminFile {
     private static final String PARCEL_FILE = "code/src/database/parcel_db.txt";
     private static final String RIDER_FILE = "code/src/database/rider_db.txt";
 
-
     public ArrayList<Parcel> getAllParcelsList() {
 
         ArrayList<Parcel> parcelList = new ArrayList<>();
-
+        File myf = new File(PARCEL_FILE);
         try {
-
-            File myf = new File(PARCEL_FILE);
-
             if (!myf.exists()) {
                 return parcelList;
             }
@@ -84,5 +80,67 @@ public class AdminFile {
         }
 
         return parcelList;
+    }
+
+
+    public int countUsers(){
+        File myf = new File(USER_FILE);
+
+        try {
+            if(!myf.exists()){
+                return 0;
+            }
+            Scanner sc = new Scanner(myf);
+            int userCount = 0;
+            while (sc.hasNextLine()){
+                userCount++;
+            }
+            sc.close();
+            return userCount;
+
+
+        }catch(IOException e){
+            System.out.println("Error on Admin File: "+e.getMessage());
+            return 0;
+        }
+    }
+
+    public int countRider(){
+        File file = new File(RIDER_FILE);
+
+        try {
+            if(!file.exists()){
+                return 0;
+            }
+            Scanner sc = new Scanner(file);
+            int userCount = 0;
+            while (sc.hasNextLine()){
+                userCount++;
+            }
+            sc.close();
+            return userCount;
+        }catch (IOException e){
+            System.out.println("Error on Admin File count Rider: "+e.getMessage());
+            return 0;
+        }
+    }
+
+    public int countTotalParcels(){
+        File fl = new File(PARCEL_FILE);
+        try {
+            if(!fl.exists()){
+                return 0;
+            }
+            Scanner sc =  new Scanner(fl);
+            int parcelCount = 0;
+            while (sc.hasNextLine()){
+                parcelCount++;
+            }
+            return parcelCount;
+        }catch(IOException e){
+            System.out.println(e.getStackTrace());
+            System.out.println(e.getMessage());
+            return 0;
+        }
     }
 }

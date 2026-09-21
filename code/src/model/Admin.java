@@ -1,6 +1,7 @@
 package model;
 import java.util.*;
 
+import file.AdminFile;
 import file.UserFile;
 
 public class Admin {
@@ -76,5 +77,36 @@ public class Admin {
 
     public boolean removeRider(String rider_id) {
         return false;
+    }
+
+    public int getTotalUsers(){
+        try {
+            AdminFile adf = new AdminFile();
+            int result = adf.countUsers();
+
+            return result;
+        }catch (Exception e){
+            return 0;
+        }
+    }
+
+    public int getTotalRiders(){
+        try {
+            AdminFile adminFile = new AdminFile();
+            int result = adminFile.countRider();
+            return result;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public int getTotalParcels(){
+        try {
+            AdminFile adfile = new AdminFile();
+            int cnt = adfile.countTotalParcels();
+            return cnt;
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }
