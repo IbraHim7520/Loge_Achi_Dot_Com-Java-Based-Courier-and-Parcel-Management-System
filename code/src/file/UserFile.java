@@ -12,8 +12,7 @@ public class UserFile {
 
     ArrayList<String> usersList = new ArrayList<>();
 
-    private static final String USER_FILE =
-            "code/src/database/users_db.txt";
+    private static final String USER_FILE = "code/src/database/users_db.txt";
 
 
     // Check if User Already Exists

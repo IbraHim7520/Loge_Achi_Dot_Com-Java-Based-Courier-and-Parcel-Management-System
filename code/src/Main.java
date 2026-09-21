@@ -1,4 +1,5 @@
 import file.RiderFile;
+import model.Parcel;
 import model.Rider;
 import model.User;
 
@@ -14,11 +15,12 @@ public class Main {
 
         User u1 = new User("karim@example.com", "karim123");
 
-        String loginMessage = u1.login(u1);
+        String loginMessage = u1.register(u1);
 
         System.out.println("Login Result:");
         System.out.println(loginMessage);
-
+        Parcel p1 = new Parcel(u1.getUser_id(), "Ibrahim", "01847284738", "Dhaka" , 5.30);
+        p1.sendParcel(u1.getUser_id());
         System.out.println("Current User ID: " + u1.USER_EXISTS);
 
 
