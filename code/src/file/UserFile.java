@@ -140,6 +140,61 @@ public class UserFile {
         }
         return null;
     }
+    public ArrayList<User> getAllUsers() {
+
+        ArrayList<User> users = new ArrayList<>();
+
+        File file = new File(USER_FILE);
+
+        if (!file.exists()) {
+            return users;
+        }
+
+        try {
+
+            Scanner scn = new Scanner(file);
+
+            while (scn.hasNextLine()) {
+
+                String data = scn.nextLine().trim();
+
+                if (data.isEmpty()) {
+                    continue;
+                }
+
+                data = data.replace("#", "");
+
+                String[] parts = data.split(" ");
+
+                if (parts.length >= 5) {
+
+                    String name = parts[0];
+                    String email = parts[1];
+                    String password = parts[2];
+                    String role = parts[3];
+                    String userId = parts[4];
+
+                    User user = new User(
+                            name,
+                            email,
+                            password,
+                            role,
+                            userId
+                    );
+
+                    users.add(user);
+                }
+            }
+
+            scn.close();
+
+        } catch (IOException e) {
+
+            System.out.println(e.getMessage());
+        }
+
+        return users;
+    }
 
 
 

@@ -39,12 +39,11 @@ public class Admin {
         this.admin_email = admin_email;
     }
 
-    public ArrayList<User> getAllUsers() {
-        return null;
-    }
 
-    public User getUser(String user_id) {
-        return null;
+    public ArrayList<User> getAllUsers() {
+
+        UserFile userFile = new UserFile();
+        return userFile.getAllUsers();
     }
 
     public boolean removeUser(String user_id) {
