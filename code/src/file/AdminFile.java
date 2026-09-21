@@ -1,6 +1,7 @@
 package file;
 
 import model.Parcel;
+import model.User;
 
 import java.io.File;
 import java.io.IOException;
@@ -141,6 +142,114 @@ public class AdminFile {
             System.out.println(e.getStackTrace());
             System.out.println(e.getMessage());
             return 0;
+        }
+    }
+
+    public boolean registerRider(String userEmail){
+        File fl = new File(USER_FILE);
+        try {
+            if(!fl.exists()){
+                return false;
+            }
+
+            Scanner sc  = new Scanner(fl);
+            while (sc.hasNextLine()){
+                String data = sc.nextLine();
+                String[] userData = data.split(" ");
+                if (userData.length >= 5) {
+                    String storedEmail = userData[1];
+                    if (storedEmail.equals(userEmail)){
+                        userData[3].replace(userData[3], "Rider");
+                        sc.close();
+                        return true;
+                    }
+                }
+            }
+            sc.close();
+            return false;
+        } catch (IOException e) {
+            System.out.println("Error on Admin File register Rider: "+e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean removeRider(String userEmail){
+        File fl = new File(USER_FILE);
+        try {
+            if(!fl.exists()){
+                return false;
+            }
+
+            Scanner sc  = new Scanner(fl);
+            while (sc.hasNextLine()){
+                String data = sc.nextLine();
+                String[] userData = data.split(" ");
+                if (userData.length >= 5) {
+                    String storedEmail = userData[1];
+                    if (storedEmail.equals(userEmail)){
+                        userData[3].replace(userData[3], "User");
+                        sc.close();
+                        return true;
+
+
+                    }
+                }
+            }
+            sc.close();
+            return false;
+        } catch (IOException e) {
+            System.out.println("Error on Admin File remove Rider: "+e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean updateUserRole(String userId, String newRole){
+        File fl = new File(USER_FILE);
+        try {
+            if(!fl.exists()){
+                return false;
+            }
+            Scanner sc  = new Scanner(fl);
+            while (sc.hasNextLine()){
+                String data = sc.nextLine();
+                String[] userData = data.split(" ");
+                if (userData.length >= 5) {
+                    String storedId = userData[2];
+                    if (storedId.equals(userId)){
+                        userData[3].replace(userData[3], newRole);
+                        sc.close();
+                        return true;
+
+
+                    }
+                }
+            }
+            sc.close();
+            return false;
+        } catch (IOException e) {
+            System.out.println("Error on Admin File Update User Role: "+e.getMessage());
+            return false;
+        }
+    }
+
+    public String searchUser(String context){
+        File fl = new File(USER_FILE);
+        try {
+            if(!fl.exists()){
+                return null;
+            }
+            Scanner sc  = new Scanner(fl);
+            while (sc.hasNextLine()){
+                String data = sc.nextLine();
+                    if (data.contains(context)){
+                        return data;
+                    }
+            }
+            sc.close();
+            return null;
+        }catch (IOException e){
+            System.out.println("Error on Admin file Search User: "+e.getMessage());
+            return null;
         }
     }
 }

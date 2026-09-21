@@ -71,7 +71,7 @@ public class Admin {
         return null;
     }
 
-    public boolean addRider(Rider rider) {
+    public boolean addRider(String email) {
         return false;
     }
 
