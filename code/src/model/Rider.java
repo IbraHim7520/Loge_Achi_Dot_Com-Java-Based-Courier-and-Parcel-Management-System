@@ -2,12 +2,12 @@ package model;
 
 public class Rider {
 
-        User user;
+    private User user;
     Rider(User user){
-        if(!isUserExits(user)){
+        if(!validateUser(user)){
             System.out.println("Unauthorized Access!");
             this.user = null;
-        }else {
+        } else {
             this.user = user;
         }
 
@@ -32,12 +32,24 @@ public class Rider {
         //ekhane parcel id diye parcel search er kaj korbo;
     }
 
-    private boolean isUserExits(User user){
-        if(user.getUser_id()==null){
-            return false;
-        }else if(!user.getUser_role().contains("RIDER")){
+    private boolean validateUser(User user) {
+
+        if (user == null) {
             return false;
         }
+
+        if (user.getUser_id() == null) {
+            return false;
+        }
+
+        if (user.getUser_role() == null) {
+            return false;
+        }
+
+        if (!user.getUser_role().contains("RIDER")) {
+            return false;
+        }
+
         return true;
     }
 }
