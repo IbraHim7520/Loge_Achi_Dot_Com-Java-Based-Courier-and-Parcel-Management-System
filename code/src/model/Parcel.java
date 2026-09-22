@@ -1,45 +1,123 @@
 package model;
 
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class Parcel {
-     public enum ParcelStatus{
-         PENDING,
-         ACCEPTED,
-         ON_TRANSIT,
-         REACHED_DESTINATION,
-         DELIVERED
-     }
 
-     private String parcelName;
-     private String reciverAddress;
-     private String reciverPhone;
-     private String parcelID;
-     private double weight;
-     private String senderEmail;
-     private String senderId;
-     private String parcelStatus;
-     private double deliveryCharge;
-     private String riderId;
+    public enum ParcelStatus {
+        PENDING,
+        ACCEPTED,
+        ON_TRANSIT,
+        REACHED_DESTINATION,
+        DELIVERED
+    }
 
-     private final double  chargePerWeight = 10.00;
+    private String parcelName;
+    private String reciverAddress;
+    private String reciverPhone;
+    private String parcelID;
+    private double weight;
+    private String senderEmail;
+    private String senderId;
+    private String parcelStatus;
+    private double deliveryCharge;
+    private String riderId;
 
-     Parcel(String parcelName,String reciverAddress, String reciverPhone, double weigh){
-         this.parcelName = parcelName;
-         this.reciverAddress = reciverAddress;
-         this.reciverPhone = reciverPhone;
-         this.weight = weigh;
-         this.parcelStatus = String.valueOf(ParcelStatus.PENDING);
+    private final double chargePerWeight = 10.00;
 
-         this.parcelID = generateParcelID();
-         this.senderId = null;
-         this.senderEmail = null;
-         this.riderId = null;
-         this.deliveryCharge = weight*chargePerWeight;
-     }
+    // Constructor: User validate korbe
+    public Parcel(User user) {
 
+        if (!validateUser(user)) {
+            throw new IllegalArgumentException("Unauthorized Access!");
+        }
+
+        this.senderEmail = user.getUser_email();
+        this.senderId = user.getUser_id();
+
+        this.parcelStatus = String.valueOf(ParcelStatus.PENDING);
+        this.parcelID = generateParcelID();
+
+        this.riderId = null;
+    }
+
+
+    // Parcel details niye parcel send korbe
+    public String sendOneParcel(String parcelName, String reciverAddress, String reciverPhone, double weight) {
+
+        this.parcelName = parcelName;
+        this.reciverAddress = reciverAddress;
+        this.reciverPhone = reciverPhone;
+        this.weight = weight;
+
+        this.deliveryCharge = weight * chargePerWeight;
+
+        // ekhane parcel send korar jonno
+        // file handling er kaj korbo
+        //parcel send success hole sender email and id set korbo
+
+        return "Parcel sent successfully!";
+    }
+
+
+    public ArrayList<String> getMyAllParcels() {
+
+        // ekhane senderId use kore
+        // all user parcels file theke get korbo
+
+        return new ArrayList<>();
+    }
+
+
+    public boolean cancelParcel(String parcelId) {
+
+        // ekhane parcel ID diye
+        // parcel cancel er business logic hobe
+
+        return false;
+    }
+
+
+    public String trackParcel(String parcelId) {
+
+        // ekhane file e parcel find korbo
+        // senderId diye user verify kora jabe
+
+        return parcelId;
+    }
+
+
+    public String generateParcelID() {
+        LocalDate ld = LocalDate.now();
+        return "PARCEL-" + ld.toString();
+    }
+
+
+    private boolean validateUser(User user) {
+
+        if (user == null) {
+            return false;
+        }
+
+        if (user.getUser_id() == null) {
+            return false;
+        }
+
+        if (user.getUser_role() == null) {
+            return false;
+        }
+
+        // Admin parcel send korte parbe na
+        if (user.getUser_role().contains("ADMIN")) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    // Getters and Setters
 
     public String getParcelName() {
         return parcelName;
@@ -112,73 +190,4 @@ public class Parcel {
     public void setDeliveryCharge(double deliveryCharge) {
         this.deliveryCharge = deliveryCharge;
     }
-
-
-     public String sendParcel(User user){
-
-         if(!isUserExists(user)){
-             return "Please Before send Parcels!";
-         }
-         this.senderEmail  = user.getUser_email();
-         this.senderId = user.getUser_id();
-
-         //ekhane parcel send er jonno file handle er kaj korbo
-
-         return "";
-     }
-
-     public ArrayList<String> getMyAllParcels(User user){
-         if(!isUserExists(user)){
-             return new ArrayList<>();
-         }
-
-         //ekhane all user parcel get korar file handle er kaj korbo;
-
-         return new ArrayList<>();
-
-     }
-
-
-     public boolean cancelParcel(User user , String ParcelId){
-
-         if(!isUserExists(user)){
-             return false;
-         }
-
-         //ekhane parcel cancel er business logic hobe
-
-         return false;
-     }
-
-
-
-     public String trackParcel(User user , String parcelId){
-         if(!isUserExists(user)){
-             return "Please Login First!";
-         }
-         //ekhane file e parcel find er kaj korbo;
-
-
-
-
-         return parcelId;
-     }
-
-
-     public String generateParcelID(){
-         LocalDate ld = LocalDate.now();
-         return  "PARCEL-"+ld.toString();
-     }
-
-     private boolean isUserExists(User user){
-         if(user.getUser_role().contains("ADMIN")){
-             return false;
-         }
-         else if(user.getUser_role()==null || user.getUser_id()==null){
-             return false;
-         }
-
-         return true;
-     }
-
 }
