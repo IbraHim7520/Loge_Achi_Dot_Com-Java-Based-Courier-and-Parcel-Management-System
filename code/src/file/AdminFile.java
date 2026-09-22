@@ -1,11 +1,112 @@
 package file;
 
+import model.Parcel;
+import model.User;
 
+import java.util.ArrayList;
 
 public class AdminFile {
 
-    private static final String USER_FILE = "code/src/database/users_db.txt";
-    private static final String PARCEL_FILE = "code/src/database/parcel_db.txt";
-    private static final String RIDER_FILE = "code/src/database/rider_db.txt";
+    private static final String USER_FILE =
+            "code/src/database/users_db.txt";
+
+    private static final String PARCEL_FILE =
+            "code/src/database/parcel_db.txt";
+
+    private static final String RIDER_FILE =
+            "code/src/database/rider_db.txt";
+
+
+    // ==================== USER ====================
+
+    // Admin.viewAllUser()
+    public static ArrayList<User> getAllUsers() {
+        // ekhane USER_FILE theke
+        // all users read kore return korbo
+
+        return new ArrayList<>();
+    }
+
+
+    // Admin.registerNewRider()
+    public static boolean registerNewRider() {
+        // ekhane new rider er information nibo
+        // rider validate korbo
+        // USER_FILE e rider save korbo
+        // RIDER_FILE eo rider save korbo
+
+        return false;
+    }
+
+
+    // Admin.updateUser()
+    public static boolean updateUser() {
+        // ekhane user information update korbo
+        // USER_FILE e existing user khujbo
+        // tarpor updated information save korbo
+
+        return false;
+    }
+
+
+    // Admin.searchUser()
+    public static User searchUser(String userId) {
+        // ekhane userId diye USER_FILE e
+        // user search korbo
+
+        return null;
+    }
+
+
+    // Admin.deleteUser()
+    public static boolean deleteUser(String userId) {
+        // ekhane userId diye USER_FILE e user khujbo
+        // tarpor user delete korbo
+
+        return false;
+    }
+
+
+    // ==================== PARCEL ====================
+
+    // Admin.viewAllParcel()
+    public static ArrayList<Parcel> getAllParcels() {
+        // ekhane PARCEL_FILE theke
+        // all parcels read kore return korbo
+
+        return new ArrayList<>();
+    }
+
+
+    // Admin.searchParcel()
+    public static Parcel searchParcel(String parcelId) {
+        // ekhane parcelId diye PARCEL_FILE e
+        // parcel search korbo
+
+        return null;
+    }
+
+
+    // Admin.deleteParcel()
+    public static boolean deleteParcel(String parcelId) {
+        // ekhane parcelId diye PARCEL_FILE e
+        // parcel khujbo
+        // tarpor parcel delete korbo
+
+        return false;
+    }
+
+
+    // Admin.updateParcelStatus()
+    public static boolean updateParcelStatus(
+            String parcelId,
+            String newStatus) {
+
+        // ekhane parcelId diye PARCEL_FILE e
+        // parcel khujbo
+        // tarpor parcel er status update korbo
+
+        return false;
+    }
 
 }
