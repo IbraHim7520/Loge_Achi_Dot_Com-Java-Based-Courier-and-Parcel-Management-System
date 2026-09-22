@@ -1,190 +1,184 @@
 package model;
 
-import file.ParcelFile;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class Parcel {
+     public enum ParcelStatus{
+         PENDING,
+         ACCEPTED,
+         ON_TRANSIT,
+         REACHED_DESTINATION,
+         DELIVERED
+     }
 
-    private String parcel_id;
-    private String sender_id;
-    private String receiver_name;
-    private String receiver_phone;
-    private String receiver_address;
-    private double weight;
-    private double delivery_charge;
-    private String parcel_status;
-    private String rider_id;
+     private String parcelName;
+     private String reciverAddress;
+     private String reciverPhone;
+     private String parcelID;
+     private double weight;
+     private String senderEmail;
+     private String senderId;
+     private String parcelStatus;
+     private double deliveryCharge;
+     private String riderId;
+
+     private final double  chargePerWeight = 10.00;
+
+     Parcel(String parcelName,String reciverAddress, String reciverPhone, double weigh){
+         this.parcelName = parcelName;
+         this.reciverAddress = reciverAddress;
+         this.reciverPhone = reciverPhone;
+         this.weight = weigh;
+         this.parcelStatus = String.valueOf(ParcelStatus.PENDING);
+
+         this.parcelID = generateParcelID();
+         this.senderId = null;
+         this.senderEmail = null;
+         this.riderId = null;
+         this.deliveryCharge = weight*chargePerWeight;
+     }
 
 
-    public Parcel(String sender_id,
-                  String receiver_name,
-                  String receiver_phone,
-                  String receiver_address,
-                  double weight) {
-
-        this.sender_id = sender_id;
-        this.receiver_name = receiver_name;
-        this.receiver_phone = receiver_phone;
-        this.receiver_address = receiver_address;
-        this.weight = weight;
-
-        this.delivery_charge = calculateDeliveryCharge(weight);
-
-        this.rider_id = null;
-        this.parcel_status = "Pending";
+    public String getParcelName() {
+        return parcelName;
     }
 
-
-    public double calculateDeliveryCharge(double weight) {
-        return weight * 5.0;
+    public void setParcelName(String parcelName) {
+        this.parcelName = parcelName;
     }
 
-
-    // Send Parcel
-    public boolean sendParcel(String userId) {
-
-        if (userId == null || userId.isEmpty()) {
-            return false;
-        }
-
-        if (!userId.equals(this.sender_id)) {
-            return false;
-        }
-
-        if (receiver_name == null || receiver_name.isEmpty()) {
-            return false;
-        }
-
-        if (receiver_phone == null || receiver_phone.isEmpty()) {
-            return false;
-        }
-
-        if (receiver_address == null || receiver_address.isEmpty()) {
-            return false;
-        }
-
-        if (weight <= 0) {
-            return false;
-        }
-
-        this.parcel_status = "Pending";
-
-        ParcelFile parcelFile = new ParcelFile();
-
-        return parcelFile.createNewParcel(this);
+    public String getReciverAddress() {
+        return reciverAddress;
     }
 
-
-    // Get all parcels sent by a specific user
-    public ArrayList<Parcel> getMyParcels(String sender_id) {
-
-        ParcelFile parcelFile = new ParcelFile();
-
-        return parcelFile.getMyParcels(sender_id);
+    public void setReciverAddress(String reciverAddress) {
+        this.reciverAddress = reciverAddress;
     }
 
-
-    // Search Parcel by ID
-    public Parcel searchParcelById(String parcel_id) {
-
-        ParcelFile parcelFile = new ParcelFile();
-
-        return parcelFile.searchParcelById(parcel_id);
+    public String getReciverPhone() {
+        return reciverPhone;
     }
 
-
-    // Assign Rider
-    public void assignRider(String rider_id) {
-
-        this.rider_id = rider_id;
-        this.parcel_status = "Assigned";
+    public void setReciverPhone(String reciverPhone) {
+        this.reciverPhone = reciverPhone;
     }
 
-
-    // Update Parcel Status
-    public void updateStatus(String status) {
-
-        this.parcel_status = status;
+    public String getParcelID() {
+        return parcelID;
     }
 
-
-    // Getters
-
-    public String getParcel_id() {
-        return parcel_id;
-    }
-
-    public String getSender_id() {
-        return sender_id;
-    }
-
-    public String getReceiver_name() {
-        return receiver_name;
-    }
-
-    public String getReceiver_phone() {
-        return receiver_phone;
-    }
-
-    public String getReceiver_address() {
-        return receiver_address;
+    public void setParcelID(String parcelID) {
+        this.parcelID = parcelID;
     }
 
     public double getWeight() {
         return weight;
     }
 
-    public double getDelivery_charge() {
-        return delivery_charge;
-    }
-
-    public String getParcel_status() {
-        return parcel_status;
-    }
-
-    public String getRider_id() {
-        return rider_id;
-    }
-
-
-    // Setters
-
-    public void setParcel_id(String parcel_id) {
-        this.parcel_id = parcel_id;
-    }
-
-    public void setSender_id(String sender_id) {
-        this.sender_id = sender_id;
-    }
-
-    public void setReceiver_name(String receiver_name) {
-        this.receiver_name = receiver_name;
-    }
-
-    public void setReceiver_phone(String receiver_phone) {
-        this.receiver_phone = receiver_phone;
-    }
-
-    public void setReceiver_address(String receiver_address) {
-        this.receiver_address = receiver_address;
-    }
-
     public void setWeight(double weight) {
-
         this.weight = weight;
-        this.delivery_charge = calculateDeliveryCharge(weight);
     }
 
-    public void setDelivery_charge(double delivery_charge) {
-        this.delivery_charge = delivery_charge;
+    public String getSenderEmail() {
+        return senderEmail;
     }
 
-    public void setParcel_status(String parcel_status) {
-        this.parcel_status = parcel_status;
+    public void setSenderEmail(String senderEmail) {
+        this.senderEmail = senderEmail;
     }
 
-    public void setRider_id(String rider_id) {
-        this.rider_id = rider_id;
+    public String getSenderId() {
+        return senderId;
     }
+
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
+    }
+
+    public String getParcelStatus() {
+        return parcelStatus;
+    }
+
+    public void setParcelStatus(String parcelStatus) {
+        this.parcelStatus = parcelStatus;
+    }
+
+    public double getDeliveryCharge() {
+        return deliveryCharge;
+    }
+
+    public void setDeliveryCharge(double deliveryCharge) {
+        this.deliveryCharge = deliveryCharge;
+    }
+
+
+     public String sendParcel(User user){
+
+         if(!isUserExists(user)){
+             return "Please Before send Parcels!";
+         }
+         this.senderEmail  = user.getUser_email();
+         this.senderId = user.getUser_id();
+
+         //ekhane parcel send er jonno file handle er kaj korbo
+
+         return "";
+     }
+
+     public ArrayList<String> getMyAllParcels(User user){
+         if(!isUserExists(user)){
+             return new ArrayList<>();
+         }
+
+         //ekhane all user parcel get korar file handle er kaj korbo;
+
+         return new ArrayList<>();
+
+     }
+
+
+     public boolean cancelParcel(User user , String ParcelId){
+
+         if(!isUserExists(user)){
+             return false;
+         }
+
+         //ekhane parcel cancel er business logic hobe
+
+         return false;
+     }
+
+
+
+     public String trackParcel(User user , String parcelId){
+         if(!isUserExists(user)){
+             return "Please Login First!";
+         }
+         //ekhane file e parcel find er kaj korbo;
+
+
+
+
+         return parcelId;
+     }
+
+
+     public String generateParcelID(){
+         LocalDate ld = LocalDate.now();
+         return  "PARCEL-"+ld.toString();
+     }
+
+     private boolean isUserExists(User user){
+         if(user.getUser_role().contains("ADMIN")){
+             return false;
+         }
+         else if(user.getUser_role()==null || user.getUser_id()==null){
+             return false;
+         }
+
+         return true;
+     }
+
 }

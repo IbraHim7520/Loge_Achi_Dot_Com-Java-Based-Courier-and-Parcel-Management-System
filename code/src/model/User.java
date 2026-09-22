@@ -1,5 +1,8 @@
 package model;
 import file.UserFile;
+
+import java.time.LocalTime;
+
 public class User extends Authentication {
     private String user_name;
     private String user_email;
@@ -7,22 +10,25 @@ public class User extends Authentication {
     private String user_role;
     private String user_id;
 
-    public String USER_EXISTS = null;
-    private static int userCount = 100;
 
 
-    public User(String user_name, String user_email, String user_pass, String user_role) {
+    public static   enum UserRole {
+        USER,
+        ADMIN,
+        RIDER
+    }
+
+    //For Registration
+    public User(String user_name, String user_email, String user_pass) {
         this.user_name = user_name;
         this.user_email = user_email;
         this.user_pass = user_pass;
-        this.user_role = user_role;
-        this.user_id = generateID();
+        this.user_role = null;
+        this.user_id = null;
     }
 
-    public User(){
-        
-    }
 
+    //For Login
     public User(String user_email, String user_pass) {
         this.user_email = user_email;
         this.user_pass = user_pass;
@@ -81,19 +87,15 @@ public class User extends Authentication {
         if (email == null || email.isEmpty()) {
             return false;
         }
-
         return email.contains("@")
                 && email.contains(".com");
     }
-
-
     @Override
     public boolean validatePassword(String pass) {
 
         if (pass == null || pass.length() < 6) {
             return false;
         }
-
         return true;
     }
 
@@ -117,19 +119,13 @@ public class User extends Authentication {
 
         UserFile ufl = new UserFile();
 
-        boolean loginRes =
-                ufl.userRegisteredCheck(email, password);
+        boolean loginRes = ufl.userRegisteredCheck(email, password);
 
 
         if (loginRes) {
-
-            USER_EXISTS =
-                    UserFile.getCurrentUser(email);
-
-            this.user_id = USER_EXISTS;
+            //login er por user role set korbo
 
             return "User login successful.";
-
         } else {
 
             return "Failed to Login.\n"
@@ -155,19 +151,11 @@ public class User extends Authentication {
 
         UserFile ufl = new UserFile();
 
-        boolean registerResult =
-                ufl.createNewUser(user);
-
+        boolean registerResult = ufl.createNewUser(user);
 
         if (registerResult) {
-
-            USER_EXISTS =
-                    UserFile.getCurrentUser(
-                            user.getUser_email()
-                    );
-
-            this.user_id = USER_EXISTS;
-
+            user.setUser_role(String.valueOf(UserRole.USER));
+            user.setUser_id(generateID());
             return "User registered successfully.";
         }
 
@@ -177,8 +165,8 @@ public class User extends Authentication {
 
     private String generateID() {
 
-        userCount++;
+        LocalTime lt = LocalTime.now();
 
-        return "USER" + userCount;
+        return lt.toString();
     }
 }
