@@ -1,24 +1,26 @@
 package model;
+
 import file.UserFile;
 
 import java.time.LocalTime;
 
 public class User extends Authentication {
+
     private String user_name;
     private String user_email;
     private String user_pass;
     private String user_role;
     private String user_id;
 
-
-
-    public static   enum UserRole {
+    public enum UserRole {
         USER,
         ADMIN,
         RIDER
     }
 
-    //For Registration
+    // =========================
+    // Registration Constructor
+    // =========================
     public User(String user_name, String user_email, String user_pass) {
         this.user_name = user_name;
         this.user_email = user_email;
@@ -27,13 +29,17 @@ public class User extends Authentication {
         this.user_id = null;
     }
 
-
-    //For Login
+    // =========================
+    // Login Constructor
+    // =========================
     public User(String user_email, String user_pass) {
         this.user_email = user_email;
         this.user_pass = user_pass;
     }
 
+    // =========================
+    // Getters
+    // =========================
 
     public String getUser_name() {
         return user_name;
@@ -55,6 +61,9 @@ public class User extends Authentication {
         return user_pass;
     }
 
+    // =========================
+    // Setters
+    // =========================
 
     public void setUser_name(String user_name) {
         this.user_name = user_name;
@@ -80,25 +89,33 @@ public class User extends Authentication {
         this.user_id = user_id;
     }
 
+    // =========================
+    // Email Validation
+    // =========================
 
     @Override
     public boolean validateEmail(String email) {
 
-        if (email == null || email.isEmpty()) {
+        if (email == null || email.trim().isEmpty()) {
             return false;
         }
-        return email.contains("@")
-                && email.contains(".com");
+
+        return email.contains("@") && email.contains(".");
     }
+
+    // =========================
+    // Password Validation
+    // =========================
+
     @Override
     public boolean validatePassword(String pass) {
 
-        if (pass == null || pass.length() < 6) {
-            return false;
-        }
-        return true;
+        return pass != null && pass.length() >= 6;
     }
 
+    // =========================
+    // LOGIN
+    // =========================
 
     @Override
     public String login(User user) {
@@ -106,67 +123,85 @@ public class User extends Authentication {
         String email = user.getUser_email();
         String password = user.getUserPassword();
 
+        // Validate email
         if (!validateEmail(email)) {
-
             return "This email is invalid. Please enter a valid email!";
         }
 
+        // Validate password
         if (!validatePassword(password)) {
-
             return "Password must be at least 6 characters long.";
         }
 
+        UserFile userFile = new UserFile();
 
-        UserFile ufl = new UserFile();
+        // Get logged-in user from file
+        User loggedUser = userFile.loginUser(email, password);
 
-        boolean loginRes = ufl.userRegisteredCheck(email, password);
+        if (loggedUser != null) {
 
+            // Set information after successful login
+            this.user_name = loggedUser.getUser_name();
+            this.user_email = loggedUser.getUser_email();
+            this.user_pass = loggedUser.getUserPassword();
+            this.user_role = loggedUser.getUser_role();
+            this.user_id = loggedUser.getUser_id();
 
-        if (loginRes) {
-            //login er por user role set korbo
-
-            return "User login successful.";
-        } else {
-
-            return "Failed to Login.\n"
-                    + "Invalid Email or Password\n"
-                    + "Or, No User found! Please Register.";
+            return "User login successful.\n"
+                    + "Welcome, " + user_name + "!\n"
+                    + "Role: " + user_role
+                    + "\nUser ID: " + user_id;
         }
+
+        return "Failed to Login.\n"
+                + "Invalid Email or Password\n"
+                + "Or, No User found! Please Register.";
     }
 
+    // =========================
+    // REGISTRATION
+    // =========================
 
     @Override
     public String register(User user) {
 
         if (!validateEmail(user.getUser_email())) {
-
             return "Invalid email!";
         }
 
         if (!validatePassword(user.getUserPassword())) {
-
             return "Password must be at least 6 characters long.";
         }
 
-
-        UserFile ufl = new UserFile();
-
-        boolean registerResult = ufl.createNewUser(user);
-
-        if (registerResult) {
-            user.setUser_role(String.valueOf(UserRole.USER));
-            user.setUser_id(generateID());
-            return "User registered successfully.";
+        if (user.getUser_name() == null ||
+                user.getUser_name().trim().isEmpty()) {
+            return "Username cannot be empty.";
         }
 
-        return "Failed to Register User. Please try again!";
+        UserFile userFile = new UserFile();
+
+        boolean result = userFile.createNewUser(user);
+
+        if (result) {
+            return "User registered successfully.\n"
+                    + "User ID: " + user.getUser_id()
+                    + "\nRole: " + user.getUser_role();
+        }
+
+        return "Failed to Register User.\n"
+                + "Email may already be registered.";
     }
 
+    // =========================
+    // Generate User ID
+    // =========================
 
-    private String generateID() {
+    public String generateUserID() {
 
-        LocalTime lt = LocalTime.now();
+        LocalTime time = LocalTime.now();
 
-        return lt.toString();
+        return "U" + time.toString()
+                .replace(":", "")
+                .replace(".", "");
     }
 }

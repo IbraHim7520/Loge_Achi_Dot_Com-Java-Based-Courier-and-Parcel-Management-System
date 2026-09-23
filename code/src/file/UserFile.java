@@ -5,36 +5,43 @@ import model.User;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class UserFile {
 
-    ArrayList<String> usersList = new ArrayList<>();
-
     private static final String USER_FILE = "code/src/database/users_db.txt";
 
-
-    // Check if User Already Exists
+    // Check whether user already exists
     public static boolean IsUserExists(User user) {
+
+        File file = new File(USER_FILE);
+
+        if (!file.exists()) {
+            return false;
+        }
         try {
-            File fl = new File(USER_FILE);
-            if (!fl.exists()) {
-                return false;
-            }
-            Scanner sc = new Scanner(fl);
-            while (sc.hasNextLine()) {
-                String data = sc.nextLine();
-                String[] userData = data.split(" ");
+            Scanner scanner = new Scanner(file);
+            while (scanner.hasNextLine()) {
+                String data = scanner.nextLine().trim();
+                if (data.isEmpty()) {
+                    continue;
+                }
+
+                data = data.replace("#", "");
+
+                // Split using -
+                String[] userData = data.split("-");
+
                 if (userData.length >= 5) {
                     String storedEmail = userData[1];
                     if (storedEmail.equals(user.getUser_email())) {
-                        sc.close();
+                        scanner.close();
                         return true;
                     }
                 }
             }
-            sc.close();
+
+            scanner.close();
 
         } catch (IOException e) {
 
@@ -47,120 +54,125 @@ public class UserFile {
         return false;
     }
 
-
     // Create New User
     public boolean createNewUser(User user) {
+
+        // Check duplicate email
         if (IsUserExists(user)) {
             return false;
         }
+
         String name = user.getUser_name();
         String email = user.getUser_email();
-        String pass = user.getUserPassword();
-        String role = user.getUser_role();
-        String userid = user.getUser_id();
+        String password = user.getUserPassword();
+
+        String role = String.valueOf(User.UserRole.USER);
+
+        String userId = user.generateUserID();
 
         try {
+
             File file = new File(USER_FILE);
 
+            // Create file if it doesn't exist
             if (!file.exists()) {
                 file.createNewFile();
             }
-            String newUser = name + " " + email + " " + pass + " " + role + " " + userid + "#\n";
-            FileWriter fwtr = new FileWriter(USER_FILE, true);
-            fwtr.write(newUser);
-            fwtr.close();
+            String newUser = name + "-" + email + "-" + password + "-" + role + "-" + userId + "#\n";
+            FileWriter writer =
+                    new FileWriter(USER_FILE, true);
+
+            writer.write(newUser);
+            writer.close();
+
+            // Update object
+            user.setUser_id(userId);
+            user.setUser_role(role);
+
             return true;
+
         } catch (IOException e) {
-            System.out.println("Exception from UserFile: " + e.getMessage());
+
+            System.out.println(
+                    "Exception from UserFile: "
+                            + e.getMessage()
+            );
+
             return false;
         }
     }
 
 
-    // Check User Login
-    public boolean userRegisteredCheck(
-            String email,
-            String password) {
+    // LOGIN USER
+    public User loginUser(String email, String password) {
 
-        File fl = new File(USER_FILE);
+        File file = new File(USER_FILE);
+
+        if (!file.exists()) {
+            return null;
+        }
 
         try {
-            if (!fl.exists()) {
-                return false;
-            }
-            Scanner scn = new Scanner(fl);
-            while (scn.hasNextLine()) {
-                String data = scn.nextLine();
-                String[] userData = data.split(" ");
+
+            Scanner scanner = new Scanner(file);
+
+            while (scanner.hasNextLine()) {
+
+                String data = scanner.nextLine().trim();
+
+                if (data.isEmpty()) {
+                    continue;
+                }
+
+                // Remove #
+                data = data.replace("#", "");
+
+                /*
+                 * Example:
+                 *
+                 * IBRAHIM2-ibrahim723@gmail.com-8jdb8-USER-U123456
+                 */
+
+                String[] userData = data.split("-");
+
                 if (userData.length >= 5) {
+
+                    String storedName = userData[0];
                     String storedEmail = userData[1];
                     String storedPassword = userData[2];
-                    if (storedEmail.equals(email) && storedPassword.equals(password)) {
-                        scn.close();
-                        return true;
+                    String storedRole = userData[3];
+                    String storedId = userData[4];
+
+                    // Check email + password
+                    if (storedEmail.equals(email)
+                            && storedPassword.equals(password)) {
+
+                        scanner.close();
+
+                        User user = new User(
+                                storedName,
+                                storedEmail,
+                                storedPassword
+                        );
+
+                        user.setUser_role(storedRole);
+                        user.setUser_id(storedId);
+
+                        return user;
                     }
                 }
             }
-            scn.close();
+
+            scanner.close();
+
         } catch (IOException e) {
-            System.out.println("Something wrong happened!");
-            System.out.println(e.getMessage());
+
+            System.out.println(
+                    "Exception from UserFile: "
+                            + e.getMessage()
+            );
         }
-        return false;
+
+        return null;
     }
-
-
-
-
-//    public ArrayList<User> getAllUsers() {
-//
-//        ArrayList<User> users = new ArrayList<>();
-//
-//        File file = new File(USER_FILE);
-//
-//        if (!file.exists()) {
-//            return users;
-//        }
-//
-//        try {
-//
-//            Scanner scn = new Scanner(file);
-//
-//            while (scn.hasNextLine()) {
-//
-//                String data = scn.nextLine().trim();
-//
-//                if (data.isEmpty()) {
-//                    continue;
-//                }
-//
-//                data = data.replace("#", "");
-//
-//                String[] parts = data.split(" ");
-//
-//                if (parts.length >= 5) {
-//
-//                    String name = parts[0];
-//                    String email = parts[1];
-//                    String password = parts[2];
-//                    String role = parts[3];
-//                    String userId = parts[4];
-//
-//                    User user = new User(name, email, password, role);
-//                    users.add(user);
-//                }
-//            }
-//
-//            scn.close();
-//
-//        } catch (IOException e) {
-//
-//            System.out.println(e.getMessage());
-//        }
-//
-//        return users;
-//    }
-
-
-
 }

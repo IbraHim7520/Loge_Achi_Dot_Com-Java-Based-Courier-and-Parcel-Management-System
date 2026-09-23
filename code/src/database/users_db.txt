@@ -1,4 +1,1 @@
-Ishtiak Shanto ishtiak@example.com password123 customer USER101#
-Rahim Ahmed rahim@example.com rahim123 rider USER101#
-Karim Hasan karim@example.com karim123 admin USER101#
-null karim@example.com karim123 null null#
+IBRAHIM2-ibrahim723@gmail.com-12345678-USER-U002435652562900#

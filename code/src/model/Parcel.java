@@ -43,6 +43,80 @@ public class Parcel {
     }
 
 
+    //Getter and Setter
+    public String getParcelName() {
+        return parcelName;
+    }
+
+    public void setParcelName(String parcelName) {
+        this.parcelName = parcelName;
+    }
+
+    public String getReciverAddress() {
+        return reciverAddress;
+    }
+
+    public void setReciverAddress(String reciverAddress) {
+        this.reciverAddress = reciverAddress;
+    }
+
+    public String getReciverPhone() {
+        return reciverPhone;
+    }
+
+    public void setReciverPhone(String reciverPhone) {
+        this.reciverPhone = reciverPhone;
+    }
+
+    public String getParcelID() {
+        return parcelID;
+    }
+
+    public void setParcelID(String parcelID) {
+        this.parcelID = parcelID;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
+    public String getSenderEmail() {
+        return senderEmail;
+    }
+
+    public void setSenderEmail(String senderEmail) {
+        this.senderEmail = senderEmail;
+    }
+
+    public String getSenderId() {
+        return senderId;
+    }
+
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
+    }
+
+    public String getParcelStatus() {
+        return parcelStatus;
+    }
+
+    public void setParcelStatus(String parcelStatus) {
+        this.parcelStatus = parcelStatus;
+    }
+
+    public double getDeliveryCharge() {
+        return deliveryCharge;
+    }
+
+    public void setDeliveryCharge(double deliveryCharge) {
+        this.deliveryCharge = deliveryCharge;
+    }
+
+
     // Parcel details niye parcel send korbe
     public String sendOneParcel(String parcelName, String reciverAddress, String reciverPhone, double weight) {
 
@@ -117,77 +191,5 @@ public class Parcel {
     }
 
 
-    // Getters and Setters
 
-    public String getParcelName() {
-        return parcelName;
-    }
-
-    public void setParcelName(String parcelName) {
-        this.parcelName = parcelName;
-    }
-
-    public String getReciverAddress() {
-        return reciverAddress;
-    }
-
-    public void setReciverAddress(String reciverAddress) {
-        this.reciverAddress = reciverAddress;
-    }
-
-    public String getReciverPhone() {
-        return reciverPhone;
-    }
-
-    public void setReciverPhone(String reciverPhone) {
-        this.reciverPhone = reciverPhone;
-    }
-
-    public String getParcelID() {
-        return parcelID;
-    }
-
-    public void setParcelID(String parcelID) {
-        this.parcelID = parcelID;
-    }
-
-    public double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
-
-    public String getSenderEmail() {
-        return senderEmail;
-    }
-
-    public void setSenderEmail(String senderEmail) {
-        this.senderEmail = senderEmail;
-    }
-
-    public String getSenderId() {
-        return senderId;
-    }
-
-    public void setSenderId(String senderId) {
-        this.senderId = senderId;
-    }
-
-    public String getParcelStatus() {
-        return parcelStatus;
-    }
-
-    public void setParcelStatus(String parcelStatus) {
-        this.parcelStatus = parcelStatus;
-    }
-
-    public double getDeliveryCharge() {
-        return deliveryCharge;
-    }
-
-    public void setDeliveryCharge(double deliveryCharge) {
-        this.deliveryCharge = deliveryCharge;
-    }
 }
