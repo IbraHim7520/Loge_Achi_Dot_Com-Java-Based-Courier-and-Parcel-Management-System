@@ -10,7 +10,8 @@ import java.util.Scanner;
 
 public class ParcelFile {
 
-    private static final String PARCEL_FILE = "code/src/database/parcel_db.txt";
+    private static final String PARCEL_FILE =
+            "code/src/database/parcel_db.txt";
 
 
     // Save a new parcel into the file
@@ -26,15 +27,22 @@ public class ParcelFile {
             double deliveryCharge,
             String riderId
     ) {
+
         File file = new File(PARCEL_FILE);
+
         try {
+
             if (!file.exists()) {
                 file.createNewFile();
             }
 
             // If rider is not assigned yet
+            if (riderId == null) {
+                riderId = "null";
+            }
 
-            String newParcel = parcelName + "-"
+            String newParcel =
+                    parcelName + "-"
                             + receiverAddress + "-"
                             + receiverPhone + "-"
                             + parcelID + "-"
@@ -46,9 +54,12 @@ public class ParcelFile {
                             + riderId
                             + "#\n";
 
-            FileWriter writer = new FileWriter(PARCEL_FILE, true);
+            FileWriter writer =
+                    new FileWriter(PARCEL_FILE, true);
+
             writer.write(newParcel);
             writer.close();
+
             return true;
 
         } catch (IOException e) {
@@ -63,15 +74,10 @@ public class ParcelFile {
     }
 
 
-//    // Get all parcels from the file
-//    public static ArrayList<Parcel> getAllParcels() {
-//        // ekhane file theke all parcels read korbo
-//
-//    }
-
-
     // Get all parcels of a specific sender
-    public static ArrayList<String> getMyAllParcels(String senderId) {
+    public static ArrayList<String> getMyAllParcels(
+            String senderId
+    ) {
 
         ArrayList<String> arr = new ArrayList<>();
 
@@ -87,14 +93,18 @@ public class ParcelFile {
 
             while (sc.hasNextLine()) {
 
-                String parcelData = sc.nextLine().trim();
+                String parcelData =
+                        sc.nextLine().trim();
 
                 if (parcelData.isEmpty()) {
                     continue;
                 }
 
-                parcelData = parcelData.replace("#", "");
+                // Remove # from the end of the line
+                parcelData =
+                        parcelData.replace("#", "");
 
+                // Check sender ID
                 if (parcelData.contains(senderId)) {
                     arr.add(parcelData);
                 }
@@ -113,58 +123,188 @@ public class ParcelFile {
         return arr;
     }
 
+
     // Find a parcel by Parcel ID
-    public static Parcel findParcel(String parcelId) {
-        // ekhane parcelId diye file e parcel search korbo
+    public static String findParcel(String parcelId) {
+
+        File fl = new File(PARCEL_FILE);
+
+        if (!fl.exists()) {
+            return null;
+        }
+
+        try {
+
+            Scanner sc = new Scanner(fl);
+
+            while (sc.hasNextLine()) {
+
+                String parcelData =
+                        sc.nextLine().trim();
+
+                if (parcelData.isEmpty()) {
+                    continue;
+                }
+
+                parcelData =
+                        parcelData.replace("#", "");
+
+                if (parcelData.contains(parcelId)) {
+
+                    sc.close();
+
+                    return parcelData;
+                }
+            }
+
+            sc.close();
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Exception from ParcelFile: "
+                            + e.getMessage()
+            );
+        }
 
         return null;
     }
 
 
     // Cancel a parcel
-    public static boolean cancelParcel(String parcelId, String senderId) {
-        // ekhane parcelId diye parcel khujbo
-        // senderId diye verify korbo je parcel ta oi user er kina
-        // tarpor parcel cancel korar business logic korbo
+    public static boolean cancelParcel(
+            String parcelId,
+            String senderId
+    ) {
 
-        return false;
+        File fl = new File(PARCEL_FILE);
+
+        if (!fl.exists()) {
+            return false;
+        }
+        ArrayList<String> allParcels = new ArrayList<>();
+
+        boolean cancelled = false;
+
+        try {
+
+            Scanner sc = new Scanner(fl);
+
+            while (sc.hasNextLine()) {
+
+                String parcelData = sc.nextLine().trim();
+                if (parcelData.isEmpty()) {
+                    continue;
+                }
+                if (parcelData.contains(parcelId) && parcelData.contains(senderId) && parcelData.contains(String.valueOf(Parcel.ParcelStatus.PENDING))) {
+                    parcelData = parcelData.replace(String.valueOf(Parcel.ParcelStatus.PENDING), String.valueOf(Parcel.ParcelStatus.CANCELED));
+                    cancelled = true;
+                }
+                allParcels.add(parcelData);
+            }
+
+            sc.close();
+
+            FileWriter writer = new FileWriter(PARCEL_FILE, false);
+
+            for (String parcel : allParcels) {
+                writer.write(parcel + "#\n");
+            }
+
+            writer.close();
+
+            return cancelled;
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Exception from ParcelFile: "
+                            + e.getMessage()
+            );
+
+            return false;
+        }
     }
 
 
     // Track a parcel
-    public static Parcel trackParcel(String parcelId, String senderId) {
-        // ekhane parcelId diye parcel khujbo
-        // senderId diye verify korbo
-        // tarpor parcel er current status return korbo
+    public static Parcel trackParcel(
+            String parcelId,
+            String senderId
+    ) {
+
+        // Not implemented yet
 
         return null;
     }
 
 
+
     // Update parcel status
     public static boolean updateParcelStatus(
             String parcelId,
-            String newStatus) {
+            String newStatus
+    ) {
 
-        // ekhane parcelId diye parcel khujbo
-        // tarpor parcel er status update korbo
+        // Not implemented yet
 
         return false;
     }
 
 
     // Delete a parcel
-    public static boolean deleteParcel(String parcelId) {
-        // ekhane parcelId diye parcel khujbo
-        // tarpor file theke parcel delete korbo
+    public static boolean deleteParcel(String parcelId, String userId) {
+        File file = new File(PARCEL_FILE);
+        if (!file.exists()) {
+            return false;
+        }
+        ArrayList<String> parcels = new ArrayList<>();
+        boolean deleted = false;
+        try {
+            Scanner sc = new Scanner(file);
+            while (sc.hasNextLine()) {
+                String parcelData = sc.nextLine().trim();
+                if (parcelData.isEmpty()) {
+                    continue;
+                }
+                String cleanData = parcelData.replace("#", "");
+                if (cleanData.contains(parcelId) && cleanData.contains(userId)) {
+                    if (cleanData.contains(String.valueOf(Parcel.ParcelStatus.PENDING)) || cleanData.contains(String.valueOf(Parcel.ParcelStatus.CANCELED))) {
+                        deleted = true;
+                        continue;
+                    }
+                }
 
-        return false;
+                parcels.add(cleanData);
+            }
+
+            sc.close();
+
+            if (deleted) {
+                FileWriter writer = new FileWriter(file, false);
+
+                for (String parcel : parcels) {
+                    writer.write(parcel + "#\n");
+                }
+
+                writer.close();
+            }
+
+            return deleted;
+
+        } catch (Exception e) {
+            System.out.println("Exception from ParcelFile: " + e.getMessage());
+            return false;
+        }
     }
 
 
     // Search parcel
-    public static Parcel searchParcel(String parcelId) {
-        // ekhane parcelId diye parcel search korbo
+    public static Parcel searchParcel(
+            String parcelId
+    ) {
+
+        // Not implemented yet
 
         return null;
     }

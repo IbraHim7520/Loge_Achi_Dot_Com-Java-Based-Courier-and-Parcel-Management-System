@@ -2,7 +2,7 @@ package model;
 
 import file.ParcelFile;
 
-import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class Parcel {
@@ -12,7 +12,8 @@ public class Parcel {
         ACCEPTED,
         ON_TRANSIT,
         REACHED_DESTINATION,
-        DELIVERED
+        DELIVERED,
+        CANCELED
     }
 
     private String parcelName;
@@ -28,7 +29,8 @@ public class Parcel {
 
     private final double chargePerWeight = 10.00;
 
-    // Constructor: User validate korbe
+
+    // user validate korbe
     public Parcel(User user) {
 
         if (!validateUser(user)) {
@@ -45,7 +47,8 @@ public class Parcel {
     }
 
 
-    //Getter and Setter
+    // Getter and Setter
+
     public String getParcelName() {
         return parcelName;
     }
@@ -105,13 +108,6 @@ public class Parcel {
     public String getParcelStatus() {
         return parcelStatus;
     }
-    public String getRiderId(){
-        return this.riderId;
-    }
-
-    public void setRiderId(String riderId){
-        this.riderId = riderId;
-    }
 
     public void setParcelStatus(String parcelStatus) {
         this.parcelStatus = parcelStatus;
@@ -125,65 +121,97 @@ public class Parcel {
         this.deliveryCharge = deliveryCharge;
     }
 
+    public String getRiderId() {
+        return riderId;
+    }
 
-    // Parcel details niye parcel send korbe
-    public String sendOneParcel(String parcelName, String reciverAddress, String reciverPhone, double weight) {
+    public void setRiderId(String riderId) {
+        this.riderId = riderId;
+    }
+
+
+    // parcel send korbe
+    public String sendOneParcel(
+            String parcelName,
+            String reciverAddress,
+            String reciverPhone,
+            double weight
+    ) {
 
         this.parcelName = parcelName;
         this.reciverAddress = reciverAddress;
         this.reciverPhone = reciverPhone;
         this.weight = weight;
+
         this.parcelID = generateParcelID();
 
         this.deliveryCharge = weight * chargePerWeight;
 
-        // ekhane parcel send korar jonno
-        // file handling er kaj korbo
-        //parcel send success hole sender email and id set korbo
-//
         boolean result = ParcelFile.saveParcel(
-                getParcelName(),getReciverAddress(),getReciverPhone(), getParcelID() ,getWeight(), getSenderEmail(), getSenderId() , getParcelStatus() , getDeliveryCharge(), getRiderId()
+                getParcelName(),
+                getReciverAddress(),
+                getReciverPhone(),
+                getParcelID(),
+                getWeight(),
+                getSenderEmail(),
+                getSenderId(),
+                getParcelStatus(),
+                getDeliveryCharge(),
+                getRiderId()
         );
-        if(result){
-            System.out.println("Parcel Send!");
-        }else{
-            System.out.println("Failed");
-        }
 
-        return "Parcel sent successfully!";
+        if (result) {
+            return "Parcel sent successfully!";
+        } else {
+            return "Failed to send parcel!";
+        }
     }
 
 
+    // current user er sob parcel nibe
     public ArrayList<String> getMyAllParcels() {
 
         return ParcelFile.getMyAllParcels(getSenderId());
     }
 
 
+    // parcel cancel korbe
     public boolean cancelParcel(String parcelId) {
 
-        // ekhane parcel ID diye
-        // parcel cancel er business logic hobe
+        boolean result = ParcelFile.cancelParcel(
+                parcelId,
+                getSenderId()
+        );
 
-        return false;
+        return result;
     }
 
 
+    // parcel track korbe
     public String trackParcel(String parcelId) {
 
-        // ekhane file e parcel find korbo
-        // senderId diye user verify kora jabe
+        String parcelData = ParcelFile.findParcel(parcelId);
 
-        return parcelId;
+        return parcelData;
+    }
+    public boolean deleteMyParcel(String parcelID) {
+        return ParcelFile.deleteParcel(parcelID, getSenderId());
     }
 
 
+    // parcel ID generate korbe
     public String generateParcelID() {
-        LocalDate ld = LocalDate.now();
-        return "PARCEL-" + ld.toString();
+
+        LocalTime time = LocalTime.now();
+
+        return "P"
+                + time.toString()
+                .replace(":", "")
+                .replace(".", "");
     }
 
 
+    // user valid kina check korbe
     private boolean validateUser(User user) {
 
         if (user == null) {
@@ -198,14 +226,11 @@ public class Parcel {
             return false;
         }
 
-        // Admin parcel send korte parbe na
+        // admin parcel send korte parbe na
         if (user.getUser_role().contains("ADMIN")) {
             return false;
         }
 
         return true;
     }
-
-
-
 }
