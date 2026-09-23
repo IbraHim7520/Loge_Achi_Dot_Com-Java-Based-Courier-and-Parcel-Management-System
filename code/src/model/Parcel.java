@@ -1,5 +1,7 @@
 package model;
 
+import file.ParcelFile;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -103,6 +105,13 @@ public class Parcel {
     public String getParcelStatus() {
         return parcelStatus;
     }
+    public String getRiderId(){
+        return this.riderId;
+    }
+
+    public void setRiderId(String riderId){
+        this.riderId = riderId;
+    }
 
     public void setParcelStatus(String parcelStatus) {
         this.parcelStatus = parcelStatus;
@@ -124,12 +133,22 @@ public class Parcel {
         this.reciverAddress = reciverAddress;
         this.reciverPhone = reciverPhone;
         this.weight = weight;
+        this.parcelID = generateParcelID();
 
         this.deliveryCharge = weight * chargePerWeight;
 
         // ekhane parcel send korar jonno
         // file handling er kaj korbo
         //parcel send success hole sender email and id set korbo
+//
+        boolean result = ParcelFile.saveParcel(
+                getParcelName(),getReciverAddress(),getReciverPhone(), getParcelID() ,getWeight(), getSenderEmail(), getSenderId() , getParcelStatus() , getDeliveryCharge(), getRiderId()
+        );
+        if(result){
+            System.out.println("Parcel Send!");
+        }else{
+            System.out.println("Failed");
+        }
 
         return "Parcel sent successfully!";
     }
@@ -137,10 +156,7 @@ public class Parcel {
 
     public ArrayList<String> getMyAllParcels() {
 
-        // ekhane senderId use kore
-        // all user parcels file theke get korbo
-
-        return new ArrayList<>();
+        return ParcelFile.getMyAllParcels(getSenderId());
     }
 
 

@@ -18,9 +18,8 @@ public class User extends Authentication {
         RIDER
     }
 
-    // =========================
+
     // Registration Constructor
-    // =========================
     public User(String user_name, String user_email, String user_pass) {
         this.user_name = user_name;
         this.user_email = user_email;
@@ -29,18 +28,15 @@ public class User extends Authentication {
         this.user_id = null;
     }
 
-    // =========================
+
     // Login Constructor
-    // =========================
+
     public User(String user_email, String user_pass) {
         this.user_email = user_email;
         this.user_pass = user_pass;
     }
 
-    // =========================
     // Getters
-    // =========================
-
     public String getUser_name() {
         return user_name;
     }
@@ -61,10 +57,7 @@ public class User extends Authentication {
         return user_pass;
     }
 
-    // =========================
     // Setters
-    // =========================
-
     public void setUser_name(String user_name) {
         this.user_name = user_name;
     }
@@ -89,10 +82,8 @@ public class User extends Authentication {
         this.user_id = user_id;
     }
 
-    // =========================
-    // Email Validation
-    // =========================
 
+    // Email Validation
     @Override
     public boolean validateEmail(String email) {
 
@@ -103,20 +94,14 @@ public class User extends Authentication {
         return email.contains("@") && email.contains(".");
     }
 
-    // =========================
     // Password Validation
-    // =========================
-
     @Override
     public boolean validatePassword(String pass) {
 
         return pass != null && pass.length() >= 6;
     }
 
-    // =========================
     // LOGIN
-    // =========================
-
     @Override
     public String login(User user) {
 
@@ -135,7 +120,6 @@ public class User extends Authentication {
 
         UserFile userFile = new UserFile();
 
-        // Get logged-in user from file
         User loggedUser = userFile.loginUser(email, password);
 
         if (loggedUser != null) {
@@ -158,10 +142,8 @@ public class User extends Authentication {
                 + "Or, No User found! Please Register.";
     }
 
-    // =========================
-    // REGISTRATION
-    // =========================
 
+    // REGISTRATION
     @Override
     public String register(User user) {
 
@@ -191,17 +173,9 @@ public class User extends Authentication {
         return "Failed to Register User.\n"
                 + "Email may already be registered.";
     }
-
-    // =========================
     // Generate User ID
-    // =========================
-
     public String generateUserID() {
-
         LocalTime time = LocalTime.now();
-
-        return "U" + time.toString()
-                .replace(":", "")
-                .replace(".", "");
+        return "U" + time.toString().replace(":", "").replace(".", "");
     }
 }

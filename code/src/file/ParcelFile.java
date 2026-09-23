@@ -2,38 +2,116 @@ package file;
 
 import model.Parcel;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class ParcelFile {
 
-    private static final String PARCEL_FILE =
-            "code/src/database/parcel_db.txt";
+    private static final String PARCEL_FILE = "code/src/database/parcel_db.txt";
 
 
     // Save a new parcel into the file
-    public static boolean saveParcel(Parcel parcel) {
-        // ekhane parcel file e save korar business logic korbo
+    public static boolean saveParcel(
+            String parcelName,
+            String receiverAddress,
+            String receiverPhone,
+            String parcelID,
+            double weight,
+            String senderEmail,
+            String senderId,
+            String parcelStatus,
+            double deliveryCharge,
+            String riderId
+    ) {
+        File file = new File(PARCEL_FILE);
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
 
-        return false;
+            // If rider is not assigned yet
+
+            String newParcel = parcelName + "-"
+                            + receiverAddress + "-"
+                            + receiverPhone + "-"
+                            + parcelID + "-"
+                            + weight + "-"
+                            + senderEmail + "-"
+                            + senderId + "-"
+                            + parcelStatus + "-"
+                            + deliveryCharge + "-"
+                            + riderId
+                            + "#\n";
+
+            FileWriter writer = new FileWriter(PARCEL_FILE, true);
+            writer.write(newParcel);
+            writer.close();
+            return true;
+
+        } catch (IOException e) {
+
+            System.out.println(
+                    "Exception from ParcelFile: "
+                            + e.getMessage()
+            );
+
+            return false;
+        }
     }
 
 
-    // Get all parcels from the file
-    public static ArrayList<Parcel> getAllParcels() {
-        // ekhane file theke all parcels read korbo
-
-        return new ArrayList<>();
-    }
+//    // Get all parcels from the file
+//    public static ArrayList<Parcel> getAllParcels() {
+//        // ekhane file theke all parcels read korbo
+//
+//    }
 
 
     // Get all parcels of a specific sender
-    public static ArrayList<Parcel> getMyAllParcels(String senderId) {
-        // ekhane senderId diye
-        // oi user er all parcels file theke ber korbo
+    public static ArrayList<String> getMyAllParcels(String senderId) {
 
-        return new ArrayList<>();
+        ArrayList<String> arr = new ArrayList<>();
+
+        File fl = new File(PARCEL_FILE);
+
+        if (!fl.exists()) {
+            return arr;
+        }
+
+        try {
+
+            Scanner sc = new Scanner(fl);
+
+            while (sc.hasNextLine()) {
+
+                String parcelData = sc.nextLine().trim();
+
+                if (parcelData.isEmpty()) {
+                    continue;
+                }
+
+                parcelData = parcelData.replace("#", "");
+
+                if (parcelData.contains(senderId)) {
+                    arr.add(parcelData);
+                }
+            }
+
+            sc.close();
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Exception from ParcelFile: "
+                            + e.getMessage()
+            );
+        }
+
+        return arr;
     }
-
 
     // Find a parcel by Parcel ID
     public static Parcel findParcel(String parcelId) {
