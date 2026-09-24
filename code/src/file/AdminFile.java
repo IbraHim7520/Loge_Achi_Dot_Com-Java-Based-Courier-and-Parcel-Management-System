@@ -96,6 +96,14 @@ public class AdminFile {
         return false;
     }
 
+    public static ArrayList<User> getAllRiders() {
+        // ekhane users_db.txt file theke
+        // all users read kore sudhu RIDER der ber korbo
+
+        return new ArrayList<>();
+    }
+
+
 
     // Admin.updateParcelStatus()
     public static boolean updateParcelStatus(

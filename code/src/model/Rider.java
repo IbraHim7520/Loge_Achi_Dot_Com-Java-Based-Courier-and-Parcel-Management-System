@@ -1,4 +1,5 @@
 package model;
+import file.ParcelFile;
 import file.RiderFile;
 import java.util.ArrayList;
 
@@ -43,7 +44,12 @@ public class Rider {
 
 
     public void acceptParcelsByRider(String parcelId, String riderID){
-
+        boolean result = RiderFile.assignParcel(parcelId, riderID);
+        if(result){
+            System.out.println("Parcel Accepted!");
+        }else {
+            System.out.println("Failed to assign!");
+        }
     }
 
     public void viewMyAssignedParcles() {

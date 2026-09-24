@@ -24,12 +24,6 @@ public class RiderFile {
 
 
     // Get all registered riders
-    public static ArrayList<User> getAllRiders() {
-        // ekhane users_db.txt file theke
-        // all users read kore sudhu RIDER der ber korbo
-
-        return new ArrayList<>();
-    }
 
 
     // Get all pending parcels
@@ -72,7 +66,6 @@ public class RiderFile {
         if (!file.exists()) {
             return assignedParcels;
         }
-
         try {
             Scanner sc = new Scanner(file);
             while (sc.hasNextLine()) {
@@ -182,7 +175,6 @@ public class RiderFile {
         }
         return false;
     }
-
 
     // Search a parcel assigned to rider
 //    public static Parcel searchParcel(
