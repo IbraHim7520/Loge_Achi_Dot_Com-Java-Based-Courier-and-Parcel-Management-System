@@ -63,7 +63,6 @@ public class RiderFile {
     }
 
 
-
     // Get parcels assigned to a specific rider
     public static ArrayList<String> getMyAssignedParcels(String riderId) {
 
@@ -144,7 +143,7 @@ public class RiderFile {
     // Update parcel status by rider
     public static boolean updateParcelStatusByRider(String parcelId, String riderId, String newStatus) {
 
-
+        return false;
 
     }
 

@@ -1,8 +1,5 @@
 package model;
-
-import file.ParcelFile;
 import file.RiderFile;
-
 import java.util.ArrayList;
 
 public class Rider {
@@ -70,10 +67,10 @@ public class Rider {
         } else {
             System.out.println("Failed to update parcel status!");
         }
-
-    public void searchAParcel(String parcelId){
-        //ekhane parcel id diye parcel search er kaj korbo;
     }
+//    public void searchAParcel(String parcelId){
+//        //ekhane parcel id diye parcel search er kaj korbo;
+//    }
 
     private boolean validateUser(User user) {
 
@@ -95,4 +92,5 @@ public class Rider {
 
         return true;
     }
+
 }
