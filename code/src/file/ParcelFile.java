@@ -274,12 +274,9 @@ public class ParcelFile {
                         continue;
                     }
                 }
-
                 parcels.add(cleanData);
             }
-
             sc.close();
-
             if (deleted) {
                 FileWriter writer = new FileWriter(file, false);
 
@@ -289,9 +286,7 @@ public class ParcelFile {
 
                 writer.close();
             }
-
             return deleted;
-
         } catch (Exception e) {
             System.out.println("Exception from ParcelFile: " + e.getMessage());
             return false;

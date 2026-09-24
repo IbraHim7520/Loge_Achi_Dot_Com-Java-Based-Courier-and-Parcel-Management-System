@@ -7,8 +7,7 @@ import java.util.ArrayList;
 
 public class RiderFile {
 
-    private static final String RIDER_FILE =
-            "code/src/database/users_db.txt";
+    private static final String RIDER_FILE = "code/src/database/users_db.txt";
 
 
     // Find a rider by Rider/User ID
@@ -34,6 +33,7 @@ public class RiderFile {
         // ekhane parcel file theke
         // all parcels read korbo
         // tarpor sudhu PENDING parcels return korbo
+
 
         return new ArrayList<>();
     }

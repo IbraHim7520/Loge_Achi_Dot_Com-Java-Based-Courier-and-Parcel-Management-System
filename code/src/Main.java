@@ -18,26 +18,28 @@ public class Main {
 
         Parcel parcel = new Parcel(u1);
        // parcel.sendOneParcel("A Big Box", "Dhaka 1206", "01983829482",5.00);
-//        ArrayList<String> arrUser1 = parcel.getMyAllParcels();
+        parcel.deleteMyParcel("P024045971393600");
+        ArrayList<String> arrUser1 = parcel.getMyAllParcels();
+
+        if(arrUser1.size() > 0){
+            System.out.println("USER 1 PARCELS:");
+            for (String line : arrUser1) {
+                System.out.println(line);
+            }
+        }else {
+            System.out.println("No Parcel Found!");
+        }
+
+//        String trackResult = parcel.trackParcel("P024045971393600");
+//        System.out.println(trackResult);
 //
-//        if(arrUser1.size() > 0){
-//            System.out.println("USER 1 PARCELS:");
-//            for (String line : arrUser1) {
-//                System.out.println(line);
-//            }
-//        }else {
-//            System.out.println("No Parcel Found!");
+//        boolean res = parcel.cancelParcel("P024045971393600");
+//        if(res){
+//            System.out.println("After Update");
+//            String re = parcel.trackParcel("P024045971393600");
+//            System.out.println(re);
 //        }
 
-        String trackResult = parcel.trackParcel("P024045971393600");
-        System.out.println(trackResult);
-
-        boolean res = parcel.cancelParcel("P024045971393600");
-        if(res){
-            System.out.println("After Update");
-            String re = parcel.trackParcel("P024045971393600");
-            System.out.println(re);
-        }
 
     }
 }

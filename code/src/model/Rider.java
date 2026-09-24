@@ -13,6 +13,19 @@ public class Rider {
 
     }
 
+    public boolean validateRider(User user){
+        if(user==null){
+            System.out.println("Unauthorized Access!");
+            return  false;
+        }
+
+        if(user.getUser_id()==null || user.getUser_role()!=String.valueOf(User.UserRole.RIDER)){
+            System.out.println("Unauthorized Access");
+            return false;
+        }
+        return true;
+    }
+
     public void viewPendingParcels(){
         //ekhane Pending parcel show er kaj korbo
 
