@@ -1,5 +1,10 @@
 package model;
 
+import file.ParcelFile;
+import file.RiderFile;
+
+import java.util.ArrayList;
+
 public class Rider {
 
     private User user;
@@ -26,18 +31,19 @@ public class Rider {
         return true;
     }
 
-    public void viewPendingParcels(){
-        //ekhane Pending parcel show er kaj korbo
+    public void viewPendingParcels() {
 
     }
 
-    public void viewMyAssignedParcles(){
-            //ekhane file theke all percels ene show korabo;
+    public void acceptParcelsByRider(String parcelId, String riderID){
+
     }
 
+    public void viewMyAssignedParcles() {
 
-    public void updateParcelStatus(String newStatus){
-        //ekhane file e parcel er status update er kaj korbo
+    }
+
+    public void updateParcelStatus(String parcelId, String newStatus) {
 
     }
 

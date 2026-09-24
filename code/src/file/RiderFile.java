@@ -3,11 +3,15 @@ package file;
 import model.Parcel;
 import model.User;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class RiderFile {
 
     private static final String RIDER_FILE = "code/src/database/users_db.txt";
+    private static final String PARCEL_FILE = "code/src/database/parcel_db.txt";
 
 
     // Find a rider by Rider/User ID
@@ -29,72 +33,90 @@ public class RiderFile {
 
 
     // Get all pending parcels
-    public static ArrayList<Parcel> getPendingParcels() {
-        // ekhane parcel file theke
-        // all parcels read korbo
-        // tarpor sudhu PENDING parcels return korbo
+    public static ArrayList<String> getPendingParcels() {
 
-
-        return new ArrayList<>();
     }
 
 
     // Get parcels assigned to a specific rider
-    public static ArrayList<Parcel> getMyAssignedParcels(String riderId) {
-        // ekhane parcel file theke
-        // riderId diye assigned parcels ber korbo
+    public static ArrayList<String> getMyAssignedParcels(String riderId) {
 
-        return new ArrayList<>();
     }
 
 
     // Assign a parcel to a rider
-    public static boolean assignParcel(
-            String parcelId,
-            String riderId) {
+    public static boolean assignParcel(String parcelId, String riderId) {
 
-        // ekhane parcelId diye parcel khujbo
-        // riderId diye rider verify korbo
-        // tarpor parcel er riderId set korbo
-
+        File file = new File(PARCEL_FILE);
+        if (!file.exists()) {
+            return false;
+        }
+        ArrayList<String> parcels = new ArrayList<>();
+        boolean assigned = false;
+        try {
+            Scanner sc = new Scanner(file);
+            while (sc.hasNextLine()) {
+                String parcelData = sc.nextLine().trim();
+                if (parcelData.isEmpty()) {
+                    continue;
+                }
+                parcelData = parcelData.replace("#", "");
+                if (parcelData.contains(parcelId)
+                        && parcelData.contains(String.valueOf(Parcel.ParcelStatus.PENDING))) {
+                    parcelData = parcelData.replace(
+                            String.valueOf(Parcel.ParcelStatus.PENDING),
+                            String.valueOf(Parcel.ParcelStatus.ACCEPTED)
+                    );
+                    String[] arr = parcelData.split("-");
+                    arr[9] = riderId;
+                    parcelData = String.join("-", arr);
+                    assigned = true;
+                }
+                parcels.add(parcelData);
+            }
+            sc.close();
+            if (assigned) {
+                FileWriter writer = new FileWriter(PARCEL_FILE, false);
+                for (String parcel : parcels) {
+                    writer.write(parcel + "#\n");
+                }
+                writer.close();
+            }
+            return assigned;
+        } catch (Exception e) {
+            System.out.println("Exception from ParcelFile: " + e.getMessage());
+        }
         return false;
     }
 
 
     // Update parcel status by rider
-    public static boolean updateParcelStatus(
-            String parcelId,
-            String riderId,
-            String newStatus) {
+    public static boolean updateParcelStatusByRider(String parcelId, String riderId, String newStatus) {
 
-        // ekhane parcelId diye parcel khujbo
-        // riderId diye verify korbo je parcel ta
-        // oi rider er assigned kina
-        // tarpor parcel status update korbo
 
-        return false;
+
     }
 
 
     // Search a parcel assigned to rider
-    public static Parcel searchParcel(
-            String parcelId,
-            String riderId) {
+//    public static Parcel searchParcel(
+//            String parcelId,
+//            String riderId) {
+//
+//        // ekhane parcelId diye parcel search korbo
+//        // riderId diye verify korbo je parcel ta
+//        // oi rider er assigned kina
+//
+//        return null;
+//    }
 
-        // ekhane parcelId diye parcel search korbo
-        // riderId diye verify korbo je parcel ta
-        // oi rider er assigned kina
 
-        return null;
-    }
-
-
-    // Check whether a user is a rider
-    public static boolean isRider(String userId) {
-        // ekhane users_db.txt file theke
-        // userId diye user khujbo
-        // user er role RIDER kina check korbo
-
-        return false;
-    }
+//    // Check whether a user is a rider
+//    public static boolean isRider(String userId) {
+//        // ekhane users_db.txt file theke
+//        // userId diye user khujbo
+//        // user er role RIDER kina check korbo
+//
+//        return false;
+//    }
 }

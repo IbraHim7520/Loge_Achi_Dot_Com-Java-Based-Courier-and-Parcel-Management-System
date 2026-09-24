@@ -10,8 +10,7 @@ import java.util.Scanner;
 
 public class ParcelFile {
 
-    private static final String PARCEL_FILE =
-            "code/src/database/parcel_db.txt";
+    private static final String PARCEL_FILE = "code/src/database/parcel_db.txt";
 
 
     // Save a new parcel into the file
@@ -93,16 +92,14 @@ public class ParcelFile {
 
             while (sc.hasNextLine()) {
 
-                String parcelData =
-                        sc.nextLine().trim();
+                String parcelData = sc.nextLine().trim();
 
                 if (parcelData.isEmpty()) {
                     continue;
                 }
 
                 // Remove # from the end of the line
-                parcelData =
-                        parcelData.replace("#", "");
+                parcelData = parcelData.replace("#", "");
 
                 // Check sender ID
                 if (parcelData.contains(senderId)) {
