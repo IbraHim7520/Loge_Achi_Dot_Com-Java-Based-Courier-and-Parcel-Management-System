@@ -32,20 +32,44 @@ public class Rider {
     }
 
     public void viewPendingParcels() {
+        ArrayList<String> parcels = RiderFile.getPendingParcels();
 
+        if (parcels.isEmpty()) {
+            System.out.println("No pending parcels found!");
+            return;
+        }
+
+        for (String parcel : parcels) {
+            System.out.println(parcel);
+        }
     }
+
 
     public void acceptParcelsByRider(String parcelId, String riderID){
 
     }
 
     public void viewMyAssignedParcles() {
+        ArrayList<String> parcels = RiderFile.getMyAssignedParcels(user.getUser_id());
 
+        if (parcels.isEmpty()) {
+            System.out.println("No assigned parcels found!");
+            return;
+        }
+
+        for (String parcel : parcels) {
+            System.out.println(parcel);
+        }
     }
 
     public void updateParcelStatus(String parcelId, String newStatus) {
+        boolean result = RiderFile.updateParcelStatusByRider(parcelId, user.getUser_id(), newStatus);
 
-    }
+        if (result) {
+            System.out.println("Parcel status updated successfully!");
+        } else {
+            System.out.println("Failed to update parcel status!");
+        }
 
     public void searchAParcel(String parcelId){
         //ekhane parcel id diye parcel search er kaj korbo;
