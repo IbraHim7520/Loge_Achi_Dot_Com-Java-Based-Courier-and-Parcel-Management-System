@@ -34,13 +34,64 @@ public class RiderFile {
 
     // Get all pending parcels
     public static ArrayList<String> getPendingParcels() {
+        ArrayList<String> pendingParcels = new ArrayList<String>();
+        File file = new File(PARCEL_FILE);
+        if (!file.exists()) {
+            return pendingParcels;
+        }
+        try {
+            Scanner sc = new Scanner(file);
+            while (sc.hasNextLine()) {
+                String parcelData = sc.nextLine().trim();
 
+                if (parcelData.isEmpty()) {
+                    continue;
+                }
+                parcelData = parcelData.replace("#", "");
+
+                if (parcelData.contains(String.valueOf(Parcel.ParcelStatus.PENDING))) {
+                    pendingParcels.add(parcelData);
+                }
+            }
+            sc.close();
+            return pendingParcels;
+
+        } catch (Exception e) {
+            System.out.println("Exception from Rider File " + e.getMessage());
+        }
+        return new ArrayList<>();
     }
+
 
 
     // Get parcels assigned to a specific rider
     public static ArrayList<String> getMyAssignedParcels(String riderId) {
 
+        ArrayList<String> assignedParcels = new ArrayList<>();
+        File file = new File(PARCEL_FILE);
+
+        if (!file.exists()) {
+            return assignedParcels;
+        }
+
+        try {
+            Scanner sc = new Scanner(file);
+            while (sc.hasNextLine()) {
+                String parcelData = sc.nextLine().trim();
+                if (parcelData.isEmpty()) {
+                    continue;
+                }
+                parcelData = parcelData.replace("#", "");
+                if (parcelData.contains(riderId)) {
+                    assignedParcels.add(parcelData);
+                }
+            }
+            sc.close();
+            return assignedParcels;
+        } catch (Exception e) {
+            System.out.println("Exception from Rider File " + e.getMessage());
+        }
+        return new ArrayList<>();
     }
 
 
