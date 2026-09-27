@@ -215,9 +215,36 @@ public class AdminFile {
 
 
     // Admin.searchParcel()
-    public static Parcel searchParcel(String parcelId) {
-        // ekhane parcelId diye PARCEL_FILE e
-        // parcel search korbo
+    public static String searchParcel(String parcelId) {
+        File file = new File(PARCEL_FILE);
+
+        if (!file.exists()) {
+            return null;
+        }
+
+        try {
+            Scanner scanner = new Scanner(file);
+
+            while (scanner.hasNextLine()) {
+                String data = scanner.nextLine().trim();
+
+                if (data.isEmpty()) {
+                    continue;
+                }
+
+                data = data.replace("#", "");
+                String[] parcelData = data.split("-");
+
+                if (parcelData.length >= 10 && parcelData[3].equals(parcelId)) {
+                    scanner.close();
+                    return data;
+                }
+            }
+
+            scanner.close();
+        } catch (Exception e) {
+            System.out.println("Exception from AdminFile: " + e.getMessage());
+        }
 
         return null;
     }
