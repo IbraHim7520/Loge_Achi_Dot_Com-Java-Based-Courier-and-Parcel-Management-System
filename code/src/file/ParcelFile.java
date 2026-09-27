@@ -1,5 +1,8 @@
 package file;
 
+import custom_exception.InvalidAmountException;
+import custom_exception.NotFoundException;
+import custom_exception.UnauthorizedAccessException;
 import model.Parcel;
 import model.User;
 
@@ -10,20 +13,11 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ParcelFile {
+
     private static final String PARCEL_FILE = "code/src/database/parcel_db.txt";
 
-    public static boolean saveParcel(
-            String parcelName,
-            String receiverAddress,
-            String receiverPhone,
-            String parcelID,
-            double weight,
-            String senderEmail,
-            String senderId,
-            String parcelStatus,
-            double deliveryCharge,
-            String riderId
-    ) {
+    public static boolean saveParcel(String parcelName, String receiverAddress, String receiverPhone, String parcelID, double weight, String senderEmail, String senderId, String parcelStatus, double deliveryCharge, String riderId) {
+
         File file = new File(PARCEL_FILE);
 
         try {
@@ -35,20 +29,16 @@ public class ParcelFile {
                 riderId = "null";
             }
 
-            String newParcel = parcelName + "-"
-                    + receiverAddress + "-"
-                    + receiverPhone + "-"
-                    + parcelID + "-"
-                    + weight + "-"
-                    + senderEmail + "-"
-                    + senderId + "-"
-                    + parcelStatus + "-"
-                    + deliveryCharge + "-"
-                    + riderId + "#\n";
+            String newParcel = parcelName + "-" + receiverAddress + "-" + receiverPhone + "-" + parcelID + "-" + weight + "-" + senderEmail + "-" + senderId + "-" + parcelStatus + "-" + deliveryCharge + "-" + riderId + "#\n";
 
-            FileWriter writer = new FileWriter(PARCEL_FILE, true);
-            writer.write(newParcel);
-            writer.close();
+            try {
+                FileWriter writer = new FileWriter(PARCEL_FILE, true);
+
+                writer.write(newParcel);
+                writer.close();
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+            }
 
             return true;
 
@@ -58,18 +48,19 @@ public class ParcelFile {
         }
     }
 
-    public static ArrayList<String> getMyAllParcels(String senderId) {
+    public static ArrayList<String> getMyAllParcels(String senderId) throws NotFoundException {
+
         ArrayList<String> arr = new ArrayList<>();
         File file = new File(PARCEL_FILE);
 
         if (!file.exists()) {
-            return arr;
+            throw new NotFoundException("Parcel database not found!");
         }
 
-        try {
-            Scanner sc = new Scanner(file);
+        try (Scanner sc = new Scanner(file)) {
 
             while (sc.hasNextLine()) {
+
                 String parcelData = sc.nextLine().trim();
 
                 if (parcelData.isEmpty()) {
@@ -84,26 +75,29 @@ public class ParcelFile {
                 }
             }
 
-            sc.close();
-
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("Exception from ParcelFile: " + e.getMessage());
+        }
+
+        if (arr.isEmpty()) {
+            throw new NotFoundException("No parcels found for this user!");
         }
 
         return arr;
     }
 
-    public static String findParcel(String parcelId) {
+    public static String findParcel(String parcelId) throws NotFoundException {
+
         File file = new File(PARCEL_FILE);
 
         if (!file.exists()) {
-            return null;
+            throw new NotFoundException("Parcel database not found!");
         }
 
-        try {
-            Scanner sc = new Scanner(file);
+        try (Scanner sc = new Scanner(file)) {
 
             while (sc.hasNextLine()) {
+
                 String parcelData = sc.nextLine().trim();
 
                 if (parcelData.isEmpty()) {
@@ -111,37 +105,36 @@ public class ParcelFile {
                 }
 
                 parcelData = parcelData.replace("#", "");
+
                 String[] parcel = parcelData.split("-");
 
                 if (parcel.length >= 10 && parcel[3].equals(parcelId)) {
-                    sc.close();
                     return parcelData;
                 }
             }
 
-            sc.close();
-
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("Exception from ParcelFile: " + e.getMessage());
         }
 
-        return null;
+        throw new NotFoundException("Parcel not found!");
     }
 
-    public static boolean cancelParcel(String parcelId, String senderId) {
+    public static boolean cancelParcel(String parcelId, String senderId) throws NotFoundException {
+
         File file = new File(PARCEL_FILE);
 
         if (!file.exists()) {
-            return false;
+            throw new NotFoundException("Parcel database not found!");
         }
 
         ArrayList<String> allParcels = new ArrayList<>();
         boolean cancelled = false;
 
-        try {
-            Scanner sc = new Scanner(file);
+        try (Scanner sc = new Scanner(file)) {
 
             while (sc.hasNextLine()) {
+
                 String parcelData = sc.nextLine().trim();
 
                 if (parcelData.isEmpty()) {
@@ -149,14 +142,13 @@ public class ParcelFile {
                 }
 
                 parcelData = parcelData.replace("#", "");
+
                 String[] parcel = parcelData.split("-");
 
-                if (parcel.length >= 10
-                        && parcel[3].equals(parcelId)
-                        && parcel[6].equals(senderId)
-                        && parcel[7].equals(String.valueOf(Parcel.ParcelStatus.PENDING))) {
+                if (parcel.length >= 10 && parcel[3].equals(parcelId) && parcel[6].equals(senderId) && parcel[7].equals(String.valueOf(Parcel.ParcelStatus.PENDING))) {
 
                     parcel[7] = String.valueOf(Parcel.ParcelStatus.CANCELED);
+
                     parcelData = String.join("-", parcel);
                     cancelled = true;
                 }
@@ -164,38 +156,40 @@ public class ParcelFile {
                 allParcels.add(parcelData);
             }
 
-            sc.close();
+        } catch (IOException e) {
+            System.out.println("Exception from ParcelFile: " + e.getMessage());
+        }
 
-            if (!cancelled) {
-                return false;
-            }
+        if (!cancelled) {
+            throw new NotFoundException("Parcel not found or cannot be canceled!");
+        }
 
-            FileWriter writer = new FileWriter(PARCEL_FILE, false);
+        try (FileWriter writer = new FileWriter(PARCEL_FILE, false)) {
 
             for (String parcel : allParcels) {
                 writer.write(parcel + "#\n");
             }
 
-            writer.close();
-            return true;
-
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("Exception from ParcelFile: " + e.getMessage());
             return false;
         }
+
+        return true;
     }
 
-    public static Parcel trackParcel(String parcelId, String senderId) {
+    public static Parcel trackParcel(String parcelId, String senderId) throws NotFoundException, UnauthorizedAccessException, InvalidAmountException {
+
         File file = new File(PARCEL_FILE);
 
         if (!file.exists()) {
-            return null;
+            throw new NotFoundException("Parcel database not found!");
         }
 
-        try {
-            Scanner sc = new Scanner(file);
+        try (Scanner sc = new Scanner(file)) {
 
             while (sc.hasNextLine()) {
+
                 String data = sc.nextLine().trim();
 
                 if (data.isEmpty()) {
@@ -203,24 +197,29 @@ public class ParcelFile {
                 }
 
                 data = data.replace("#", "");
+
                 String[] parcelData = data.split("-");
 
-                if (parcelData.length >= 10
-                        && parcelData[3].equals(parcelId)
-                        && parcelData[6].equals(senderId)) {
+                if (parcelData.length >= 10 && parcelData[3].equals(parcelId) && parcelData[6].equals(senderId)) {
 
                     User user = new User("", parcelData[5], "");
+
                     user.setUser_id(parcelData[6]);
+                    user.setUser_role(String.valueOf(User.UserRole.USER));
 
                     Parcel parcel = new Parcel(user);
+
                     parcel.setParcelName(parcelData[0]);
                     parcel.setReciverAddress(parcelData[1]);
                     parcel.setReciverPhone(parcelData[2]);
                     parcel.setParcelID(parcelData[3]);
+
                     parcel.setWeight(Double.parseDouble(parcelData[4]));
+
                     parcel.setSenderEmail(parcelData[5]);
                     parcel.setSenderId(parcelData[6]);
                     parcel.setParcelStatus(parcelData[7]);
+
                     parcel.setDeliveryCharge(Double.parseDouble(parcelData[8]));
 
                     if (parcelData[9].equals("null")) {
@@ -229,47 +228,45 @@ public class ParcelFile {
                         parcel.setRiderId(parcelData[9]);
                     }
 
-                    sc.close();
                     return parcel;
                 }
             }
 
-            sc.close();
-
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("Exception from ParcelFile: " + e.getMessage());
         }
 
-        return null;
+        throw new NotFoundException("Parcel not found for this user!");
     }
 
-    public static boolean updateParcelStatus(String parcelId, String newStatus) {
+    public static boolean updateParcelStatus(String parcelId, String newStatus) throws NotFoundException {
+
         File file = new File(PARCEL_FILE);
 
         if (!file.exists()) {
-            return false;
+            throw new NotFoundException("Parcel database not found!");
         }
 
         try {
             Parcel.ParcelStatus.valueOf(newStatus.toUpperCase());
         } catch (IllegalArgumentException e) {
-            return false;
+            throw new NotFoundException("Invalid parcel status!");
         }
 
         ArrayList<String> parcels = new ArrayList<>();
         boolean updated = false;
 
-        try {
-            Scanner sc = new Scanner(file);
+        try (Scanner sc = new Scanner(file)) {
 
             while (sc.hasNextLine()) {
+
                 String data = sc.nextLine().trim();
 
                 if (data.isEmpty()) {
                     continue;
                 }
-
                 data = data.replace("#", "");
+
                 String[] parcelData = data.split("-");
 
                 if (parcelData.length >= 10 && parcelData[3].equals(parcelId)) {
@@ -281,57 +278,54 @@ public class ParcelFile {
                 parcels.add(data);
             }
 
-            sc.close();
+        } catch (IOException e) {
+            System.out.println("Exception from ParcelFile: " + e.getMessage());
+        }
 
-            if (!updated) {
-                return false;
-            }
+        if (!updated) {
+            throw new NotFoundException("Parcel not found!");
+        }
 
-            FileWriter writer = new FileWriter(PARCEL_FILE, false);
+        try (FileWriter writer = new FileWriter(PARCEL_FILE, false)) {
 
             for (String parcel : parcels) {
                 writer.write(parcel + "#\n");
             }
 
-            writer.close();
-            return true;
-
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("Exception from ParcelFile: " + e.getMessage());
             return false;
         }
+
+        return true;
     }
 
-    public static boolean deleteParcel(String parcelId, String userId) {
+    public static boolean deleteParcel(String parcelId, String userId) throws NotFoundException {
+
         File file = new File(PARCEL_FILE);
 
         if (!file.exists()) {
-            return false;
+            throw new NotFoundException("Parcel database not found!");
         }
 
         ArrayList<String> parcels = new ArrayList<>();
         boolean deleted = false;
 
-        try {
-            Scanner sc = new Scanner(file);
+        try (Scanner sc = new Scanner(file)) {
 
             while (sc.hasNextLine()) {
+
                 String parcelData = sc.nextLine().trim();
 
                 if (parcelData.isEmpty()) {
                     continue;
                 }
-
                 String cleanData = parcelData.replace("#", "");
+
                 String[] parcel = cleanData.split("-");
 
-                if (parcel.length >= 10
-                        && parcel[3].equals(parcelId)
-                        && parcel[6].equals(userId)) {
-
-                    if (parcel[7].equals(String.valueOf(Parcel.ParcelStatus.PENDING))
-                            || parcel[7].equals(String.valueOf(Parcel.ParcelStatus.CANCELED))) {
-
+                if (parcel.length >= 10 && parcel[3].equals(parcelId) && parcel[6].equals(userId)) {
+                    if (parcel[7].equals(String.valueOf(Parcel.ParcelStatus.PENDING)) || parcel[7].equals(String.valueOf(Parcel.ParcelStatus.CANCELED))) {
                         deleted = true;
                         continue;
                     }
@@ -340,38 +334,40 @@ public class ParcelFile {
                 parcels.add(cleanData);
             }
 
-            sc.close();
+        } catch (IOException e) {
+            System.out.println("Exception from ParcelFile: " + e.getMessage());
+        }
 
-            if (!deleted) {
-                return false;
-            }
+        if (!deleted) {
+            throw new NotFoundException("Parcel not found or cannot be deleted!");
+        }
 
-            FileWriter writer = new FileWriter(PARCEL_FILE, false);
+        try (FileWriter writer = new FileWriter(PARCEL_FILE, false)) {
 
             for (String parcel : parcels) {
                 writer.write(parcel + "#\n");
             }
 
-            writer.close();
-            return true;
-
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("Exception from ParcelFile: " + e.getMessage());
             return false;
         }
+
+        return true;
     }
 
-    public static Parcel searchParcel(String parcelId) {
+    public static Parcel searchParcel(String parcelId) throws NotFoundException, UnauthorizedAccessException, InvalidAmountException {
+
         File file = new File(PARCEL_FILE);
 
         if (!file.exists()) {
-            return null;
+            throw new NotFoundException("Parcel database not found!");
         }
 
-        try {
-            Scanner sc = new Scanner(file);
+        try (Scanner sc = new Scanner(file)) {
 
             while (sc.hasNextLine()) {
+
                 String data = sc.nextLine().trim();
 
                 if (data.isEmpty()) {
@@ -379,21 +375,30 @@ public class ParcelFile {
                 }
 
                 data = data.replace("#", "");
+
                 String[] parcelData = data.split("-");
 
-                if (parcelData.length >= 10 && parcelData[3].equals(parcelId)) {
+                if (parcelData.length >= 10
+                        && parcelData[3].equals(parcelId)) {
+
                     User user = new User("", parcelData[5], "");
+
                     user.setUser_id(parcelData[6]);
+                    user.setUser_role(String.valueOf(User.UserRole.USER));
 
                     Parcel parcel = new Parcel(user);
+
                     parcel.setParcelName(parcelData[0]);
                     parcel.setReciverAddress(parcelData[1]);
                     parcel.setReciverPhone(parcelData[2]);
                     parcel.setParcelID(parcelData[3]);
+
                     parcel.setWeight(Double.parseDouble(parcelData[4]));
+
                     parcel.setSenderEmail(parcelData[5]);
                     parcel.setSenderId(parcelData[6]);
                     parcel.setParcelStatus(parcelData[7]);
+
                     parcel.setDeliveryCharge(Double.parseDouble(parcelData[8]));
 
                     if (parcelData[9].equals("null")) {
@@ -402,17 +407,14 @@ public class ParcelFile {
                         parcel.setRiderId(parcelData[9]);
                     }
 
-                    sc.close();
                     return parcel;
                 }
             }
 
-            sc.close();
-
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("Exception from ParcelFile: " + e.getMessage());
         }
 
-        return null;
+        throw new NotFoundException("Parcel not found!");
     }
 }

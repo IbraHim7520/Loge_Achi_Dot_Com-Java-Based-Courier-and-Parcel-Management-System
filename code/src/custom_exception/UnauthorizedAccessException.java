@@ -1,7 +1,7 @@
 package custom_exception;
 
 public class UnauthorizedAccessException extends Exception{
-    UnauthorizedAccessException(String message){
+    public  UnauthorizedAccessException(String message){
         super(message);
     }
 }

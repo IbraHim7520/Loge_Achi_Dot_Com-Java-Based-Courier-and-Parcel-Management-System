@@ -1,5 +1,5 @@
 package model;
-
+import custom_exception.NotFoundException;
 import file.UserFile;
 
 import java.time.LocalTime;
@@ -90,7 +90,7 @@ public class User extends Authentication {
     }
 
     @Override
-    public String login(User user) {
+    public String login(User user) throws NotFoundException {
         String email = user.getUser_email();
         String password = user.getUserPassword();
 
@@ -112,15 +112,14 @@ public class User extends Authentication {
             this.user_role = loggedUser.getUser_role();
             this.user_id = loggedUser.getUser_id();
 
-            return "User login successful.\n"
-                    + "Welcome, " + user_name + "!\n"
-                    + "Role: " + user_role
-                    + "\nUser ID: " + user_id;
+            return "User login successful.\n" + "Welcome, " + user_name + "!\n" + "Role: " + user_role + "\nUser ID: " + user_id;
         }
 
-        return "Failed to Login.\n"
-                + "Invalid Email or Password\n"
-                + "Or, No User found! Please Register.";
+        try {
+            throw new NotFoundException("No user found with the provided email and password.");
+        } catch (NotFoundException e) {
+            return "Failed to Login.\n" + e.getMessage();
+        }
     }
 
     @Override
@@ -133,8 +132,7 @@ public class User extends Authentication {
             return "Password must be at least 6 characters long.";
         }
 
-        if (user.getUser_name() == null
-                || user.getUser_name().trim().isEmpty()) {
+        if (user.getUser_name() == null || user.getUser_name().trim().isEmpty()) {
             return "Username cannot be empty.";
         }
 
@@ -142,21 +140,13 @@ public class User extends Authentication {
         boolean result = userFile.createNewUser(user);
 
         if (result) {
-            return "User registered successfully.\n"
-                    + "User ID: " + user.getUser_id()
-                    + "\nRole: " + user.getUser_role();
+            return "User registered successfully.\n" + "User ID: " + user.getUser_id() + "\nRole: " + user.getUser_role();
         }
-
-        return "Failed to Register User.\n"
-                + "Email may already be registered.";
+        return "Failed to Register User.\n" + "Email may already be registered.";
     }
 
     public String generateUserID() {
         LocalTime time = LocalTime.now();
-
-        return "U"
-                + time.toString()
-                .replace(":", "")
-                .replace(".", "");
+        return "U" + time.toString().replace(":", "").replace(".", "");
     }
 }
