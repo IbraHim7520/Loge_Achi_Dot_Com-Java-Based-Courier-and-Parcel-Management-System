@@ -186,11 +186,31 @@ public class AdminFile {
     // ==================== PARCEL ====================
 
     // Admin.viewAllParcel()
-    public static ArrayList<Parcel> getAllParcels() {
-        // ekhane PARCEL_FILE theke
-        // all parcels read kore return korbo
+    public static ArrayList<String> getAllParcels() {
+        ArrayList<String> parcels = new ArrayList<>();
+        File file = new File(PARCEL_FILE);
 
-        return new ArrayList<>();
+        if (!file.exists()) {
+            return parcels;
+        }
+
+        try {
+            Scanner scanner = new Scanner(file);
+
+            while (scanner.hasNextLine()) {
+                String data = scanner.nextLine().trim();
+
+                if (!data.isEmpty()) {
+                    parcels.add(data.replace("#", ""));
+                }
+            }
+
+            scanner.close();
+        } catch (Exception e) {
+            System.out.println("Exception from AdminFile: " + e.getMessage());
+        }
+
+        return parcels;
     }
 
 
