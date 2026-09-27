@@ -29,25 +29,17 @@ public class Parcel {
 
     private final double chargePerWeight = 10.00;
 
-
-    // user validate korbe
     public Parcel(User user) {
-
         if (!validateUser(user)) {
             throw new IllegalArgumentException("Unauthorized Access!");
         }
 
         this.senderEmail = user.getUser_email();
         this.senderId = user.getUser_id();
-
         this.parcelStatus = String.valueOf(ParcelStatus.PENDING);
         this.parcelID = generateParcelID();
-
         this.riderId = null;
     }
-
-
-    // Getter and Setter
 
     public String getParcelName() {
         return parcelName;
@@ -129,22 +121,12 @@ public class Parcel {
         this.riderId = riderId;
     }
 
-
-    // parcel send korbe
-    public String sendOneParcel(
-            String parcelName,
-            String reciverAddress,
-            String reciverPhone,
-            double weight
-    ) {
-
+    public String sendOneParcel(String parcelName, String reciverAddress, String reciverPhone, double weight) {
         this.parcelName = parcelName;
         this.reciverAddress = reciverAddress;
         this.reciverPhone = reciverPhone;
         this.weight = weight;
-
         this.parcelID = generateParcelID();
-
         this.deliveryCharge = weight * chargePerWeight;
 
         boolean result = ParcelFile.saveParcel(
@@ -167,41 +149,25 @@ public class Parcel {
         }
     }
 
-
-    // current user er sob parcel nibe
     public ArrayList<String> getMyAllParcels() {
-
         return ParcelFile.getMyAllParcels(getSenderId());
     }
 
-
-    // parcel cancel korbe
     public boolean cancelParcel(String parcelId) {
-
-        boolean result = ParcelFile.cancelParcel(
-                parcelId,
-                getSenderId()
-        );
-
+        boolean result = ParcelFile.cancelParcel(parcelId, getSenderId());
         return result;
     }
 
-
-    // parcel track korbe
     public String trackParcel(String parcelId) {
-
         String parcelData = ParcelFile.findParcel(parcelId);
-
         return parcelData;
     }
+
     public boolean deleteMyParcel(String parcelID) {
         return ParcelFile.deleteParcel(parcelID, getSenderId());
     }
 
-
-    // parcel ID generate korbe
     public String generateParcelID() {
-
         LocalTime time = LocalTime.now();
 
         return "P"
@@ -210,10 +176,7 @@ public class Parcel {
                 .replace(".", "");
     }
 
-
-    // user valid kina check korbe
     private boolean validateUser(User user) {
-
         if (user == null) {
             return false;
         }
@@ -226,7 +189,6 @@ public class Parcel {
             return false;
         }
 
-        // admin parcel send korte parbe na
         if (user.getUser_role().contains("ADMIN")) {
             return false;
         }

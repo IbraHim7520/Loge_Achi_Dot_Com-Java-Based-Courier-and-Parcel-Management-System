@@ -1,6 +1,7 @@
 package file;
 
 import model.Parcel;
+import model.User;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -9,11 +10,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ParcelFile {
-
     private static final String PARCEL_FILE = "code/src/database/parcel_db.txt";
 
-
-    // Save a new parcel into the file
     public static boolean saveParcel(
             String parcelName,
             String receiverAddress,
@@ -26,83 +24,62 @@ public class ParcelFile {
             double deliveryCharge,
             String riderId
     ) {
-
         File file = new File(PARCEL_FILE);
 
         try {
-
             if (!file.exists()) {
                 file.createNewFile();
             }
 
-            // If rider is not assigned yet
             if (riderId == null) {
                 riderId = "null";
             }
 
-            String newParcel =
-                    parcelName + "-"
-                            + receiverAddress + "-"
-                            + receiverPhone + "-"
-                            + parcelID + "-"
-                            + weight + "-"
-                            + senderEmail + "-"
-                            + senderId + "-"
-                            + parcelStatus + "-"
-                            + deliveryCharge + "-"
-                            + riderId
-                            + "#\n";
+            String newParcel = parcelName + "-"
+                    + receiverAddress + "-"
+                    + receiverPhone + "-"
+                    + parcelID + "-"
+                    + weight + "-"
+                    + senderEmail + "-"
+                    + senderId + "-"
+                    + parcelStatus + "-"
+                    + deliveryCharge + "-"
+                    + riderId + "#\n";
 
-            FileWriter writer =
-                    new FileWriter(PARCEL_FILE, true);
-
+            FileWriter writer = new FileWriter(PARCEL_FILE, true);
             writer.write(newParcel);
             writer.close();
 
             return true;
 
         } catch (IOException e) {
-
-            System.out.println(
-                    "Exception from ParcelFile: "
-                            + e.getMessage()
-            );
-
+            System.out.println("Exception from ParcelFile: " + e.getMessage());
             return false;
         }
     }
 
-
-    // Get all parcels of a specific sender
-    public static ArrayList<String> getMyAllParcels(
-            String senderId
-    ) {
-
+    public static ArrayList<String> getMyAllParcels(String senderId) {
         ArrayList<String> arr = new ArrayList<>();
+        File file = new File(PARCEL_FILE);
 
-        File fl = new File(PARCEL_FILE);
-
-        if (!fl.exists()) {
+        if (!file.exists()) {
             return arr;
         }
 
         try {
-
-            Scanner sc = new Scanner(fl);
+            Scanner sc = new Scanner(file);
 
             while (sc.hasNextLine()) {
-
                 String parcelData = sc.nextLine().trim();
 
                 if (parcelData.isEmpty()) {
                     continue;
                 }
 
-                // Remove # from the end of the line
                 parcelData = parcelData.replace("#", "");
+                String[] parcel = parcelData.split("-");
 
-                // Check sender ID
-                if (parcelData.contains(senderId)) {
+                if (parcel.length >= 10 && parcel[6].equals(senderId)) {
                     arr.add(parcelData);
                 }
             }
@@ -110,46 +87,34 @@ public class ParcelFile {
             sc.close();
 
         } catch (Exception e) {
-
-            System.out.println(
-                    "Exception from ParcelFile: "
-                            + e.getMessage()
-            );
+            System.out.println("Exception from ParcelFile: " + e.getMessage());
         }
 
         return arr;
     }
 
-
-    // Find a parcel by Parcel ID
     public static String findParcel(String parcelId) {
+        File file = new File(PARCEL_FILE);
 
-        File fl = new File(PARCEL_FILE);
-
-        if (!fl.exists()) {
+        if (!file.exists()) {
             return null;
         }
 
         try {
-
-            Scanner sc = new Scanner(fl);
+            Scanner sc = new Scanner(file);
 
             while (sc.hasNextLine()) {
-
-                String parcelData =
-                        sc.nextLine().trim();
+                String parcelData = sc.nextLine().trim();
 
                 if (parcelData.isEmpty()) {
                     continue;
                 }
 
-                parcelData =
-                        parcelData.replace("#", "");
+                parcelData = parcelData.replace("#", "");
+                String[] parcel = parcelData.split("-");
 
-                if (parcelData.contains(parcelId)) {
-
+                if (parcel.length >= 10 && parcel[3].equals(parcelId)) {
                     sc.close();
-
                     return parcelData;
                 }
             }
@@ -157,50 +122,53 @@ public class ParcelFile {
             sc.close();
 
         } catch (Exception e) {
-
-            System.out.println(
-                    "Exception from ParcelFile: "
-                            + e.getMessage()
-            );
+            System.out.println("Exception from ParcelFile: " + e.getMessage());
         }
 
         return null;
     }
 
+    public static boolean cancelParcel(String parcelId, String senderId) {
+        File file = new File(PARCEL_FILE);
 
-    // Cancel a parcel
-    public static boolean cancelParcel(
-            String parcelId,
-            String senderId
-    ) {
-
-        File fl = new File(PARCEL_FILE);
-
-        if (!fl.exists()) {
+        if (!file.exists()) {
             return false;
         }
-        ArrayList<String> allParcels = new ArrayList<>();
 
+        ArrayList<String> allParcels = new ArrayList<>();
         boolean cancelled = false;
 
         try {
-
-            Scanner sc = new Scanner(fl);
+            Scanner sc = new Scanner(file);
 
             while (sc.hasNextLine()) {
-
                 String parcelData = sc.nextLine().trim();
+
                 if (parcelData.isEmpty()) {
                     continue;
                 }
-                if (parcelData.contains(parcelId) && parcelData.contains(senderId) && parcelData.contains(String.valueOf(Parcel.ParcelStatus.PENDING))) {
-                    parcelData = parcelData.replace(String.valueOf(Parcel.ParcelStatus.PENDING), String.valueOf(Parcel.ParcelStatus.CANCELED));
+
+                parcelData = parcelData.replace("#", "");
+                String[] parcel = parcelData.split("-");
+
+                if (parcel.length >= 10
+                        && parcel[3].equals(parcelId)
+                        && parcel[6].equals(senderId)
+                        && parcel[7].equals(String.valueOf(Parcel.ParcelStatus.PENDING))) {
+
+                    parcel[7] = String.valueOf(Parcel.ParcelStatus.CANCELED);
+                    parcelData = String.join("-", parcel);
                     cancelled = true;
                 }
+
                 allParcels.add(parcelData);
             }
 
             sc.close();
+
+            if (!cancelled) {
+                return false;
+            }
 
             FileWriter writer = new FileWriter(PARCEL_FILE, false);
 
@@ -209,94 +177,241 @@ public class ParcelFile {
             }
 
             writer.close();
+            return true;
 
-            return cancelled;
-
-        } catch (Exception e) {
-
-            System.out.println(
-                    "Exception from ParcelFile: "
-                            + e.getMessage()
-            );
-
-            return false;
-        }
-    }
-
-
-    // Track a parcel
-    public static Parcel trackParcel(
-            String parcelId,
-            String senderId
-    ) {
-
-        // Not implemented yet
-
-        return null;
-    }
-
-
-
-    // Update parcel status
-    public static boolean updateParcelStatus(
-            String parcelId,
-            String newStatus
-    ) {
-
-        // Not implemented yet
-
-        return false;
-    }
-
-
-    // Delete a parcel
-    public static boolean deleteParcel(String parcelId, String userId) {
-        File file = new File(PARCEL_FILE);
-        if (!file.exists()) {
-            return false;
-        }
-        ArrayList<String> parcels = new ArrayList<>();
-        boolean deleted = false;
-        try {
-            Scanner sc = new Scanner(file);
-            while (sc.hasNextLine()) {
-                String parcelData = sc.nextLine().trim();
-                if (parcelData.isEmpty()) {
-                    continue;
-                }
-                String cleanData = parcelData.replace("#", "");
-                if (cleanData.contains(parcelId) && cleanData.contains(userId)) {
-                    if (cleanData.contains(String.valueOf(Parcel.ParcelStatus.PENDING)) || cleanData.contains(String.valueOf(Parcel.ParcelStatus.CANCELED))) {
-                        deleted = true;
-                        continue;
-                    }
-                }
-                parcels.add(cleanData);
-            }
-            sc.close();
-            if (deleted) {
-                FileWriter writer = new FileWriter(file, false);
-
-                for (String parcel : parcels) {
-                    writer.write(parcel + "#\n");
-                }
-
-                writer.close();
-            }
-            return deleted;
         } catch (Exception e) {
             System.out.println("Exception from ParcelFile: " + e.getMessage());
             return false;
         }
     }
 
+    public static Parcel trackParcel(String parcelId, String senderId) {
+        File file = new File(PARCEL_FILE);
 
-    // Search parcel
-    public static Parcel searchParcel(
-            String parcelId
-    ) {
+        if (!file.exists()) {
+            return null;
+        }
 
-        // Not implemented yet
+        try {
+            Scanner sc = new Scanner(file);
+
+            while (sc.hasNextLine()) {
+                String data = sc.nextLine().trim();
+
+                if (data.isEmpty()) {
+                    continue;
+                }
+
+                data = data.replace("#", "");
+                String[] parcelData = data.split("-");
+
+                if (parcelData.length >= 10
+                        && parcelData[3].equals(parcelId)
+                        && parcelData[6].equals(senderId)) {
+
+                    User user = new User("", parcelData[5], "");
+                    user.setUser_id(parcelData[6]);
+
+                    Parcel parcel = new Parcel(user);
+                    parcel.setParcelName(parcelData[0]);
+                    parcel.setReciverAddress(parcelData[1]);
+                    parcel.setReciverPhone(parcelData[2]);
+                    parcel.setParcelID(parcelData[3]);
+                    parcel.setWeight(Double.parseDouble(parcelData[4]));
+                    parcel.setSenderEmail(parcelData[5]);
+                    parcel.setSenderId(parcelData[6]);
+                    parcel.setParcelStatus(parcelData[7]);
+                    parcel.setDeliveryCharge(Double.parseDouble(parcelData[8]));
+
+                    if (parcelData[9].equals("null")) {
+                        parcel.setRiderId(null);
+                    } else {
+                        parcel.setRiderId(parcelData[9]);
+                    }
+
+                    sc.close();
+                    return parcel;
+                }
+            }
+
+            sc.close();
+
+        } catch (Exception e) {
+            System.out.println("Exception from ParcelFile: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    public static boolean updateParcelStatus(String parcelId, String newStatus) {
+        File file = new File(PARCEL_FILE);
+
+        if (!file.exists()) {
+            return false;
+        }
+
+        try {
+            Parcel.ParcelStatus.valueOf(newStatus.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+
+        ArrayList<String> parcels = new ArrayList<>();
+        boolean updated = false;
+
+        try {
+            Scanner sc = new Scanner(file);
+
+            while (sc.hasNextLine()) {
+                String data = sc.nextLine().trim();
+
+                if (data.isEmpty()) {
+                    continue;
+                }
+
+                data = data.replace("#", "");
+                String[] parcelData = data.split("-");
+
+                if (parcelData.length >= 10 && parcelData[3].equals(parcelId)) {
+                    parcelData[7] = newStatus.toUpperCase();
+                    data = String.join("-", parcelData);
+                    updated = true;
+                }
+
+                parcels.add(data);
+            }
+
+            sc.close();
+
+            if (!updated) {
+                return false;
+            }
+
+            FileWriter writer = new FileWriter(PARCEL_FILE, false);
+
+            for (String parcel : parcels) {
+                writer.write(parcel + "#\n");
+            }
+
+            writer.close();
+            return true;
+
+        } catch (Exception e) {
+            System.out.println("Exception from ParcelFile: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean deleteParcel(String parcelId, String userId) {
+        File file = new File(PARCEL_FILE);
+
+        if (!file.exists()) {
+            return false;
+        }
+
+        ArrayList<String> parcels = new ArrayList<>();
+        boolean deleted = false;
+
+        try {
+            Scanner sc = new Scanner(file);
+
+            while (sc.hasNextLine()) {
+                String parcelData = sc.nextLine().trim();
+
+                if (parcelData.isEmpty()) {
+                    continue;
+                }
+
+                String cleanData = parcelData.replace("#", "");
+                String[] parcel = cleanData.split("-");
+
+                if (parcel.length >= 10
+                        && parcel[3].equals(parcelId)
+                        && parcel[6].equals(userId)) {
+
+                    if (parcel[7].equals(String.valueOf(Parcel.ParcelStatus.PENDING))
+                            || parcel[7].equals(String.valueOf(Parcel.ParcelStatus.CANCELED))) {
+
+                        deleted = true;
+                        continue;
+                    }
+                }
+
+                parcels.add(cleanData);
+            }
+
+            sc.close();
+
+            if (!deleted) {
+                return false;
+            }
+
+            FileWriter writer = new FileWriter(PARCEL_FILE, false);
+
+            for (String parcel : parcels) {
+                writer.write(parcel + "#\n");
+            }
+
+            writer.close();
+            return true;
+
+        } catch (Exception e) {
+            System.out.println("Exception from ParcelFile: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static Parcel searchParcel(String parcelId) {
+        File file = new File(PARCEL_FILE);
+
+        if (!file.exists()) {
+            return null;
+        }
+
+        try {
+            Scanner sc = new Scanner(file);
+
+            while (sc.hasNextLine()) {
+                String data = sc.nextLine().trim();
+
+                if (data.isEmpty()) {
+                    continue;
+                }
+
+                data = data.replace("#", "");
+                String[] parcelData = data.split("-");
+
+                if (parcelData.length >= 10 && parcelData[3].equals(parcelId)) {
+                    User user = new User("", parcelData[5], "");
+                    user.setUser_id(parcelData[6]);
+
+                    Parcel parcel = new Parcel(user);
+                    parcel.setParcelName(parcelData[0]);
+                    parcel.setReciverAddress(parcelData[1]);
+                    parcel.setReciverPhone(parcelData[2]);
+                    parcel.setParcelID(parcelData[3]);
+                    parcel.setWeight(Double.parseDouble(parcelData[4]));
+                    parcel.setSenderEmail(parcelData[5]);
+                    parcel.setSenderId(parcelData[6]);
+                    parcel.setParcelStatus(parcelData[7]);
+                    parcel.setDeliveryCharge(Double.parseDouble(parcelData[8]));
+
+                    if (parcelData[9].equals("null")) {
+                        parcel.setRiderId(null);
+                    } else {
+                        parcel.setRiderId(parcelData[9]);
+                    }
+
+                    sc.close();
+                    return parcel;
+                }
+            }
+
+            sc.close();
+
+        } catch (Exception e) {
+            System.out.println("Exception from ParcelFile: " + e.getMessage());
+        }
 
         return null;
     }
