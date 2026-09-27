@@ -18,8 +18,6 @@ public class User extends Authentication {
         RIDER
     }
 
-
-    // Registration Constructor
     public User(String user_name, String user_email, String user_pass) {
         this.user_name = user_name;
         this.user_email = user_email;
@@ -28,15 +26,11 @@ public class User extends Authentication {
         this.user_id = null;
     }
 
-
-    // Login Constructor
-
     public User(String user_email, String user_pass) {
         this.user_email = user_email;
         this.user_pass = user_pass;
     }
 
-    // Getters
     public String getUser_name() {
         return user_name;
     }
@@ -57,7 +51,6 @@ public class User extends Authentication {
         return user_pass;
     }
 
-    // Setters
     public void setUser_name(String user_name) {
         this.user_name = user_name;
     }
@@ -82,11 +75,8 @@ public class User extends Authentication {
         this.user_id = user_id;
     }
 
-
-    // Email Validation
     @Override
     public boolean validateEmail(String email) {
-
         if (email == null || email.trim().isEmpty()) {
             return false;
         }
@@ -94,37 +84,28 @@ public class User extends Authentication {
         return email.contains("@") && email.contains(".");
     }
 
-    // Password Validation
     @Override
     public boolean validatePassword(String pass) {
-
         return pass != null && pass.length() >= 6;
     }
 
-    // LOGIN
     @Override
     public String login(User user) {
-
         String email = user.getUser_email();
         String password = user.getUserPassword();
 
-        // Validate email
         if (!validateEmail(email)) {
             return "This email is invalid. Please enter a valid email!";
         }
 
-        // Validate password
         if (!validatePassword(password)) {
             return "Password must be at least 6 characters long.";
         }
 
         UserFile userFile = new UserFile();
-
         User loggedUser = userFile.loginUser(email, password);
 
         if (loggedUser != null) {
-
-            // Set information after successful login
             this.user_name = loggedUser.getUser_name();
             this.user_email = loggedUser.getUser_email();
             this.user_pass = loggedUser.getUserPassword();
@@ -142,11 +123,8 @@ public class User extends Authentication {
                 + "Or, No User found! Please Register.";
     }
 
-
-    // REGISTRATION
     @Override
     public String register(User user) {
-
         if (!validateEmail(user.getUser_email())) {
             return "Invalid email!";
         }
@@ -155,13 +133,12 @@ public class User extends Authentication {
             return "Password must be at least 6 characters long.";
         }
 
-        if (user.getUser_name() == null ||
-                user.getUser_name().trim().isEmpty()) {
+        if (user.getUser_name() == null
+                || user.getUser_name().trim().isEmpty()) {
             return "Username cannot be empty.";
         }
 
         UserFile userFile = new UserFile();
-
         boolean result = userFile.createNewUser(user);
 
         if (result) {
@@ -173,9 +150,13 @@ public class User extends Authentication {
         return "Failed to Register User.\n"
                 + "Email may already be registered.";
     }
-    // Generate User ID
+
     public String generateUserID() {
         LocalTime time = LocalTime.now();
-        return "U" + time.toString().replace(":", "").replace(".", "");
+
+        return "U"
+                + time.toString()
+                .replace(":", "")
+                .replace(".", "");
     }
 }

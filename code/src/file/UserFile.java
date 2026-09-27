@@ -11,29 +11,30 @@ public class UserFile {
 
     private static final String USER_FILE = "code/src/database/users_db.txt";
 
-    // Check whether user already exists
     public static boolean IsUserExists(User user) {
-
         File file = new File(USER_FILE);
 
         if (!file.exists()) {
             return false;
         }
+
         try {
             Scanner scanner = new Scanner(file);
+
             while (scanner.hasNextLine()) {
                 String data = scanner.nextLine().trim();
+
                 if (data.isEmpty()) {
                     continue;
                 }
 
                 data = data.replace("#", "");
 
-                // Split using -
                 String[] userData = data.split("-");
 
                 if (userData.length >= 5) {
                     String storedEmail = userData[1];
+
                     if (storedEmail.equals(user.getUser_email())) {
                         scanner.close();
                         return true;
@@ -44,20 +45,13 @@ public class UserFile {
             scanner.close();
 
         } catch (IOException e) {
-
-            System.out.println(
-                    "Exception from UserFile: "
-                            + e.getMessage()
-            );
+            System.out.println("Exception from UserFile: " + e.getMessage());
         }
 
         return false;
     }
 
-    // Create New User
     public boolean createNewUser(User user) {
-
-        // Check duplicate email
         if (IsUserExists(user)) {
             return false;
         }
@@ -67,45 +61,37 @@ public class UserFile {
         String password = user.getUserPassword();
 
         String role = String.valueOf(User.UserRole.USER);
-
         String userId = user.generateUserID();
 
         try {
-
             File file = new File(USER_FILE);
 
-            // Create file if it doesn't exist
             if (!file.exists()) {
                 file.createNewFile();
             }
-            String newUser = name + "-" + email + "-" + password + "-" + role + "-" + userId + "#\n";
-            FileWriter writer =
-                    new FileWriter(USER_FILE, true);
 
+            String newUser = name + "-"
+                    + email + "-"
+                    + password + "-"
+                    + role + "-"
+                    + userId + "#\n";
+
+            FileWriter writer = new FileWriter(USER_FILE, true);
             writer.write(newUser);
             writer.close();
 
-            // Update object
             user.setUser_id(userId);
             user.setUser_role(role);
 
             return true;
 
         } catch (IOException e) {
-
-            System.out.println(
-                    "Exception from UserFile: "
-                            + e.getMessage()
-            );
-
+            System.out.println("Exception from UserFile: " + e.getMessage());
             return false;
         }
     }
 
-
-    // LOGIN USER
     public User loginUser(String email, String password) {
-
         File file = new File(USER_FILE);
 
         if (!file.exists()) {
@@ -113,37 +99,26 @@ public class UserFile {
         }
 
         try {
-
             Scanner scanner = new Scanner(file);
 
             while (scanner.hasNextLine()) {
-
                 String data = scanner.nextLine().trim();
 
                 if (data.isEmpty()) {
                     continue;
                 }
 
-                // Remove #
                 data = data.replace("#", "");
-
-                /*
-                 * Example:
-                 *
-                 * IBRAHIM2-ibrahim723@gmail.com-8jdb8-USER-U123456
-                 */
 
                 String[] userData = data.split("-");
 
                 if (userData.length >= 5) {
-
                     String storedName = userData[0];
                     String storedEmail = userData[1];
                     String storedPassword = userData[2];
                     String storedRole = userData[3];
                     String storedId = userData[4];
 
-                    // Check email + password
                     if (storedEmail.equals(email)
                             && storedPassword.equals(password)) {
 
@@ -166,11 +141,7 @@ public class UserFile {
             scanner.close();
 
         } catch (IOException e) {
-
-            System.out.println(
-                    "Exception from UserFile: "
-                            + e.getMessage()
-            );
+            System.out.println("Exception from UserFile: " + e.getMessage());
         }
 
         return null;
