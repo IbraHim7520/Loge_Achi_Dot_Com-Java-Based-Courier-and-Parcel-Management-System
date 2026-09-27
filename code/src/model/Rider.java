@@ -1,31 +1,32 @@
 package model;
-import file.ParcelFile;
+
 import file.RiderFile;
 import java.util.ArrayList;
 
 public class Rider {
 
     private User user;
-    Rider(User user){
-        if(!validateUser(user)){
+
+    Rider(User user) {
+        if (!validateUser(user)) {
             System.out.println("Unauthorized Access!");
             this.user = null;
         } else {
             this.user = user;
         }
-
     }
 
-    public boolean validateRider(User user){
-        if(user==null){
+    public boolean validateRider(User user) {
+        if (user == null) {
             System.out.println("Unauthorized Access!");
-            return  false;
+            return false;
         }
 
-        if(user.getUser_id()==null || user.getUser_role()!=String.valueOf(User.UserRole.RIDER)){
+        if (user.getUser_id() == null || user.getUser_role() != String.valueOf(User.UserRole.RIDER)) {
             System.out.println("Unauthorized Access");
             return false;
         }
+
         return true;
     }
 
@@ -42,12 +43,12 @@ public class Rider {
         }
     }
 
-
-    public void acceptParcelsByRider(String parcelId, String riderID){
+    public void acceptParcelsByRider(String parcelId, String riderID) {
         boolean result = RiderFile.assignParcel(parcelId, riderID);
-        if(result){
+
+        if (result) {
             System.out.println("Parcel Accepted!");
-        }else {
+        } else {
             System.out.println("Failed to assign!");
         }
     }
@@ -66,7 +67,11 @@ public class Rider {
     }
 
     public void updateParcelStatus(String parcelId, String newStatus) {
-        boolean result = RiderFile.updateParcelStatusByRider(parcelId, user.getUser_id(), newStatus);
+        boolean result = RiderFile.updateParcelStatusByRider(
+                parcelId,
+                user.getUser_id(),
+                newStatus
+        );
 
         if (result) {
             System.out.println("Parcel status updated successfully!");
@@ -74,12 +79,8 @@ public class Rider {
             System.out.println("Failed to update parcel status!");
         }
     }
-//    public void searchAParcel(String parcelId){
-//        //ekhane parcel id diye parcel search er kaj korbo;
-//    }
 
     private boolean validateUser(User user) {
-
         if (user == null) {
             return false;
         }
@@ -98,5 +99,4 @@ public class Rider {
 
         return true;
     }
-
 }
