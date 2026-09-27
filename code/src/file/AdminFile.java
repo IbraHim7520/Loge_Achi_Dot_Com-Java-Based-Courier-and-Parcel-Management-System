@@ -167,12 +167,75 @@ public class AdminFile {
         return false;
     }
 
+    // Get all riders
     public static ArrayList<User> getAllRiders() {
-        // ekhane users_db.txt file theke
-        // all users read kore sudhu RIDER der ber korbo
 
-        return new ArrayList<>();
+        ArrayList<User> riders =
+                new ArrayList<>();
+
+        File file =
+                new File(USER_FILE);
+
+        if (!file.exists()) {
+            return riders;
+        }
+
+        try {
+
+            Scanner scanner =
+                    new Scanner(file);
+
+            while (scanner.hasNextLine()) {
+
+                String data =
+                        scanner.nextLine().trim();
+
+                if (data.isEmpty()) {
+                    continue;
+                }
+
+                data = data.replace("#", "");
+
+                String[] userData =
+                        data.split("-");
+
+                if (userData.length >= 5
+                        && userData[3].equals(
+                        String.valueOf(
+                                User.UserRole.RIDER))) {
+
+                    User rider =
+                            new User(
+                                    userData[0],
+                                    userData[1],
+                                    userData[2]
+                            );
+
+                    rider.setUser_role(
+                            userData[3]
+                    );
+
+                    rider.setUser_id(
+                            userData[4]
+                    );
+
+                    riders.add(rider);
+                }
+            }
+
+            scanner.close();
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Exception from AdminFile: "
+                            + e.getMessage()
+            );
+        }
+
+        return riders;
     }
+
 
 
 
