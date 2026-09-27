@@ -4,6 +4,7 @@ import model.Parcel;
 import model.User;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -76,13 +77,52 @@ public class AdminFile {
     }
 
     // Admin.registerNewRider()
-    public static boolean registerNewRider() {
-        // ekhane new rider er information nibo
-        // rider validate korbo
-        // USER_FILE e rider save korbo
-        // RIDER_FILE eo rider save korbo
+    public static boolean registerNewRider(String name, String email, String password) {
+        User rider = new User(name, email, password);
 
-        return false;
+        if (name == null || name.trim().isEmpty()) {
+            return false;
+        }
+
+        if (!rider.validateEmail(email) || !rider.validatePassword(password)) {
+            return false;
+        }
+
+        if (UserFile.IsUserExists(rider)) {
+            return false;
+        }
+
+        String riderId = rider.generateUserID();
+        String role = String.valueOf(User.UserRole.RIDER);
+
+        String data = name + "-" + email + "-" + password + "-" + role + "-" + riderId + "#\n";
+
+        try {
+            File userFile = new File(USER_FILE);
+
+            if (!userFile.exists()) {
+                userFile.createNewFile();
+            }
+
+            FileWriter userWriter = new FileWriter(USER_FILE, true);
+            userWriter.write(data);
+            userWriter.close();
+
+            File riderFile = new File(USER_FILE);
+
+            if (!riderFile.exists()) {
+                riderFile.createNewFile();
+            }
+
+            FileWriter riderWriter = new FileWriter(USER_FILE, true);
+            riderWriter.write(data);
+            riderWriter.close();
+
+            return true;
+        } catch (Exception e) {
+            System.out.println("Exception from AdminFile: " + e.getMessage());
+            return false;
+        }
     }
 
 
