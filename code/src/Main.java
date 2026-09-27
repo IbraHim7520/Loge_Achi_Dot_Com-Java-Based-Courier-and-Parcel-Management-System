@@ -7,14 +7,12 @@ public class Main {
 
     public static void main(String[] args) {
 
-        // =========================
-        // USER
         User u1 = new User("ibrahim723@gmail.com", "12345678");
         u1.login(u1);
 
         User u2 = new User("user4@gmail.com","12345678");
         u2.login(u2);
-        // =========================
+
 
         Parcel parcel = new Parcel(u1);
        // parcel.sendOneParcel("A Big Box", "Dhaka 1206", "01983829482",5.00);
