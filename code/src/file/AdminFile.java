@@ -22,13 +22,58 @@ public class AdminFile {
     // ==================== USER ====================
 
     // Admin.viewAllUser()
+    // Admin.viewAllUser()
     public static ArrayList<User> getAllUsers() {
-        // ekhane USER_FILE theke
-        // all users read kore return korbo
 
-        return new ArrayList<>();
+        ArrayList<User> users = new ArrayList<>();
+
+        File file = new File(USER_FILE);
+
+        if (!file.exists()) {
+            return users;
+        }
+
+        try {
+            Scanner scanner = new Scanner(file);
+
+            while (scanner.hasNextLine()) {
+
+                String data = scanner.nextLine().trim();
+
+                if (data.isEmpty()) {
+                    continue;
+                }
+
+                data = data.replace("#", "");
+
+                String[] userData = data.split("-");
+
+                if (userData.length >= 5) {
+
+                    User user = new User(
+                            userData[0],
+                            userData[1],
+                            userData[2]
+                    );
+
+                    user.setUser_role(userData[3]);
+                    user.setUser_id(userData[4]);
+
+                    users.add(user);
+                }
+            }
+
+            scanner.close();
+
+        } catch (Exception e) {
+            System.out.println(
+                    "Exception from AdminFile: "
+                            + e.getMessage()
+            );
+        }
+
+        return users;
     }
-
 
     // Admin.registerNewRider()
     public static boolean registerNewRider() {
