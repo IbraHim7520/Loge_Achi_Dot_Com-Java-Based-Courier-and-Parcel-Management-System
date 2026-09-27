@@ -3,7 +3,9 @@ package file;
 import model.Parcel;
 import model.User;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class AdminFile {
 
@@ -51,11 +53,80 @@ public class AdminFile {
 
     // Admin.searchUser()
     public static User searchUser(String userId) {
-        // ekhane userId diye USER_FILE e
-        // user search korbo
+
+
+        File file = new File(USER_FILE);
+
+
+        if (!file.exists()) {
+            return null;
+        }
+
+
+        try {
+
+
+            Scanner scanner = new Scanner(file);
+
+
+            while (scanner.hasNextLine()) {
+
+
+                String data =
+                        scanner.nextLine().trim();
+
+
+                if (data.isEmpty()) {
+                    continue;
+                }
+
+
+                data = data.replace("#", "");
+
+
+                String[] userData = data.split("-");
+
+
+                if (userData.length >= 5
+                        && userData[4].equals(userId)) {
+
+
+                    User user =
+                            new User(
+                                    userData[0],
+                                    userData[1],
+                                    userData[2]
+                            );
+
+
+                    user.setUser_role(userData[3]);
+                    user.setUser_id(userData[4]);
+
+
+                    scanner.close();
+
+
+                    return user;
+                }
+            }
+
+
+            scanner.close();
+
+
+        } catch (Exception e) {
+
+
+            System.out.println(
+                    "Exception from AdminFile: "
+                            + e.getMessage()
+            );
+        }
+
 
         return null;
     }
+
 
 
     // Admin.deleteUser()
