@@ -14,211 +14,446 @@ public class RiderFile {
     private static final String PARCEL_FILE =
             "code/src/database/parcel_db.txt";
 
-    public static ArrayList<String> getPendingParcels() throws NotFoundException {
+    private static final String SEPARATOR = "|";
+    private static final String RECORD_END = "#";
 
-        ArrayList<String> pendingParcels = new ArrayList<>();
+
+
+    public static ArrayList<String> getPendingParcels()
+            throws NotFoundException {
+
+        ArrayList<String> pendingParcels =
+
+                new ArrayList<>();
+
         File file = new File(PARCEL_FILE);
 
         if (!file.exists()) {
-            throw new NotFoundException("Parcel database not found!");
+
+            throw new NotFoundException(
+                    "Parcel database not found!"
+            );
         }
 
         try (Scanner sc = new Scanner(file)) {
 
             while (sc.hasNextLine()) {
-                String parcelData = sc.nextLine().trim();
+
+                String parcelData =
+                        sc.nextLine().trim();
 
                 if (parcelData.isEmpty()) {
                     continue;
                 }
 
-                parcelData = parcelData.replace("#", "");
+                String cleanData =
+                        removeRecordEnd(parcelData);
 
-                String[] parcel = parcelData.split("-");
+                String[] parcel =
+                        cleanData.split("\\|", -1);
+
 
                 if (parcel.length >= 10
-                        && parcel[7].equals(
-                        String.valueOf(Parcel.ParcelStatus.PENDING))) {
+                        && parcel[7].equalsIgnoreCase(
+                        String.valueOf(
+                                Parcel.ParcelStatus.PENDING
+                        )
+                )) {
 
-                    pendingParcels.add(parcelData);
+                    pendingParcels.add(cleanData);
                 }
             }
 
         } catch (IOException e) {
-            System.out.println("Exception from RiderFile: " + e.getMessage());
+
+            throw new NotFoundException(
+                    "Unable to read parcel database!"
+            );
         }
 
         if (pendingParcels.isEmpty()) {
-            throw new NotFoundException("No pending parcels found!");
+
+            throw new NotFoundException(
+                    "No pending parcels found!"
+            );
         }
 
         return pendingParcels;
     }
 
-    public static ArrayList<String> getMyAssignedParcels(String riderId) throws NotFoundException {
 
-        ArrayList<String> assignedParcels = new ArrayList<>();
+    public static ArrayList<String> getMyAssignedParcels(
+            String riderId
+    ) throws NotFoundException {
+
+        if (riderId == null
+                || riderId.trim().isEmpty()) {
+
+            throw new NotFoundException(
+                    "Invalid rider ID!"
+            );
+        }
+
+        ArrayList<String> assignedParcels =
+                new ArrayList<>();
+
         File file = new File(PARCEL_FILE);
 
         if (!file.exists()) {
-            throw new NotFoundException("Parcel database not found!");
+
+            throw new NotFoundException(
+                    "Parcel database not found!"
+            );
         }
 
         try (Scanner sc = new Scanner(file)) {
 
             while (sc.hasNextLine()) {
-                String parcelData = sc.nextLine().trim();
+
+                String parcelData =
+                        sc.nextLine().trim();
 
                 if (parcelData.isEmpty()) {
                     continue;
                 }
 
-                parcelData = parcelData.replace("#", "");
+                String cleanData =
+                        removeRecordEnd(parcelData);
 
-                String[] parcel = parcelData.split("-");
+                String[] parcel =
+                        cleanData.split("\\|", -1);
 
-                if (parcel.length >= 10 && parcel[9].equals(riderId)) {
-                    assignedParcels.add(parcelData);
+                if (parcel.length >= 10
+                        && parcel[9].equals(
+                        riderId.trim())) {
+
+                    assignedParcels.add(cleanData);
                 }
             }
 
         } catch (IOException e) {
-            System.out.println("Exception from RiderFile: " + e.getMessage());
+
+            throw new NotFoundException(
+                    "Unable to read parcel database!"
+            );
         }
 
         if (assignedParcels.isEmpty()) {
-            throw new NotFoundException("No assigned parcels found!");
+
+            throw new NotFoundException(
+                    "No assigned parcels found!"
+            );
         }
+
         return assignedParcels;
     }
 
-    public static boolean assignParcel(String parcelId, String riderId) throws NotFoundException {
+
+    public static boolean assignParcel(
+            String parcelId,
+            String riderId
+    ) throws NotFoundException {
+
+        if (parcelId == null
+                || parcelId.trim().isEmpty()) {
+
+            throw new NotFoundException(
+                    "Invalid parcel ID!"
+            );
+        }
+
+        if (riderId == null
+                || riderId.trim().isEmpty()) {
+
+            throw new NotFoundException(
+                    "Invalid rider ID!"
+            );
+        }
 
         File file = new File(PARCEL_FILE);
 
         if (!file.exists()) {
-            throw new NotFoundException("Parcel database not found!");
+
+            throw new NotFoundException(
+                    "Parcel database not found!"
+            );
         }
 
-        ArrayList<String> parcels = new ArrayList<>();
+        ArrayList<String> parcels =
+                new ArrayList<>();
+
         boolean assigned = false;
 
         try (Scanner sc = new Scanner(file)) {
 
             while (sc.hasNextLine()) {
 
-                String parcelData = sc.nextLine().trim();
+                String parcelData =
+                        sc.nextLine().trim();
 
                 if (parcelData.isEmpty()) {
                     continue;
                 }
 
-                parcelData = parcelData.replace("#", "");
+                String cleanData =
+                        removeRecordEnd(parcelData);
 
-                String[] arr = parcelData.split("-");
+                String[] arr =
+                        cleanData.split("\\|", -1);
+
+
 
                 if (arr.length >= 10
-                        && arr[3].equals(parcelId)
-                        && arr[7].equals(
-                        String.valueOf(Parcel.ParcelStatus.PENDING))) {
+                        && arr[3].equals(
+                        parcelId.trim())
+                        && arr[7].equalsIgnoreCase(
+                        String.valueOf(
+                                Parcel.ParcelStatus.PENDING
+                        )
+                )) {
 
-                    arr[7] = String.valueOf(
-                            Parcel.ParcelStatus.ACCEPTED
-                    );
+                    arr[7] =
+                            String.valueOf(
+                                    Parcel.ParcelStatus.ACCEPTED
+                            );
 
-                    arr[9] = riderId;
+                    arr[9] =
+                            riderId.trim();
 
-                    parcelData = String.join("-", arr);
+                    cleanData =
+                            String.join(
+                                    SEPARATOR,
+                                    arr
+                            );
 
                     assigned = true;
                 }
 
-                parcels.add(parcelData);
+                parcels.add(cleanData);
             }
 
         } catch (IOException e) {
-            System.out.println("Exception from RiderFile: " + e.getMessage());
+
+            throw new NotFoundException(
+                    "Unable to read parcel database!"
+            );
         }
 
         if (!assigned) {
-            throw new NotFoundException("Parcel not found or parcel is not pending!");
+
+            throw new NotFoundException(
+                    "Parcel not found or parcel is not pending!"
+            );
         }
 
-        try (FileWriter writer = new FileWriter(PARCEL_FILE, false)) {
-
-            for (String parcel : parcels) {
-                writer.write(parcel + "#\n");
-            }
-
-        } catch (IOException e) {
-            System.out.println("Exception from RiderFile: " + e.getMessage());
-            return false;
-        }
-
-        return true;
+        return rewriteDatabase(parcels);
     }
 
-    public static boolean updateParcelStatusByRider(String parcelId, String riderId, String newStatus) throws NotFoundException {
+
+
+    public static boolean updateParcelStatusByRider(
+            String parcelId,
+            String riderId,
+            String newStatus
+    ) throws NotFoundException {
+
+        if (parcelId == null
+                || parcelId.trim().isEmpty()) {
+
+            throw new NotFoundException(
+                    "Invalid parcel ID!"
+            );
+        }
+
+        if (riderId == null
+                || riderId.trim().isEmpty()) {
+
+            throw new NotFoundException(
+                    "Invalid rider ID!"
+            );
+        }
+
+        if (newStatus == null
+                || newStatus.trim().isEmpty()) {
+
+            throw new NotFoundException(
+                    "Invalid parcel status!"
+            );
+        }
+
+        newStatus =
+                newStatus.trim().toUpperCase();
+
+
+        // Validate status
+        try {
+
+            Parcel.ParcelStatus.valueOf(
+                    newStatus
+            );
+
+        } catch (IllegalArgumentException e) {
+
+            throw new NotFoundException(
+                    "Invalid parcel status!"
+            );
+        }
+
 
         File file = new File(PARCEL_FILE);
 
         if (!file.exists()) {
-            throw new NotFoundException("Parcel database not found!");
+
+            throw new NotFoundException(
+                    "Parcel database not found!"
+            );
         }
 
-        try {
-            Parcel.ParcelStatus.valueOf(newStatus.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new NotFoundException("Invalid parcel status!");
-        }
+        ArrayList<String> parcels =
+                new ArrayList<>();
 
-        ArrayList<String> parcels = new ArrayList<>();
         boolean updated = false;
 
         try (Scanner sc = new Scanner(file)) {
 
             while (sc.hasNextLine()) {
 
-                String parcelData = sc.nextLine().trim();
+                String parcelData =
+                        sc.nextLine().trim();
 
                 if (parcelData.isEmpty()) {
                     continue;
                 }
 
-                parcelData = parcelData.replace("#", "");
+                String cleanData =
+                        removeRecordEnd(parcelData);
 
-                String[] arr = parcelData.split("-");
+                String[] arr =
+                        cleanData.split("\\|", -1);
 
-                if (arr.length >= 10 && arr[3].equals(parcelId) && arr[9].equals(riderId)) {
+                /*
+                 * Update only when:
+                 *
+                 * Parcel ID matches
+                 * AND
+                 * Rider ID matches
+                 */
 
-                    arr[7] = newStatus.toUpperCase();
+                if (arr.length >= 10
+                        && arr[3].equals(
+                        parcelId.trim())
+                        && arr[9].equals(
+                        riderId.trim())) {
 
-                    parcelData = String.join("-", arr);
+                    arr[7] = newStatus;
+
+                    cleanData =
+                            String.join(
+                                    SEPARATOR,
+                                    arr
+                            );
 
                     updated = true;
                 }
 
-                parcels.add(parcelData);
+                parcels.add(cleanData);
             }
 
         } catch (IOException e) {
-            System.out.println("Exception from RiderFile: " + e.getMessage());
+
+            throw new NotFoundException(
+                    "Unable to read parcel database!"
+            );
         }
 
         if (!updated) {
-            throw new NotFoundException("Parcel not found or parcel is not assigned to this rider!");
+
+            throw new NotFoundException(
+                    "Parcel not found or parcel is not assigned to this rider!"
+            );
         }
+
+        return rewriteDatabase(parcels);
+    }
+
+
+
+    private static String removeRecordEnd(
+            String data
+    ) {
+
+        if (data == null) {
+            return "";
+        }
+
+        data = data.trim();
+
+        if (data.endsWith(RECORD_END)) {
+
+            return data.substring(
+                    0,
+                    data.length() - RECORD_END.length()
+            );
+        }
+
+        return data;
+    }
+
+
+
+    private static boolean rewriteDatabase(
+            ArrayList<String> parcels
+    ) {
+
+        File file = new File(PARCEL_FILE);
 
         try {
-            FileWriter writer = new FileWriter(PARCEL_FILE, false);
-            for (String parcel : parcels) {
-                    writer.write(parcel + "#\n");
+
+            File parent =
+                    file.getParentFile();
+
+            if (parent != null
+                    && !parent.exists()) {
+
+                if (!parent.mkdirs()) {
+                    return false;
                 }
+            }
+
+            try (FileWriter writer =
+                         new FileWriter(
+                                 file,
+                                 false
+                         )) {
+
+                for (String parcel : parcels) {
+
+                    if (parcel == null
+                            || parcel.trim().isEmpty()) {
+                        continue;
+                    }
+
+                    String cleanParcel =
+                            removeRecordEnd(parcel);
+
+                    writer.write(
+                            cleanParcel
+                                    + RECORD_END
+                                    + System.lineSeparator()
+                    );
+                }
+            }
+
+            return true;
+
         } catch (IOException e) {
-            System.out.println("Exception from RiderFile: " + e.getMessage());
+
+            System.err.println(
+                    "Exception while rewriting parcel database: "
+                            + e.getMessage()
+            );
+
             return false;
         }
-
-        return true;
     }
 }

@@ -6,8 +6,15 @@ import java.util.Scanner;
 
 public class AdminStatistics {
 
-    private static final String USER_FILE = "code/src/database/users_db.txt";
-    private static final String PARCEL_FILE = "code/src/database/parcel_db.txt";
+    private static final String USER_FILE =
+            "code/src/database/users_db.txt";
+
+    private static final String PARCEL_FILE =
+            "code/src/database/parcel_db.txt";
+
+    private static final String SEPARATOR = "|";
+
+    private static final String RECORD_END = "#";
 
     private int total_parcels;
     private int total_users;
@@ -19,7 +26,8 @@ public class AdminStatistics {
         loadStatistics();
     }
 
-    private void loadStatistics() {
+    public void loadStatistics() {
+
         total_parcels = 0;
         total_users = 0;
         total_riders = 0;
@@ -30,83 +38,163 @@ public class AdminStatistics {
         loadParcelStatistics();
     }
 
+
     private void loadUserStatistics() {
-        File file = new File(USER_FILE);
+
+        File file =
+                new File(USER_FILE);
 
         if (!file.exists()) {
             return;
         }
 
-        try (Scanner scanner = new Scanner(file)) {
+        try (Scanner scanner =
+                     new Scanner(file)) {
 
             while (scanner.hasNextLine()) {
-                String data = scanner.nextLine().trim();
+
+                String data =
+                        scanner.nextLine().trim();
 
                 if (data.isEmpty()) {
                     continue;
                 }
 
-                data = data.replace("#", "");
+                data =
+                        removeRecordEnd(data);
 
-                String[] userData = data.split("-");
+                String[] userData =
+                        data.split(
+                                "\\" + SEPARATOR,
+                                -1
+                        );
 
                 if (userData.length >= 5) {
-                    String role = userData[3];
 
-                    if (role.equals(String.valueOf(User.UserRole.USER))) {
+                    String role =
+                            userData[3].trim();
+
+                    if (role.equalsIgnoreCase(
+                            String.valueOf(
+                                    User.UserRole.USER
+                            )
+                    )) {
+
                         total_users++;
-                    } else if (role.equals(String.valueOf(User.UserRole.RIDER))) {
+
+                    } else if (role.equalsIgnoreCase(
+                            String.valueOf(
+                                    User.UserRole.RIDER
+                            )
+                    )) {
+
                         total_riders++;
                     }
                 }
             }
 
         } catch (IOException e) {
-            System.out.println("Exception from AdminStatistics: " + e.getMessage());
+
+            System.out.println(
+                    "Exception from AdminStatistics: "
+                            + e.getMessage()
+            );
         }
     }
-
     private void loadParcelStatistics() {
-        File file = new File(PARCEL_FILE);
+
+        File file =
+                new File(PARCEL_FILE);
 
         if (!file.exists()) {
             return;
         }
 
-        try (Scanner scanner = new Scanner(file)) {
+        try (Scanner scanner =
+                     new Scanner(file)) {
 
             while (scanner.hasNextLine()) {
-                String data = scanner.nextLine().trim();
+
+                String data =
+                        scanner.nextLine().trim();
 
                 if (data.isEmpty()) {
                     continue;
                 }
 
-                data = data.replace("#", "");
+                data =
+                        removeRecordEnd(data);
 
-                String[] parcelData = data.split("-");
+                String[] parcelData =
+                        data.split(
+                                "\\" + SEPARATOR,
+                                -1
+                        );
 
                 if (parcelData.length >= 10) {
+
                     total_parcels++;
 
-                    String status = parcelData[7];
+                    String status =
+                            parcelData[7].trim();
 
-                    if (status.equals(
-                            String.valueOf(Parcel.ParcelStatus.DELIVERED))) {
+                    if (status.equalsIgnoreCase(
+                            String.valueOf(
+                                    Parcel.ParcelStatus.DELIVERED
+                            )
+                    )) {
+
                         total_delivered_parcels++;
                     }
 
-                    if (status.equals(
-                            String.valueOf(Parcel.ParcelStatus.CANCELED))) {
+                    if (status.equalsIgnoreCase(
+                            String.valueOf(
+                                    Parcel.ParcelStatus.CANCELED
+                            )
+                    )) {
+
                         total_canceled_parcels++;
                     }
                 }
             }
 
         } catch (IOException e) {
-            System.out.println("Exception from AdminStatistics: " + e.getMessage());
+
+            System.out.println(
+                    "Exception from AdminStatistics: "
+                            + e.getMessage()
+            );
         }
     }
+
+    // =====================================================
+    // REMOVE RECORD END
+    // =====================================================
+
+    private String removeRecordEnd(
+            String data
+    ) {
+
+        if (data == null) {
+            return "";
+        }
+
+        data = data.trim();
+
+        if (data.endsWith(RECORD_END)) {
+
+            return data.substring(
+                    0,
+                    data.length() - RECORD_END.length()
+            );
+        }
+
+        return data;
+    }
+
+    // =====================================================
+    // GETTERS
+    // =====================================================
 
     public int getTotal_parcels() {
         return total_parcels;
@@ -128,13 +216,43 @@ public class AdminStatistics {
         return total_canceled_parcels;
     }
 
+    // =====================================================
+    // DISPLAY
+    // =====================================================
+
     public void displayStatistics() {
-        System.out.println("\n========== ADMIN STATISTICS ==========");
-        System.out.println("Total Users             : " + total_users);
-        System.out.println("Total Riders            : " + total_riders);
-        System.out.println("Total Parcels           : " + total_parcels);
-        System.out.println("Total Delivered Parcels : " + total_delivered_parcels);
-        System.out.println("Total Canceled Parcels  : " + total_canceled_parcels);
-        System.out.println("======================================");
+
+        System.out.println(
+                "\n========== ADMIN STATISTICS =========="
+        );
+
+        System.out.println(
+                "Total Users             : "
+                        + total_users
+        );
+
+        System.out.println(
+                "Total Riders            : "
+                        + total_riders
+        );
+
+        System.out.println(
+                "Total Parcels           : "
+                        + total_parcels
+        );
+
+        System.out.println(
+                "Total Delivered Parcels : "
+                        + total_delivered_parcels
+        );
+
+        System.out.println(
+                "Total Canceled Parcels  : "
+                        + total_canceled_parcels
+        );
+
+        System.out.println(
+                "======================================"
+        );
     }
 }

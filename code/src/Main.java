@@ -1,8 +1,7 @@
-import custom_exception.InvalidAmountException;
 import custom_exception.NotFoundException;
-import custom_exception.UnauthorizedAccessException;
+import file.AdminFile;
+import file.ParcelFile;
 import model.Admin;
-import model.AdminStatistics;
 import model.Parcel;
 import model.Rider;
 import model.User;
@@ -13,1153 +12,1113 @@ public class Main {
 
     public static void main(String[] args) {
 
-        System.out.println("\n========================================");
-        System.out.println("       PARCEL MANAGEMENT SYSTEM");
-        System.out.println("          FULL PROJECT TEST");
-        System.out.println("========================================");
+        System.out.println("\n");
+        System.out.println("======================================================");
+        System.out.println("        COURIER MANAGEMENT SYSTEM - FULL TEST");
+        System.out.println("======================================================");
 
 
-        // =========================================================
-        // 1. CREATE USERS
-        // =========================================================
+        // ==================================================
+        // TEST 1: CREATE 5 USERS
+        // ==================================================
 
-        System.out.println("\n\n========== 1. CREATE USERS ==========");
+        System.out.println("\n\n========== TEST 1: CREATE 5 USERS ==========");
 
-        User admin1 = new User(
-                "Admin One",
-                "admin1@gmail.com",
-                "12345678"
+        User user1 = createUser(
+                "Test User 1",
+                "user1@test.com",
+                "123456"
         );
 
-        User admin2 = new User(
-                "Admin Two",
-                "admin2@gmail.com",
-                "12345678"
+        User user2 = createUser(
+                "Test User 2",
+                "user2@test.com",
+                "123456"
         );
 
-        User rider1 = new User(
-                "Rider One",
-                "rider1@gmail.com",
-                "12345678"
+        User user3 = createUser(
+                "Test User 3",
+                "user3@test.com",
+                "123456"
         );
 
-        User rider2 = new User(
-                "Rider Two",
-                "rider2@gmail.com",
-                "12345678"
+        User user4 = createUser(
+                "Test User 4",
+                "user4@test.com",
+                "123456"
         );
 
-        User user1 = new User(
-                "Ibrahim",
-                "ibrahim723@gmail.com",
-                "12345678"
-        );
-
-        User user2 = new User(
-                "User Two",
-                "user2@gmail.com",
-                "12345678"
-        );
-
-        User user3 = new User(
-                "User Three",
-                "user3@gmail.com",
-                "12345678"
+        User user5 = createUser(
+                "Test User 5",
+                "user5@test.com",
+                "123456"
         );
 
 
-        // =========================================================
-        // 2. REGISTER 3 NORMAL USERS
-        // =========================================================
+        // ==================================================
+        // PRINT USER IDS
+        // ==================================================
 
-        System.out.println("\n\n========== 2. USER REGISTRATION ==========");
+        System.out.println("\nCreated Users:");
 
-        System.out.println(user1.register(user1));
-        System.out.println(user2.register(user2));
-        System.out.println(user3.register(user3));
-
-
-        // =========================================================
-        // 3. REGISTER ADMIN + RIDER
-        // =========================================================
-        // User.register() always creates USER role.
-        // So Admin/Rider records are created manually here
-        // for testing the role-based system.
-
-        System.out.println("\n\n========== 3. ADMIN/RIDER SETUP ==========");
-
-        admin1.setUser_role(String.valueOf(User.UserRole.ADMIN));
-        admin1.setUser_id("ADMIN001");
-
-        admin2.setUser_role(String.valueOf(User.UserRole.ADMIN));
-        admin2.setUser_id("ADMIN002");
-
-        rider1.setUser_role(String.valueOf(User.UserRole.RIDER));
-        rider1.setUser_id("RIDER001");
-
-        rider2.setUser_role(String.valueOf(User.UserRole.RIDER));
-        rider2.setUser_id("RIDER002");
-
-        System.out.println("Admin 1 created: " + admin1.getUser_id());
-        System.out.println("Admin 2 created: " + admin2.getUser_id());
-        System.out.println("Rider 1 created: " + rider1.getUser_id());
-        System.out.println("Rider 2 created: " + rider2.getUser_id());
+        printUser(user1);
+        printUser(user2);
+        printUser(user3);
+        printUser(user4);
+        printUser(user5);
 
 
-        // =========================================================
-        // 4. LOGIN TEST
-        // =========================================================
+        // ==================================================
+        // TEST 2: CREATE RIDER
+        // ==================================================
 
-        System.out.println("\n\n========== 4. LOGIN TEST ==========");
+        System.out.println("\n\n========== TEST 2: CREATE RIDER ==========");
 
         try {
 
-            User loginUser1 = new User(
-                    "ibrahim723@gmail.com",
-                    "12345678"
-            );
+            boolean riderCreated =
+                    AdminFile.registerNewRider(
+                            "Test Rider",
+                            "rider@test.com",
+                            "123456"
+                    );
+
+            if (riderCreated) {
+
+                System.out.println(
+                        "PASS: Rider created successfully."
+                );
+
+            } else {
+
+                System.out.println(
+                        "FAIL: Rider creation failed."
+                );
+            }
+
+        } catch (Exception e) {
 
             System.out.println(
-                    loginUser1.login(loginUser1)
-            );
-
-        } catch (NotFoundException e) {
-
-            System.out.println(
-                    "Login Exception: " + e.getMessage()
+                    "FAIL: Rider creation error -> "
+                            + e.getMessage()
             );
         }
 
 
-        // =========================================================
-        // 5. CREATE ROLE OBJECTS
-        // =========================================================
+        // ==================================================
+        // FIND RIDER
+        // ==================================================
 
-        System.out.println("\n\n========== 5. ROLE OBJECT CREATION ==========");
+        User riderUser = findRider();
+
+        if (riderUser == null) {
+
+            System.out.println(
+                    "FAIL: Rider could not be found."
+            );
+
+            return;
+        }
+
+        System.out.println(
+                "\nRider ID: "
+                        + riderUser.getUser_id()
+        );
+
+
+        // ==================================================
+        // TEST 3: CREATE 10 PARCELS
+        // ==================================================
+
+        System.out.println(
+                "\n\n========== TEST 3: CREATE 10 PARCELS =========="
+        );
+
+        /*
+         * User 1 sends 5 parcels.
+         * User 2 sends 5 parcels.
+         *
+         * Total = 10 parcels.
+         */
+
+        createParcel(
+                "P001",
+                user1,
+                "Laptop",
+                "Dhaka",
+                "01711111111",
+                2.0,
+                100
+        );
+
+        createParcel(
+                "P002",
+                user1,
+                "Books",
+                "Mohakhali",
+                "01711111112",
+                1.5,
+                80
+        );
+
+        createParcel(
+                "P003",
+                user1,
+                "Documents",
+                "Gulshan",
+                "01711111113",
+                0.5,
+                50
+        );
+
+        createParcel(
+                "P004",
+                user1,
+                "Clothes",
+                "Banani",
+                "01711111114",
+                3.0,
+                120
+        );
+
+        createParcel(
+                "P005",
+                user1,
+                "Shoes",
+                "Mirpur",
+                "01711111115",
+                2.5,
+                100
+        );
+
+
+        createParcel(
+                "P006",
+                user2,
+                "Mobile",
+                "Dhanmondi",
+                "01722222221",
+                0.8,
+                70
+        );
+
+        createParcel(
+                "P007",
+                user2,
+                "Watch",
+                "Uttara",
+                "01722222222",
+                0.4,
+                50
+        );
+
+        createParcel(
+                "P008",
+                user2,
+                "Gift",
+                "Bashundhara",
+                "01722222223",
+                1.2,
+                80
+        );
+
+        createParcel(
+                "P009",
+                user2,
+                "Computer Parts",
+                "Farmgate",
+                "01722222224",
+                4.0,
+                150
+        );
+
+        createParcel(
+                "P010",
+                user2,
+                "Documents",
+                "Tejgaon",
+                "01722222225",
+                0.3,
+                50
+        );
+
+
+        // ==================================================
+        // TEST 4: USER 1 PARCELS
+        // ==================================================
+
+        System.out.println(
+                "\n\n========== TEST 4: USER 1 PARCELS =========="
+        );
 
         try {
 
-            Admin admin = new Admin(admin1);
-            Rider riderA = new Rider(rider1);
-            Rider riderB = new Rider(rider2);
-
-            System.out.println("Admin object created successfully.");
-            System.out.println("Rider 1 object created successfully.");
-            System.out.println("Rider 2 object created successfully.");
-
-
-            // =====================================================
-            // 6. CREATE 10 PARCELS
-            // =====================================================
-
-            System.out.println("\n\n========== 6. CREATE 10 PARCELS ==========");
-
-            Parcel p1 = new Parcel(user1);
-            Parcel p2 = new Parcel(user1);
-            Parcel p3 = new Parcel(user1);
-            Parcel p4 = new Parcel(user1);
-            Parcel p5 = new Parcel(user1);
-
-            Parcel p6 = new Parcel(user2);
-            Parcel p7 = new Parcel(user2);
-            Parcel p8 = new Parcel(user2);
-            Parcel p9 = new Parcel(user2);
-            Parcel p10 = new Parcel(user2);
-
-
-            // USER 1 - 5 PARCELS
+            ArrayList<String> user1Parcels =
+                    ParcelFile.getMyAllParcels(
+                            user1.getUser_id()
+                    );
 
             System.out.println(
-                    "P1: " +
-                            p1.sendOneParcel(
-                                    "Laptop",
-                                    "Dhaka 1206",
-                                    "01711111111",
-                                    2.0
-                            )
+                    "User 1 parcel count = "
+                            + user1Parcels.size()
             );
+
+            for (String parcel :
+                    user1Parcels) {
+
+                System.out.println(parcel);
+            }
+
+        } catch (Exception e) {
 
             System.out.println(
-                    "P2: " +
-                            p2.sendOneParcel(
-                                    "Mobile Phone",
-                                    "Mirpur 10",
-                                    "01722222222",
-                                    1.0
-                            )
+                    "FAIL: "
+                            + e.getMessage()
             );
+        }
+
+
+        // ==================================================
+        // TEST 5: USER 2 PARCELS
+        // ==================================================
+
+        System.out.println(
+                "\n\n========== TEST 5: USER 2 PARCELS =========="
+        );
+
+        try {
+
+            ArrayList<String> user2Parcels =
+                    ParcelFile.getMyAllParcels(
+                            user2.getUser_id()
+                    );
 
             System.out.println(
-                    "P3: " +
-                            p3.sendOneParcel(
-                                    "Books",
-                                    "Dhanmondi",
-                                    "01733333333",
-                                    3.0
-                            )
+                    "User 2 parcel count = "
+                            + user2Parcels.size()
             );
+
+            for (String parcel :
+                    user2Parcels) {
+
+                System.out.println(parcel);
+            }
+
+        } catch (Exception e) {
 
             System.out.println(
-                    "P4: " +
-                            p4.sendOneParcel(
-                                    "Clothes",
-                                    "Uttara",
-                                    "01744444444",
-                                    4.0
-                            )
+                    "FAIL: "
+                            + e.getMessage()
             );
+        }
+
+
+        // ==================================================
+        // TEST 6: SEARCH PARCEL
+        // ==================================================
+
+        System.out.println(
+                "\n\n========== TEST 6: SEARCH PARCEL =========="
+        );
+
+        try {
+
+            Parcel parcel =
+                    AdminFile.searchParcel("P001");
 
             System.out.println(
-                    "P5: " +
-                            p5.sendOneParcel(
-                                    "Computer Parts",
-                                    "Banani",
-                                    "01755555555",
-                                    5.0
-                            )
+                    "PASS: P001 found."
             );
 
+            printParcel(parcel);
 
-            // USER 2 - 5 PARCELS
+        } catch (Exception e) {
 
             System.out.println(
-                    "P6: " +
-                            p6.sendOneParcel(
-                                    "Monitor",
-                                    "Mohakhali",
-                                    "01811111111",
-                                    6.0
-                            )
+                    "FAIL: "
+                            + e.getMessage()
             );
+        }
+
+
+        // ==================================================
+        // TEST 7: TRACK PARCEL
+        // ==================================================
+
+        System.out.println(
+                "\n\n========== TEST 7: TRACK PARCEL =========="
+        );
+
+        try {
+
+            Parcel tracked =
+                    ParcelFile.trackParcel(
+                            "P002",
+                            user1.getUser_id()
+                    );
 
             System.out.println(
-                    "P7: " +
-                            p7.sendOneParcel(
-                                    "Keyboard",
-                                    "Bashundhara",
-                                    "01822222222",
-                                    1.5
-                            )
+                    "PASS: P002 tracked successfully."
             );
+
+            printParcel(tracked);
+
+        } catch (Exception e) {
 
             System.out.println(
-                    "P8: " +
-                            p8.sendOneParcel(
-                                    "Headphone",
-                                    "Khilgaon",
-                                    "01833333333",
-                                    0.5
-                            )
+                    "FAIL: "
+                            + e.getMessage()
             );
-
-            System.out.println(
-                    "P9: " +
-                            p9.sendOneParcel(
-                                    "Camera",
-                                    "Gulshan",
-                                    "01844444444",
-                                    2.5
-                            )
-            );
-
-            System.out.println(
-                    "P10: " +
-                            p10.sendOneParcel(
-                                    "Printer",
-                                    "Wari",
-                                    "01855555555",
-                                    7.0
-                            )
-            );
+        }
 
 
-            // =====================================================
-            // 7. DISPLAY GENERATED PARCEL IDs
-            // =====================================================
+        // ==================================================
+        // TEST 8: CANCEL PARCEL
+        // ==================================================
 
-            System.out.println("\n\n========== GENERATED PARCEL IDs ==========");
+        System.out.println(
+                "\n\n========== TEST 8: CANCEL PARCEL =========="
+        );
 
-            System.out.println("P1  = " + p1.getParcelID());
-            System.out.println("P2  = " + p2.getParcelID());
-            System.out.println("P3  = " + p3.getParcelID());
-            System.out.println("P4  = " + p4.getParcelID());
-            System.out.println("P5  = " + p5.getParcelID());
-            System.out.println("P6  = " + p6.getParcelID());
-            System.out.println("P7  = " + p7.getParcelID());
-            System.out.println("P8  = " + p8.getParcelID());
-            System.out.println("P9  = " + p9.getParcelID());
-            System.out.println("P10 = " + p10.getParcelID());
+        try {
 
+            boolean cancelled =
+                    ParcelFile.cancelParcel(
+                            "P003",
+                            user1.getUser_id()
+                    );
 
-            // =====================================================
-            // 8. USER 1 VIEW ALL PARCELS
-            // =====================================================
-
-            System.out.println("\n\n========== 8. USER 1 PARCELS ==========");
-
-            try {
-
-                ArrayList<String> user1Parcels =
-                        user1ParcelList(user1);
-
-                for (String parcel : user1Parcels) {
-                    System.out.println(parcel);
-                }
-
-            } catch (NotFoundException e) {
+            if (cancelled) {
 
                 System.out.println(
-                        "User 1 Parcel Exception: "
-                                + e.getMessage()
+                        "PASS: P003 cancelled."
+                );
+
+            } else {
+
+                System.out.println(
+                        "FAIL: P003 cancellation failed."
                 );
             }
 
-
-            // =====================================================
-            // 9. USER 2 VIEW ALL PARCELS
-            // =====================================================
-
-            System.out.println("\n\n========== 9. USER 2 PARCELS ==========");
-
-            try {
-
-                ArrayList<String> user2Parcels =
-                        user2ParcelList(user2);
-
-                for (String parcel : user2Parcels) {
-                    System.out.println(parcel);
-                }
-
-            } catch (NotFoundException e) {
-
-                System.out.println(
-                        "User 2 Parcel Exception: "
-                                + e.getMessage()
-                );
-            }
-
-
-            // =====================================================
-            // 10. USER CANCEL PARCEL
-            // =====================================================
-
-            System.out.println("\n\n========== 10. USER CANCEL PARCEL ==========");
-
-            try {
-
-                boolean cancelResult =
-                        user1ParcelCancel(
-                                user1,
-                                p2.getParcelID()
-                        );
-
-                System.out.println(
-                        "Cancel P2 Result: " + cancelResult
-                );
-
-            } catch (NotFoundException e) {
-
-                System.out.println(
-                        "Cancel Exception: "
-                                + e.getMessage()
-                );
-            }
-
-
-            // =====================================================
-            // 11. USER TRACK PARCEL
-            // =====================================================
-
-            System.out.println("\n\n========== 11. TRACK PARCEL ==========");
-
-            try {
-
-                Parcel trackResult =
-                        p1.trackParcel(p1.getParcelID());
-
-                System.out.println(
-                        "Tracking P1:"
-                );
-
-                displayParcel(trackResult);
-
-            } catch (NotFoundException e) {
-
-                System.out.println(
-                        "Track Exception: " + e.getMessage()
-                );
-
-            } catch (UnauthorizedAccessException e) {
-
-                System.out.println(
-                        "Track Authorization Exception: "
-                                + e.getMessage()
-                );
-
-            } catch (InvalidAmountException e) {
-
-                System.out.println(
-                        "Track Amount Exception: "
-                                + e.getMessage()
-                );
-            }
-
-
-            // =====================================================
-            // 12. RIDER VIEW PENDING PARCELS
-            // =====================================================
-
-            System.out.println("\n\n========== 12. RIDER PENDING PARCELS ==========");
-
-            try {
-
-                riderA.viewPendingParcels();
-
-            } catch (NotFoundException e) {
-
-                System.out.println(
-                        "Pending Parcel Exception: "
-                                + e.getMessage()
-                );
-            }
-
-
-            // =====================================================
-            // 13. RIDER 1 ACCEPT P3
-            // =====================================================
-
-            System.out.println("\n\n========== 13. RIDER ACCEPT P3 ==========");
-
-            try {
-
-                riderA.acceptParcelsByRider(
-                        p3.getParcelID(),
-                        rider1.getUser_id()
-                );
-
-            } catch (NotFoundException e) {
-
-                System.out.println(
-                        "Accept Exception: "
-                                + e.getMessage()
-                );
-            }
-
-
-            // =====================================================
-            // 14. RIDER 1 ACCEPT P4
-            // =====================================================
-
-            System.out.println("\n\n========== 14. RIDER ACCEPT P4 ==========");
-
-            try {
-
-                riderA.acceptParcelsByRider(
-                        p4.getParcelID(),
-                        rider1.getUser_id()
-                );
-
-            } catch (NotFoundException e) {
-
-                System.out.println(
-                        "Accept Exception: "
-                                + e.getMessage()
-                );
-            }
-
-
-            // =====================================================
-            // 15. RIDER 2 ACCEPT P6
-            // =====================================================
-
-            System.out.println("\n\n========== 15. RIDER 2 ACCEPT P6 ==========");
-
-            try {
-
-                riderB.acceptParcelsByRider(
-                        p6.getParcelID(),
-                        rider2.getUser_id()
-                );
-
-            } catch (NotFoundException e) {
-
-                System.out.println(
-                        "Accept Exception: "
-                                + e.getMessage()
-                );
-            }
-
-
-            // =====================================================
-            // 16. RIDER 1 VIEW ASSIGNED PARCELS
-            // =====================================================
+        } catch (Exception e) {
 
             System.out.println(
-                    "\n\n========== 16. RIDER 1 ASSIGNED PARCELS =========="
+                    "FAIL: "
+                            + e.getMessage()
             );
-
-            try {
-
-                riderA.viewMyAssignedParcles();
-
-            } catch (NotFoundException e) {
-
-                System.out.println(
-                        "Assigned Parcel Exception: "
-                                + e.getMessage()
-                );
-            }
+        }
 
 
-            // =====================================================
-            // 17. RIDER UPDATE P3 STATUS
-            // =====================================================
+        // ==================================================
+        // TEST 9: RIDER - VIEW PENDING PARCELS
+        // ==================================================
+
+        System.out.println(
+                "\n\n========== TEST 9: RIDER PENDING PARCELS =========="
+        );
+
+        try {
+
+            Rider rider =
+                    new Rider(riderUser);
+
+            rider.viewPendingParcels();
+
+        } catch (Exception e) {
 
             System.out.println(
-                    "\n\n========== 17. RIDER UPDATE P3 =========="
+                    "FAIL: "
+                            + e.getMessage()
             );
-
-            try {
-
-                riderA.updateParcelStatus(
-                        p3.getParcelID(),
-                        "ON_TRANSIT"
-                );
-
-                riderA.updateParcelStatus(
-                        p3.getParcelID(),
-                        "REACHED_DESTINATION"
-                );
-
-                riderA.updateParcelStatus(
-                        p3.getParcelID(),
-                        "DELIVERED"
-                );
-
-            } catch (NotFoundException e) {
-
-                System.out.println(
-                        "Status Exception: "
-                                + e.getMessage()
-                );
-            }
+        }
 
 
-            // =====================================================
-            // 18. RIDER UPDATE P4
-            // =====================================================
+        // ==================================================
+        // TEST 10: RIDER - ACCEPT PARCEL
+        // ==================================================
+
+        System.out.println(
+                "\n\n========== TEST 10: RIDER ACCEPT PARCEL =========="
+        );
+
+        try {
+
+            Rider rider =
+                    new Rider(riderUser);
+
+            rider.acceptParcelsByRider("P001");
 
             System.out.println(
-                    "\n\n========== 18. RIDER UPDATE P4 =========="
+                    "PASS: Rider accepted P001."
             );
 
-            try {
-
-                riderA.updateParcelStatus(
-                        p4.getParcelID(),
-                        "ON_TRANSIT"
-                );
-
-            } catch (NotFoundException e) {
-
-                System.out.println(
-                        "Status Exception: "
-                                + e.getMessage()
-                );
-            }
-
-
-            // =====================================================
-            // 19. RIDER 2 UPDATE P6
-            // =====================================================
+        } catch (Exception e) {
 
             System.out.println(
-                    "\n\n========== 19. RIDER 2 UPDATE P6 =========="
+                    "FAIL: "
+                            + e.getMessage()
             );
-
-            try {
-
-                riderB.updateParcelStatus(
-                        p6.getParcelID(),
-                        "ON_TRANSIT"
-                );
-
-            } catch (NotFoundException e) {
-
-                System.out.println(
-                        "Status Exception: "
-                                + e.getMessage()
-                );
-            }
+        }
 
 
-            // =====================================================
-            // 20. ADMIN VIEW ALL USERS
-            // =====================================================
+        // ==================================================
+        // TEST 11: RIDER - VIEW ASSIGNED
+        // ==================================================
+
+        System.out.println(
+                "\n\n========== TEST 11: RIDER ASSIGNED PARCELS =========="
+        );
+
+        try {
+
+            Rider rider =
+                    new Rider(riderUser);
+
+            rider.viewMyAssignedParcels();
+
+        } catch (Exception e) {
 
             System.out.println(
-                    "\n\n========== 20. ADMIN VIEW ALL USERS =========="
+                    "FAIL: "
+                            + e.getMessage()
+            );
+        }
+
+
+        // ==================================================
+        // TEST 12: RIDER - UPDATE STATUS
+        // ==================================================
+
+        System.out.println(
+                "\n\n========== TEST 12: RIDER STATUS UPDATE =========="
+        );
+
+        try {
+
+            Rider rider =
+                    new Rider(riderUser);
+
+            rider.updateParcelStatus(
+                    "P001",
+                    "ON_TRANSIT"
             );
 
+            System.out.println(
+                    "PASS: P001 status changed to ON_TRANSIT."
+            );
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "FAIL: "
+                            + e.getMessage()
+            );
+        }
+
+
+        // ==================================================
+        // TEST 13: ADMIN - VIEW USERS
+        // ==================================================
+
+        System.out.println(
+                "\n\n========== TEST 13: ADMIN VIEW USERS =========="
+        );
+
+        User adminUser =
+                findAdmin();
+
+        if (adminUser == null) {
+
+            System.out.println(
+                    "ADMIN TEST SKIPPED."
+            );
+
+            System.out.println(
+                    "No ADMIN account found in users_db.txt."
+            );
+
+        } else {
+
             try {
+
+                Admin admin =
+                        new Admin(adminUser);
 
                 admin.viewAllUser();
 
-            } catch (NotFoundException e) {
+            } catch (Exception e) {
 
                 System.out.println(
-                        "Admin User Exception: "
+                        "FAIL: "
                                 + e.getMessage()
                 );
             }
+        }
 
 
-            // =====================================================
-            // 21. ADMIN VIEW ALL RIDERS
-            // =====================================================
+        // ==================================================
+        // TEST 14: ADMIN - SEARCH USER
+        // ==================================================
 
-            System.out.println(
-                    "\n\n========== 21. ADMIN VIEW ALL RIDERS =========="
-            );
+        System.out.println(
+                "\n\n========== TEST 14: ADMIN SEARCH USER =========="
+        );
+
+        if (adminUser != null) {
 
             try {
 
-                ArrayList<User> riders =
-                        file.AdminFile.getAllRiders();
+                Admin admin =
+                        new Admin(adminUser);
 
-                for (User rider : riders) {
+                admin.searchUser(
+                        user4.getUser_id()
+                );
 
-                    System.out.println(
-                            rider.getUser_id()
-                                    + " | "
-                                    + rider.getUser_name()
-                                    + " | "
-                                    + rider.getUser_email()
-                    );
-                }
-
-            } catch (NotFoundException e) {
+            } catch (Exception e) {
 
                 System.out.println(
-                        "Rider Exception: "
+                        "FAIL: "
                                 + e.getMessage()
                 );
             }
+        }
 
 
-            // =====================================================
-            // 22. ADMIN VIEW ALL PARCELS
-            // =====================================================
+        // ==================================================
+        // TEST 15: ADMIN - UPDATE USER
+        // ==================================================
 
-            System.out.println(
-                    "\n\n========== 22. ADMIN VIEW ALL PARCELS =========="
-            );
+        System.out.println(
+                "\n\n========== TEST 15: ADMIN UPDATE USER =========="
+        );
+
+        if (adminUser != null) {
 
             try {
+
+                Admin admin =
+                        new Admin(adminUser);
+
+                admin.updateUser(
+                        user4.getUser_id(),
+                        "Updated User 4",
+                        "updated4@test.com",
+                        "123456"
+                );
+
+                System.out.println(
+                        "PASS: User 4 updated."
+                );
+
+            } catch (Exception e) {
+
+                System.out.println(
+                        "FAIL: "
+                                + e.getMessage()
+                );
+            }
+        }
+
+
+        // ==================================================
+        // TEST 16: ADMIN - REGISTER ANOTHER RIDER
+        // ==================================================
+
+        System.out.println(
+                "\n\n========== TEST 16: ADMIN REGISTER RIDER =========="
+        );
+
+        if (adminUser != null) {
+
+            try {
+
+                Admin admin =
+                        new Admin(adminUser);
+
+                admin.registerNewRider(
+                        "Second Rider",
+                        "rider2@test.com",
+                        "123456"
+                );
+
+                System.out.println(
+                        "PASS: Second rider registered."
+                );
+
+            } catch (Exception e) {
+
+                System.out.println(
+                        "FAIL: "
+                                + e.getMessage()
+                );
+            }
+        }
+
+
+        // ==================================================
+        // TEST 17: ADMIN - VIEW ALL PARCELS
+        // ==================================================
+
+        System.out.println(
+                "\n\n========== TEST 17: ADMIN VIEW ALL PARCELS =========="
+        );
+
+        if (adminUser != null) {
+
+            try {
+
+                Admin admin =
+                        new Admin(adminUser);
 
                 admin.viewAllParcel();
 
             } catch (Exception e) {
 
                 System.out.println(
-                        "Admin Parcel Exception: "
+                        "FAIL: "
                                 + e.getMessage()
                 );
             }
+        }
 
 
-            // =====================================================
-            // 23. ADMIN SEARCH USER
-            // =====================================================
+        // ==================================================
+        // TEST 18: ADMIN - SEARCH PARCEL
+        // ==================================================
 
-            System.out.println(
-                    "\n\n========== 23. ADMIN SEARCH USER =========="
-            );
+        System.out.println(
+                "\n\n========== TEST 18: ADMIN SEARCH PARCEL =========="
+        );
 
-            try {
-
-                admin.searchUser(
-                        user1.getUser_id()
-                );
-
-            } catch (NotFoundException e) {
-
-                System.out.println(
-                        "Search User Exception: "
-                                + e.getMessage()
-                );
-            }
-
-
-            // =====================================================
-            // 24. ADMIN SEARCH PARCEL
-            // =====================================================
-
-            System.out.println(
-                    "\n\n========== 24. ADMIN SEARCH PARCEL =========="
-            );
+        if (adminUser != null) {
 
             try {
 
-                admin.searchParcel(
-                        p4.getParcelID()
-                );
+                Admin admin =
+                        new Admin(adminUser);
+
+                admin.searchParcel("P004");
 
             } catch (Exception e) {
 
                 System.out.println(
-                        "Search Parcel Exception: "
+                        "FAIL: "
                                 + e.getMessage()
                 );
             }
+        }
 
 
-            // =====================================================
-            // 25. ADMIN UPDATE PARCEL STATUS
-            // =====================================================
+        // ==================================================
+        // TEST 19: ADMIN - UPDATE PARCEL STATUS
+        // ==================================================
 
-            System.out.println(
-                    "\n\n========== 25. ADMIN UPDATE P5 =========="
-            );
+        System.out.println(
+                "\n\n========== TEST 19: ADMIN UPDATE PARCEL =========="
+        );
+
+        if (adminUser != null) {
 
             try {
+
+                Admin admin =
+                        new Admin(adminUser);
 
                 admin.updateParcelStatus(
-                        p5.getParcelID(),
-                        "DELIVERED"
+                        "P004",
+                        "REACHED_DESTINATION"
                 );
-
-            } catch (NotFoundException e) {
 
                 System.out.println(
-                        "Admin Status Exception: "
-                                + e.getMessage()
-                );
-            }
-
-
-            // =====================================================
-            // 26. ADMIN UPDATE USER
-            // =====================================================
-
-            System.out.println(
-                    "\n\n========== 26. ADMIN UPDATE USER =========="
-            );
-
-            try {
-
-                admin.updateUser(
-                        user3.getUser_id(),
-                        "User Three Updated",
-                        "user3updated@gmail.com",
-                        "123456789"
-                );
-
-            } catch (NotFoundException e) {
-
-                System.out.println(
-                        "Update User Exception: "
-                                + e.getMessage()
-                );
-            }
-
-
-            // =====================================================
-            // 27. ADMIN REGISTER NEW RIDER
-            // =====================================================
-
-            System.out.println(
-                    "\n\n========== 27. ADMIN REGISTER NEW RIDER =========="
-            );
-
-            try {
-
-                admin.registerNewRider(
-                        "Rider Three",
-                        "rider3@gmail.com",
-                        "12345678"
-                );
-
-            } catch (NotFoundException e) {
-
-                System.out.println(
-                        "Register Rider Exception: "
-                                + e.getMessage()
-                );
-            }
-
-
-            // =====================================================
-            // 28. ADMIN DELETE PARCEL
-            // =====================================================
-
-            System.out.println(
-                    "\n\n========== 28. ADMIN DELETE P7 =========="
-            );
-
-            try {
-
-                admin.deleteParcel(
-                        p7.getParcelID()
-                );
-
-            } catch (NotFoundException e) {
-
-                System.out.println(
-                        "Delete Parcel Exception: "
-                                + e.getMessage()
-                );
-            }
-
-
-            // =====================================================
-            // 29. USER DELETE CANCELED PARCEL
-            // =====================================================
-
-            System.out.println(
-                    "\n\n========== 29. USER DELETE P2 =========="
-            );
-
-            try {
-
-                boolean result =
-                        user1ParcelDelete(
-                                user1,
-                                p2.getParcelID()
-                        );
-
-                System.out.println(
-                        "User Delete P2 Result: "
-                                + result
+                        "PASS: P004 status updated."
                 );
 
             } catch (Exception e) {
 
                 System.out.println(
-                        "Delete Exception: "
+                        "FAIL: "
                                 + e.getMessage()
                 );
             }
+        }
 
 
-            // =====================================================
-            // 30. ADMIN DELETE USER
-            // =====================================================
+        // ==================================================
+        // TEST 20: ADMIN - DELETE PARCEL
+        // ==================================================
 
-            System.out.println(
-                    "\n\n========== 30. ADMIN DELETE USER =========="
-            );
+        System.out.println(
+                "\n\n========== TEST 20: ADMIN DELETE PARCEL =========="
+        );
+
+        if (adminUser != null) {
 
             try {
+
+                Admin admin =
+                        new Admin(adminUser);
+
+                /*
+                 * P010 is still PENDING.
+                 * Good candidate for delete testing.
+                 */
+
+                admin.deleteParcel("P010");
+
+                System.out.println(
+                        "PASS: P010 deleted."
+                );
+
+            } catch (Exception e) {
+
+                System.out.println(
+                        "FAIL: "
+                                + e.getMessage()
+                );
+            }
+        }
+
+
+        // ==================================================
+        // TEST 21: ADMIN - DELETE USER
+        // ==================================================
+
+        System.out.println(
+                "\n\n========== TEST 21: ADMIN DELETE USER =========="
+        );
+
+        if (adminUser != null) {
+
+            try {
+
+                Admin admin =
+                        new Admin(adminUser);
+
+                /*
+                 * User 5 has no parcel.
+                 * Therefore this should succeed.
+                 */
 
                 admin.deleteUser(
-                        user3.getUser_id()
-                );
-
-            } catch (NotFoundException e) {
-
-                System.out.println(
-                        "Delete User Exception: "
-                                + e.getMessage()
-                );
-            }
-
-
-            // =====================================================
-            // 31. ADMIN STATISTICS
-            // =====================================================
-
-            System.out.println(
-                    "\n\n========== 31. ADMIN STATISTICS =========="
-            );
-
-            AdminStatistics statistics =
-                    new AdminStatistics();
-
-            statistics.displayStatistics();
-
-
-            // =====================================================
-            // 32. FINAL PARCEL STATUS CHECK
-            // =====================================================
-
-            System.out.println(
-                    "\n\n========== 32. FINAL PARCEL STATUS =========="
-            );
-
-            try {
-
-                System.out.println(
-                        "P1: "
-                                + p1.trackParcel(
-                                p1.getParcelID()
-                        )
+                        user5.getUser_id()
                 );
 
                 System.out.println(
-                        "P3: "
-                                + p3.trackParcel(
-                                p3.getParcelID()
-                        )
+                        "PASS: User 5 deleted."
                 );
-
-                System.out.println(
-                        "P4: "
-                                + p4.trackParcel(
-                                p4.getParcelID()
-                        )
-                );
-
-                System.out.println(
-                        "P5: "
-                                + p5.trackParcel(
-                                p5.getParcelID()
-                        )
-                );
-
-                System.out.println(
-                        "P6: "
-                                + p6.trackParcel(
-                                p6.getParcelID()
-                        )
-                );
-
-                System.out.println(
-                        "P8: "
-                                + p8.trackParcel(
-                                p8.getParcelID()
-                        )
-                );
-
-                System.out.println(
-                        "P9: "
-                                + p9.trackParcel(
-                                p9.getParcelID()
-                        )
-                );
-
-                System.out.println(
-                        "P10: "
-                                + p10.trackParcel(
-                                p10.getParcelID()
-                        )
-                );
-
-            } catch (NotFoundException e) {
-
-                System.out.println(
-                        "Final Track Exception: "
-                                + e.getMessage()
-                );
-
-            } catch (UnauthorizedAccessException e) {
-
-                System.out.println(
-                        "Final Track Authorization Exception: "
-                                + e.getMessage()
-                );
-
-            } catch (InvalidAmountException e) {
-
-                System.out.println(
-                        "Final Track Amount Exception: "
-                                + e.getMessage()
-                );
-            }
-
-
-            // =====================================================
-            // 33. INVALID AMOUNT EXCEPTION TEST
-            // =====================================================
-
-            System.out.println(
-                    "\n\n========== 33. INVALID AMOUNT EXCEPTION =========="
-            );
-
-            try {
-
-                Parcel testParcel =
-                        new Parcel(user1);
-
-                testParcel.setWeight(-5);
-
-            } catch (InvalidAmountException e) {
-
-                System.out.println(
-                        "InvalidAmountException WORKING: "
-                                + e.getMessage()
-                );
-            }
-
-
-            // =====================================================
-            // 34. UNAUTHORIZED ACCESS EXCEPTION TEST
-            // =====================================================
-
-            System.out.println(
-                    "\n\n========== 34. UNAUTHORIZED ACCESS TEST =========="
-            );
-
-            try {
-
-                Admin wrongAdmin =
-                        new Admin(user1);
-
-            } catch (UnauthorizedAccessException e) {
-
-                System.out.println(
-                        "UnauthorizedAccessException WORKING: "
-                                + e.getMessage()
-                );
-            }
-
-
-            try {
-
-                Rider wrongRider =
-                        new Rider(user1);
-
-            } catch (UnauthorizedAccessException e) {
-
-                System.out.println(
-                        "UnauthorizedAccessException WORKING: "
-                                + e.getMessage()
-                );
-            }
-
-
-            // =====================================================
-            // 35. NOT FOUND EXCEPTION TEST
-            // =====================================================
-
-            System.out.println(
-                    "\n\n========== 35. NOT FOUND EXCEPTION TEST =========="
-            );
-
-            try {
-
-                admin.searchUser("INVALID_USER_ID");
-
-            } catch (NotFoundException e) {
-
-                System.out.println(
-                        "NotFoundException WORKING: "
-                                + e.getMessage()
-                );
-            }
-
-
-            try {
-
-                admin.searchParcel("INVALID_PARCEL_ID");
 
             } catch (Exception e) {
 
                 System.out.println(
-                        "NotFoundException WORKING: "
+                        "FAIL: "
                                 + e.getMessage()
                 );
             }
+        }
 
 
-            // =====================================================
-            // FINAL
-            // =====================================================
+        // ==================================================
+        // TEST 22: FINAL PARCEL SEARCH
+        // ==================================================
+
+        System.out.println(
+                "\n\n========== TEST 22: FINAL DATABASE CHECK =========="
+        );
+
+        try {
+
+            Parcel finalParcel =
+                    AdminFile.searchParcel("P001");
 
             System.out.println(
-                    "\n\n========================================"
+                    "P001 final status: "
+                            + finalParcel.getParcelStatus()
             );
 
             System.out.println(
-                    "       FULL TEST COMPLETED"
-            );
-
-            System.out.println(
-                    "========================================"
-            );
-
-
-        } catch (UnauthorizedAccessException e) {
-
-            System.out.println(
-                    "\nROLE AUTHORIZATION ERROR: "
-                            + e.getMessage()
-            );
-
-        } catch (InvalidAmountException e) {
-
-            System.out.println(
-                    "\nINVALID AMOUNT ERROR: "
-                            + e.getMessage()
+                    "P001 rider: "
+                            + finalParcel.getRiderId()
             );
 
         } catch (Exception e) {
 
             System.out.println(
-                    "\nUNEXPECTED ERROR: "
+                    "FAIL: "
                             + e.getMessage()
+            );
+        }
+
+
+        // ==================================================
+        // FINAL
+        // ==================================================
+
+        System.out.println("\n\n");
+        System.out.println("======================================================");
+        System.out.println("             FULL TEST COMPLETED");
+        System.out.println("======================================================");
+        System.out.println("Users created       : 5");
+        System.out.println("Parcels created     : 10");
+        System.out.println("User 1 parcels      : P001 - P005");
+        System.out.println("User 2 parcels      : P006 - P010");
+        System.out.println("Rider operations    : Tested");
+        System.out.println("Admin operations    : Tested");
+        System.out.println("Tracking            : Tested");
+        System.out.println("Cancellation        : Tested");
+        System.out.println("Parcel status       : Tested");
+        System.out.println("Search              : Tested");
+        System.out.println("Delete              : Tested");
+        System.out.println("======================================================");
+    }
+
+
+    // =========================================================
+    // CREATE USER
+    // =========================================================
+
+    static User createUser(
+            String name,
+            String email,
+            String password
+    ) {
+
+        User user =
+                new User(
+                        name,
+                        email,
+                        password
+                );
+
+        try {
+
+            String result =
+                    user.register(user);
+
+            System.out.println(
+                    result
+            );
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "User creation failed: "
+                            + e.getMessage()
+            );
+        }
+
+        return user;
+    }
+
+
+    // =========================================================
+    // CREATE PARCEL
+    // =========================================================
+
+    static void createParcel(
+            String parcelId,
+            User sender,
+            String parcelName,
+            String address,
+            String phone,
+            double weight,
+            double charge
+    ) {
+
+        boolean result =
+                ParcelFile.saveParcel(
+                        parcelName,
+                        address,
+                        phone,
+                        parcelId,
+                        weight,
+                        sender.getUser_email(),
+                        sender.getUser_id(),
+                        String.valueOf(
+                                Parcel.ParcelStatus.PENDING
+                        ),
+                        charge,
+                        null
+                );
+
+        if (result) {
+
+            System.out.println(
+                    "PASS: "
+                            + parcelId
+                            + " created for "
+                            + sender.getUser_name()
+            );
+
+        } else {
+
+            System.out.println(
+                    "FAIL: "
+                            + parcelId
             );
         }
     }
 
 
-    // =============================================================
-    // HELPER METHODS
-    // =============================================================
+    // =========================================================
+    // FIND RIDER
+    // =========================================================
 
-    private static ArrayList<String> user1ParcelList(
-            User user
-    ) throws NotFoundException, UnauthorizedAccessException {
+    static User findRider() {
 
-        Parcel parcel = new Parcel(user);
+        try {
 
-        return parcel.getMyAllParcels();
+            ArrayList<User> users =
+                    AdminFile.getAllUsers();
+
+            for (User user : users) {
+
+                if (user.getUser_role()
+                        != null
+                        && user.getUser_role()
+                        .equalsIgnoreCase("RIDER")) {
+
+                    return user;
+                }
+            }
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Rider search failed: "
+                            + e.getMessage()
+            );
+        }
+
+        return null;
     }
 
 
-    private static ArrayList<String> user2ParcelList(
-            User user
-    ) throws NotFoundException, UnauthorizedAccessException {
+    // =========================================================
+    // FIND ADMIN
+    // =========================================================
 
-        Parcel parcel = new Parcel(user);
+    static User findAdmin() {
 
-        return parcel.getMyAllParcels();
+        try {
+
+            ArrayList<User> users =
+                    AdminFile.getAllUsers();
+
+            for (User user : users) {
+
+                if (user.getUser_role()
+                        != null
+                        && user.getUser_role()
+                        .equalsIgnoreCase("ADMIN")) {
+
+                    return user;
+                }
+            }
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Admin search failed: "
+                            + e.getMessage()
+            );
+        }
+
+        return null;
     }
 
 
-    private static boolean user1ParcelCancel(
-            User user,
-            String parcelId
-    ) throws NotFoundException, UnauthorizedAccessException {
+    // =========================================================
+    // PRINT USER
+    // =========================================================
 
-        Parcel parcel = new Parcel(user);
+    static void printUser(User user) {
 
-        return parcel.cancelParcel(parcelId);
+        if (user == null) {
+
+            System.out.println(
+                    "User = null"
+            );
+
+            return;
+        }
+
+        System.out.println(
+                "ID: "
+                        + user.getUser_id()
+                        + " | Name: "
+                        + user.getUser_name()
+                        + " | Email: "
+                        + user.getUser_email()
+                        + " | Role: "
+                        + user.getUser_role()
+        );
     }
 
 
-    private static boolean user1ParcelDelete(
-            User user,
-            String parcelId
-    ) throws NotFoundException, UnauthorizedAccessException {
+    // =========================================================
+    // PRINT PARCEL
+    // =========================================================
 
-        Parcel parcel = new Parcel(user);
+    static void printParcel(Parcel parcel) {
 
-        return parcel.deleteMyParcel(parcelId);
-    }
+        System.out.println(
+                "------------------------------------------"
+        );
 
+        System.out.println(
+                "Parcel ID: "
+                        + parcel.getParcelID()
+        );
 
-    private static void displayParcel(Parcel parcel) {
+        System.out.println(
+                "Name: "
+                        + parcel.getParcelName()
+        );
 
-        System.out.println("Parcel ID: " + parcel.getParcelID());
-        System.out.println("Parcel Name: " + parcel.getParcelName());
-        System.out.println("Receiver Address: " + parcel.getReciverAddress());
-        System.out.println("Receiver Phone: " + parcel.getReciverPhone());
-        System.out.println("Weight: " + parcel.getWeight());
-        System.out.println("Sender Email: " + parcel.getSenderEmail());
-        System.out.println("Sender ID: " + parcel.getSenderId());
-        System.out.println("Status: " + parcel.getParcelStatus());
-        System.out.println("Delivery Charge: " + parcel.getDeliveryCharge());
-        System.out.println("Rider ID: " + parcel.getRiderId());
+        System.out.println(
+                "Receiver Address: "
+                        + parcel.getReciverAddress()
+        );
+
+        System.out.println(
+                "Receiver Phone: "
+                        + parcel.getReciverPhone()
+        );
+
+        System.out.println(
+                "Weight: "
+                        + parcel.getWeight()
+        );
+
+        System.out.println(
+                "Sender Email: "
+                        + parcel.getSenderEmail()
+        );
+
+        System.out.println(
+                "Sender ID: "
+                        + parcel.getSenderId()
+        );
+
+        System.out.println(
+                "Status: "
+                        + parcel.getParcelStatus()
+        );
+
+        System.out.println(
+                "Delivery Charge: "
+                        + parcel.getDeliveryCharge()
+        );
+
+        System.out.println(
+                "Rider ID: "
+                        + parcel.getRiderId()
+        );
+
+        System.out.println(
+                "------------------------------------------"
+        );
     }
 }

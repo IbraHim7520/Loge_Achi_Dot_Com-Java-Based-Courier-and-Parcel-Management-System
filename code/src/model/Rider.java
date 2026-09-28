@@ -15,85 +15,125 @@ public class Rider {
         this.user = user;
     }
 
-    public boolean validateRider(User user) throws UnauthorizedAccessException {
+    public boolean validateRider(User user)
+            throws UnauthorizedAccessException {
 
-        if (user == null) {
-            throw new UnauthorizedAccessException("Unauthorized Access! User not found.");
-        }
-
-        if (user.getUser_id() == null || user.getUser_id().trim().isEmpty()) {
-            throw new UnauthorizedAccessException("Unauthorized Access! Invalid user ID.");
-        }
-
-        if (user.getUser_role() == null || !user.getUser_role().equals(String.valueOf(User.UserRole.RIDER))) {
-            throw new UnauthorizedAccessException("Unauthorized Access! Only Rider can access this feature.");
-        }
-
+        validateUser(user);
         return true;
     }
 
-    public void viewPendingParcels() throws NotFoundException {
 
-        ArrayList<String> parcels = RiderFile.getPendingParcels();
+    public void viewPendingParcels()
+            throws NotFoundException {
 
-        if (parcels.isEmpty()) {
-            throw new NotFoundException("No pending parcels found!");
-        }
+        ArrayList<String> parcels =
+                RiderFile.getPendingParcels();
 
         for (String parcel : parcels) {
             System.out.println(parcel);
         }
     }
 
-    public void acceptParcelsByRider(String parcelId, String riderID) throws NotFoundException {
+    public void acceptParcelsByRider(
+            String parcelId
+    ) throws NotFoundException {
 
-        boolean result = RiderFile.assignParcel(parcelId, riderID);
+        boolean result =
+                RiderFile.assignParcel(
+                        parcelId,
+                        user.getUser_id()
+                );
 
         if (result) {
-            System.out.println("Parcel Accepted!");
+
+            System.out.println(
+                    "Parcel Accepted!"
+            );
+
         } else {
-            throw new NotFoundException("Parcel not found or failed to assign!");
+
+            throw new NotFoundException(
+                    "Parcel not found or failed to assign!"
+            );
         }
     }
 
-    public void viewMyAssignedParcles() throws NotFoundException {
 
-        ArrayList<String> parcels = RiderFile.getMyAssignedParcels(user.getUser_id());
+    public void viewMyAssignedParcels()
+            throws NotFoundException {
 
-        if (parcels.isEmpty()) {
-            throw new NotFoundException("No assigned parcels found!");
-        }
+        ArrayList<String> parcels =
+                RiderFile.getMyAssignedParcels(
+                        user.getUser_id()
+                );
+
         for (String parcel : parcels) {
             System.out.println(parcel);
         }
     }
 
-    public void updateParcelStatus(String parcelId, String newStatus) throws NotFoundException {
-        boolean result = RiderFile.updateParcelStatusByRider(parcelId, user.getUser_id(), newStatus);
+
+
+    public void updateParcelStatus(
+            String parcelId,
+            String newStatus
+    ) throws NotFoundException {
+
+        boolean result =
+                RiderFile.updateParcelStatusByRider(
+                        parcelId,
+                        user.getUser_id(),
+                        newStatus
+                );
+
         if (result) {
-            System.out.println("Parcel status updated successfully!");
+
+            System.out.println(
+                    "Parcel status updated successfully!"
+            );
+
         } else {
-            throw new NotFoundException("Parcel not found or status update failed!");
+
+            throw new NotFoundException(
+                    "Parcel not found or status update failed!"
+            );
         }
     }
+
 
     private void validateUser(User user)
             throws UnauthorizedAccessException {
 
         if (user == null) {
-            throw new UnauthorizedAccessException("Unauthorized Access! User not found.");
+
+            throw new UnauthorizedAccessException(
+                    "Unauthorized Access! User not found."
+            );
         }
 
-        if (user.getUser_id() == null || user.getUser_id().trim().isEmpty()) {
-            throw new UnauthorizedAccessException("Unauthorized Access! Invalid user ID.");
+        if (user.getUser_id() == null
+                || user.getUser_id().trim().isEmpty()) {
+
+            throw new UnauthorizedAccessException(
+                    "Unauthorized Access! Invalid user ID."
+            );
         }
 
-        if (user.getUser_role() == null) {
-            throw new UnauthorizedAccessException("Unauthorized Access! User role not found.");
+        if (user.getUser_role() == null
+                || user.getUser_role().trim().isEmpty()) {
+
+            throw new UnauthorizedAccessException(
+                    "Unauthorized Access! User role not found."
+            );
         }
 
-        if (!user.getUser_role().equals(String.valueOf(User.UserRole.RIDER))) {
-            throw new UnauthorizedAccessException("Unauthorized Access! Only Rider can access this feature.");
+        if (!user.getUser_role().equalsIgnoreCase(
+                String.valueOf(User.UserRole.RIDER)
+        )) {
+
+            throw new UnauthorizedAccessException(
+                    "Unauthorized Access! Only Rider can access this feature."
+            );
         }
     }
 }

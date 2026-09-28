@@ -11,546 +11,1022 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class AdminFile {
 
-    private static final String USER_FILE = "code/src/database/users_db.txt";
+    private static final String USER_FILE =
+            "code/src/database/users_db.txt";
 
-    private static final String PARCEL_FILE = "code/src/database/parcel_db.txt";
+    private static final String PARCEL_FILE =
+            "code/src/database/parcel_db.txt";
 
-    public static ArrayList<User> getAllUsers() throws NotFoundException {
+    private static final String SEPARATOR = "|";
+    private static final String RECORD_END = "#";
 
-        ArrayList<User> users = new ArrayList<>();
-        File file = new File(USER_FILE);
+    private static void createFileIfNeeded(String filePath)
+            throws IOException {
 
-        if (!file.exists()) {
-            throw new NotFoundException("User database not found!");
+        File file = new File(filePath);
+
+        File parent = file.getParentFile();
+
+        if (parent != null && !parent.exists()) {
+            if (!parent.mkdirs()) {
+                throw new IOException(
+                        "Could not create database directory."
+                );
+            }
         }
 
-        try (Scanner scanner = new Scanner(file)) {
+        if (!file.exists()) {
+            if (!file.createNewFile()) {
+                throw new IOException(
+                        "Could not create database file."
+                );
+            }
+        }
+    }
+
+
+    private static ArrayList<String> readLines(String filePath)
+            throws IOException {
+
+        createFileIfNeeded(filePath);
+
+        ArrayList<String> lines = new ArrayList<>();
+
+        try (Scanner scanner =
+                     new Scanner(new File(filePath))) {
 
             while (scanner.hasNextLine()) {
 
-                String data = scanner.nextLine().trim();
+                String line = scanner.nextLine().trim();
 
-                if (data.isEmpty()) {
+                if (!line.isEmpty()) {
+                    lines.add(line);
+                }
+            }
+        }
+
+        return lines;
+    }
+
+
+
+    private static void writeLines(
+            String filePath,
+            ArrayList<String> lines
+    ) throws IOException {
+
+        createFileIfNeeded(filePath);
+
+        try (FileWriter writer =
+                     new FileWriter(filePath, false)) {
+
+            for (String line : lines) {
+
+                if (line == null || line.trim().isEmpty()) {
                     continue;
                 }
 
-                data = data.replace("#", "");
+                String cleanLine = removeRecordEnd(line);
 
-                String[] userData = data.split("-");
-
-                if (userData.length >= 5) {
-
-                    User user = new User(userData[0], userData[1], userData[2]);
-
-                    user.setUser_role(userData[3]);
-                    user.setUser_id(userData[4]);
-
-                    users.add(user);
-                }
+                writer.write(
+                        cleanLine
+                                + RECORD_END
+                                + System.lineSeparator()
+                );
             }
-
-        } catch (IOException e) {
-            System.out.println("Exception from AdminFile: " + e.getMessage());
-        }
-
-        if (users.isEmpty()) {
-            throw new NotFoundException("No users found!");
-        }
-
-        return users;
-    }
-
-    public static boolean registerNewRider(String name, String email, String password) {
-
-        User rider = new User(name, email, password);
-
-        if (name == null || name.trim().isEmpty()) {
-            return false;
-        }
-
-        if (!rider.validateEmail(email) || !rider.validatePassword(password)) {return false;
-        }
-
-        if (UserFile.IsUserExists(rider)) {
-            return false;
-        }
-
-        String riderId = rider.generateUserID();
-
-        String role = String.valueOf(User.UserRole.RIDER);
-
-        String data = name + "-" + email + "-" + password + "-" + role + "-" + riderId + "#\n";
-
-        try {
-
-            File file = new File(USER_FILE);
-
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-
-            try (FileWriter writer = new FileWriter(USER_FILE, true)) {
-                writer.write(data);
-            }
-
-            return true;
-
-        } catch (IOException e) {
-            System.out.println("Exception from AdminFile: " + e.getMessage());
-            return false;
         }
     }
 
-    public static boolean updateUser(
-            String userId,
+
+
+
+    private static String removeRecordEnd(String data) {
+
+        if (data == null) {
+            return "";
+        }
+
+        data = data.trim();
+
+        if (data.endsWith(RECORD_END)) {
+            return data.substring(
+                    0,
+                    data.length() - RECORD_END.length()
+            );
+        }
+
+        return data;
+    }
+
+
+
+    private static String[] parseUser(String line) {
+
+        if (line == null) {
+            return new String[0];
+        }
+
+        String data = removeRecordEnd(line);
+
+        if (data.contains(SEPARATOR)) {
+            return data.split("\\|", -1);
+        }
+
+        return data.split("-", -1);
+    }
+
+
+
+    private static String[] parseParcel(String line) {
+
+        if (line == null) {
+            return new String[0];
+        }
+
+        String data = removeRecordEnd(line);
+
+        return data.split("\\|", -1);
+    }
+
+
+
+    private static boolean isValidUserRecord(String[] data) {
+
+        return data != null && data.length >= 5;
+    }
+
+
+
+
+    private static boolean isValidParcelRecord(String[] data) {
+
+        return data != null && data.length >= 10;
+    }
+
+
+
+    private static boolean emailExists(
+            String email,
+            String excludedUserId
+    ) throws IOException {
+
+        if (email == null || email.trim().isEmpty()) {
+            return false;
+        }
+
+        ArrayList<String> lines =
+                readLines(USER_FILE);
+
+        for (String line : lines) {
+
+            String[] data = parseUser(line);
+
+            if (!isValidUserRecord(data)) {
+                continue;
+            }
+
+            boolean sameEmail =
+                    data[1].trim()
+                            .equalsIgnoreCase(email.trim());
+
+            boolean sameUser =
+                    excludedUserId != null
+                            && data[4].trim()
+                            .equals(excludedUserId.trim());
+
+            if (sameEmail && !sameUser) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+
+    public static boolean registerNewRider(
             String name,
             String email,
             String password
     ) throws NotFoundException {
 
-        File file = new File(USER_FILE);
+        if (name == null
+                || email == null
+                || password == null) {
 
-        if (!file.exists()) {
+            return false;
+        }
+
+        name = name.trim();
+        email = email.trim();
+
+        if (name.isEmpty()
+                || email.isEmpty()
+                || password.isEmpty()) {
+
+            return false;
+        }
+
+        if (name.contains(SEPARATOR)
+                || name.contains(RECORD_END)
+                || email.contains(SEPARATOR)
+                || email.contains(RECORD_END)
+                || password.contains(SEPARATOR)
+                || password.contains(RECORD_END)) {
+
+            return false;
+        }
+
+        // Create temporary User object
+        User tempUser =
+                new User(
+                        name,
+                        email,
+                        password
+                );
+
+        /*
+         * IMPORTANT:
+         * User.validateEmail() needs an argument.
+         */
+        if (!tempUser.validateEmail(email)) {
+            return false;
+        }
+
+        /*
+         * IMPORTANT:
+         * User.validatePassword() needs an argument.
+         */
+        if (!tempUser.validatePassword(password)) {
+            return false;
+        }
+
+        try {
+
+            if (emailExists(email, null)) {
+                return false;
+            }
+
+            String riderId =
+                    "R"
+                            + UUID.randomUUID()
+                            .toString()
+                            .replace("-", "");
+
+            ArrayList<String> lines =
+                    readLines(USER_FILE);
+
+            String newUser =
+                    name
+                            + SEPARATOR
+                            + email
+                            + SEPARATOR
+                            + password
+                            + SEPARATOR
+                            + "RIDER"
+                            + SEPARATOR
+                            + riderId;
+
+            lines.add(newUser);
+
+            writeLines(
+                    USER_FILE,
+                    lines
+            );
+
+            return true;
+
+        } catch (IOException e) {
+
+            return false;
+        }
+    }
+
+
+
+    public static ArrayList<User> getAllUsers()
+            throws NotFoundException {
+
+        ArrayList<User> users =
+                new ArrayList<>();
+
+        try {
+
+            ArrayList<String> lines =
+                    readLines(USER_FILE);
+
+            for (String line : lines) {
+
+                String[] data =
+                        parseUser(line);
+
+                if (!isValidUserRecord(data)) {
+                    continue;
+                }
+
+                try {
+
+                    User user =
+                            new User(
+                                    data[0].trim(),
+                                    data[1].trim(),
+                                    data[2]
+                            );
+
+                    user.setUser_role(
+                            data[3].trim()
+                    );
+
+                    user.setUser_id(
+                            data[4].trim()
+                    );
+
+                    users.add(user);
+
+                } catch (Exception e) {
+
+                    // Skip invalid user record
+                }
+            }
+
+        } catch (IOException e) {
+
             throw new NotFoundException(
-                    "User database not found!"
+                    "Unable to read user database!"
             );
         }
 
-        ArrayList<String> users = new ArrayList<>();
-        boolean updated = false;
+        if (users.isEmpty()) {
 
-        User user = new User(name, email, password);
-
-        if (!user.validateEmail(email) || !user.validatePassword(password)) {
-            return false;
+            throw new NotFoundException(
+                    "No users found!"
+            );
         }
 
-        try (Scanner scanner = new Scanner(file)) {
-
-            while (scanner.hasNextLine()) {
-
-                String data = scanner.nextLine().trim();
-
-                if (data.isEmpty()) {
-                    continue;
-                }
-
-                data = data.replace("#", "");
-
-                String[] userData = data.split("-");
-
-                if (userData.length >= 5 && userData[4].equals(userId)) {
-
-                    data = name + "-" + email + "-" + password + "-" + userData[3] + "-" + userData[4];
-                    updated = true;
-                }
-
-                users.add(data);
-            }
-
-        } catch (IOException e) {
-            System.out.println("Exception from AdminFile: " + e.getMessage());
-        }
-
-        if (!updated) {
-            throw new NotFoundException("User not found!");
-        }
-
-        try (FileWriter writer = new FileWriter(USER_FILE, false)) {
-
-            for (String userData : users) {
-                writer.write(userData + "#\n");
-            }
-
-        } catch (IOException e) {
-            System.out.println("Exception from AdminFile: " + e.getMessage());
-            return false;
-        }
-
-        return true;
+        return users;
     }
 
-    public static User searchUser(String userId) throws NotFoundException {
 
-        File file = new File(USER_FILE);
 
-        if (!file.exists()) {
-            throw new NotFoundException("User database not found!");
+    public static boolean updateUser(
+            String userID,
+            String name,
+            String email,
+            String password
+    ) throws NotFoundException {
+
+        if (userID == null
+                || userID.trim().isEmpty()) {
+
+            return false;
         }
 
-        try (Scanner scanner = new Scanner(file)) {
+        if (name == null || email == null) {
+            return false;
+        }
 
-            while (scanner.hasNextLine()) {
+        name = name.trim();
+        email = email.trim();
 
-                String data = scanner.nextLine().trim();
+        if (name.isEmpty()
+                || email.isEmpty()) {
 
-                if (data.isEmpty()) {
+            return false;
+        }
+
+        if (name.contains(SEPARATOR)
+                || name.contains(RECORD_END)
+                || email.contains(SEPARATOR)
+                || email.contains(RECORD_END)) {
+
+            return false;
+        }
+
+        User tempUser =
+                new User(
+                        name,
+                        email,
+                        password == null
+                                ? "123456"
+                                : password
+                );
+
+        if (!tempUser.validateEmail(email)) {
+            return false;
+        }
+
+        if (password != null
+                && !password.isEmpty()
+                && !tempUser.validatePassword(password)) {
+
+            return false;
+        }
+
+        try {
+
+            if (emailExists(email, userID)) {
+                return false;
+            }
+
+            ArrayList<String> lines =
+                    readLines(USER_FILE);
+
+            ArrayList<String> updatedLines =
+                    new ArrayList<>();
+
+            boolean found = false;
+
+            for (String line : lines) {
+
+                String[] data =
+                        parseUser(line);
+
+                if (!isValidUserRecord(data)) {
+
+                    updatedLines.add(line);
                     continue;
                 }
 
-                data = data.replace("#", "");
+                if (data[4].trim()
+                        .equals(userID.trim())) {
 
-                String[] userData = data.split("-");
+                    String oldPassword =
+                            data[2];
 
-                if (userData.length >= 5 && userData[4].equals(userId)) {
+                    String finalPassword =
+                            password == null
+                                    || password.isEmpty()
+                                    ? oldPassword
+                                    : password;
 
-                    User user = new User(userData[0], userData[1], userData[2]);
+                    updatedLines.add(
+                            name
+                                    + SEPARATOR
+                                    + email
+                                    + SEPARATOR
+                                    + finalPassword
+                                    + SEPARATOR
+                                    + data[3].trim()
+                                    + SEPARATOR
+                                    + data[4].trim()
+                    );
 
-                    user.setUser_role(userData[3]);
-                    user.setUser_id(userData[4]);
+                    found = true;
+
+                } else {
+
+                    updatedLines.add(line);
+                }
+            }
+
+            if (!found) {
+
+                throw new NotFoundException(
+                        "User not found."
+                );
+            }
+
+            writeLines(
+                    USER_FILE,
+                    updatedLines
+            );
+
+            return true;
+
+        } catch (IOException e) {
+
+            return false;
+        }
+    }
+
+
+    public static User searchUser(String userID)
+            throws NotFoundException {
+
+        if (userID == null
+                || userID.trim().isEmpty()) {
+
+            throw new NotFoundException(
+                    "User ID is required!"
+            );
+        }
+
+        try {
+
+            ArrayList<String> lines =
+                    readLines(USER_FILE);
+
+            for (String line : lines) {
+
+                String[] data =
+                        parseUser(line);
+
+                if (!isValidUserRecord(data)) {
+                    continue;
+                }
+
+                if (data[4].trim()
+                        .equals(userID.trim())) {
+
+                    User user =
+                            new User(
+                                    data[0].trim(),
+                                    data[1].trim(),
+                                    data[2]
+                            );
+
+                    user.setUser_role(
+                            data[3].trim()
+                    );
+
+                    user.setUser_id(
+                            data[4].trim()
+                    );
 
                     return user;
                 }
             }
 
         } catch (IOException e) {
-            System.out.println("Exception from AdminFile: " + e.getMessage());
+
+            throw new NotFoundException(
+                    "Unable to read user database!"
+            );
         }
 
-        throw new NotFoundException("User not found or invalid User ID!");
+        throw new NotFoundException(
+                "User not found!"
+        );
     }
 
-    public static boolean deleteUser(String userId) throws NotFoundException {
 
-        File file = new File(USER_FILE);
+    public static boolean deleteUser(String userID)
+            throws NotFoundException {
 
-        if (!file.exists()) {
-            throw new NotFoundException("User database not found!");
-        }
+        if (userID == null
+                || userID.trim().isEmpty()) {
 
-        ArrayList<String> users = new ArrayList<>();
-        boolean deleted = false;
-
-        try (Scanner scanner = new Scanner(file)) {
-
-            while (scanner.hasNextLine()) {
-
-                String data = scanner.nextLine().trim();
-
-                if (data.isEmpty()) {
-                    continue;
-                }
-
-                data = data.replace("#", "");
-
-                String[] userData = data.split("-");
-
-                if (userData.length >= 5 && userData[4].equals(userId)) {
-
-                    deleted = true;
-                    continue;
-                }
-
-                users.add(data);
-            }
-
-        } catch (IOException e) {
-            System.out.println("Exception from AdminFile: " + e.getMessage());
-        }
-
-        if (!deleted) {
-            throw new NotFoundException("User not found!");
-        }
-
-        try (FileWriter writer = new FileWriter(USER_FILE, false)) {
-
-            for (String userData : users) {
-                writer.write(userData + "#\n");
-            }
-
-        } catch (IOException e) {
-            System.out.println("Exception from AdminFile: " + e.getMessage());
             return false;
         }
 
-        return true;
-    }
+        try {
 
-    public static ArrayList<Parcel> getAllParcels() throws NotFoundException, UnauthorizedAccessException, InvalidAmountException {
+            /*
+             * Don't delete a user if they have
+             * existing parcels.
+             */
+            ArrayList<String> parcelLines =
+                    readLines(PARCEL_FILE);
 
-        ArrayList<Parcel> parcels = new ArrayList<>();
-        File file = new File(PARCEL_FILE);
+            for (String line : parcelLines) {
 
-        if (!file.exists()) {
-            throw new NotFoundException("Parcel database not found!");
-        }
+                String[] data =
+                        parseParcel(line);
 
-        try (Scanner scanner = new Scanner(file)) {
-
-            while (scanner.hasNextLine()) {
-
-                String data = scanner.nextLine().trim();
-
-                if (data.isEmpty()) {
+                if (!isValidParcelRecord(data)) {
                     continue;
                 }
 
-                data = data.replace("#", "");
+                // Sender ID = index 6
+                if (data[6].trim()
+                        .equals(userID.trim())) {
 
-                String[] parcelData = data.split("-");
+                    return false;
+                }
+            }
 
-                if (parcelData.length >= 10) {
 
-                    User sender = new User("", parcelData[5], "");
+            ArrayList<String> lines =
+                    readLines(USER_FILE);
 
-                    sender.setUser_id(parcelData[6]);
-                    sender.setUser_role(String.valueOf(User.UserRole.USER));
+            ArrayList<String> updatedLines =
+                    new ArrayList<>();
 
-                    Parcel parcel = new Parcel(sender);
+            boolean found = false;
 
-                    parcel.setParcelName(parcelData[0]);
-                    parcel.setReciverAddress(parcelData[1]);
-                    parcel.setReciverPhone(parcelData[2]);
-                    parcel.setParcelID(parcelData[3]);
+            for (String line : lines) {
 
-                    parcel.setWeight(Double.parseDouble(parcelData[4]));
+                String[] data =
+                        parseUser(line);
 
-                    parcel.setSenderEmail(parcelData[5]);
-                    parcel.setSenderId(parcelData[6]);
-                    parcel.setParcelStatus(parcelData[7]);
+                if (!isValidUserRecord(data)) {
 
-                    parcel.setDeliveryCharge(Double.parseDouble(parcelData[8]));
+                    updatedLines.add(line);
+                    continue;
+                }
 
-                    parcel.setRiderId(parcelData[9].equals("null") ? null : parcelData[9]);
+                if (data[4].trim()
+                        .equals(userID.trim())) {
+
+                    // Admin cannot be deleted
+                    if (data[3].trim()
+                            .equalsIgnoreCase("ADMIN")) {
+
+                        return false;
+                    }
+
+                    found = true;
+
+                } else {
+
+                    updatedLines.add(line);
+                }
+            }
+
+            if (!found) {
+
+                throw new NotFoundException(
+                        "User not found."
+                );
+            }
+
+            writeLines(
+                    USER_FILE,
+                    updatedLines
+            );
+
+            return true;
+
+        } catch (IOException e) {
+
+            return false;
+        }
+    }
+
+
+    public static ArrayList<Parcel> getAllParcels()
+            throws NotFoundException,
+            UnauthorizedAccessException,
+            InvalidAmountException {
+
+        ArrayList<Parcel> parcels =
+                new ArrayList<>();
+
+        try {
+
+            ArrayList<String> lines =
+                    readLines(PARCEL_FILE);
+
+            for (String line : lines) {
+
+                String[] data =
+                        parseParcel(line);
+
+                if (!isValidParcelRecord(data)) {
+                    continue;
+                }
+
+                try {
+
+                    Parcel parcel =
+                            createParcelFromData(data);
 
                     parcels.add(parcel);
+
+                } catch (NumberFormatException e) {
+
+                    System.err.println(
+                            "Skipping invalid parcel: "
+                                    + line
+                    );
                 }
             }
 
         } catch (IOException e) {
-            System.out.println("Exception from AdminFile: " + e.getMessage());
+
+            throw new NotFoundException(
+                    "Unable to read parcel database!"
+            );
         }
 
         if (parcels.isEmpty()) {
-            throw new NotFoundException("No parcels found!");
+
+            throw new NotFoundException(
+                    "No parcels found!"
+            );
         }
 
         return parcels;
     }
 
-    public static Parcel searchParcel(String parcelId) throws NotFoundException, UnauthorizedAccessException, InvalidAmountException {
 
-        File file = new File(PARCEL_FILE);
 
-        if (!file.exists()) {
-            throw new NotFoundException("Parcel database not found!");
+
+    private static Parcel createParcelFromData(
+            String[] data
+    ) throws UnauthorizedAccessException,
+            InvalidAmountException {
+
+
+        double weight;
+
+        double deliveryCharge;
+
+        try {
+
+            weight =
+                    Double.parseDouble(
+                            data[4].trim()
+                    );
+
+            deliveryCharge =
+                    Double.parseDouble(
+                            data[8].trim()
+                    );
+
+        } catch (NumberFormatException e) {
+
+            throw new InvalidAmountException(
+                    "Invalid parcel weight or delivery charge."
+            );
         }
 
-        try (Scanner scanner = new Scanner(file)) {
 
-            while (scanner.hasNextLine()) {
+        User sender =
+                new User(
+                        "",
+                        data[5].trim(),
+                        "123456"
+                );
 
-                String data = scanner.nextLine().trim();
+        sender.setUser_id(
+                data[6].trim()
+        );
 
-                if (data.isEmpty()) {
-                    continue;
-                }
+        sender.setUser_role(
+                String.valueOf(
+                        User.UserRole.USER
+                )
+        );
 
-                data = data.replace("#", "");
 
-                String[] parcelData = data.split("-");
+        Parcel parcel =
+                new Parcel(sender);
 
-                if (parcelData.length >= 10 && parcelData[3].equals(parcelId)) {
+        parcel.setParcelName(
+                data[0].trim()
+        );
 
-                    User sender = new User("", parcelData[5], "");
+        parcel.setReciverAddress(
+                data[1].trim()
+        );
 
-                    sender.setUser_id(parcelData[6]);
-                    sender.setUser_role(String.valueOf(User.UserRole.USER));
+        parcel.setReciverPhone(
+                data[2].trim()
+        );
 
-                    Parcel parcel = new Parcel(sender);
+        parcel.setParcelID(
+                data[3].trim()
+        );
 
-                    parcel.setParcelName(parcelData[0]);
-                    parcel.setReciverAddress(parcelData[1]);
-                    parcel.setReciverPhone(parcelData[2]);
-                    parcel.setParcelID(parcelData[3]);
+        parcel.setWeight(weight);
 
-                    parcel.setWeight(Double.parseDouble(parcelData[4]));
+        parcel.setSenderEmail(
+                data[5].trim()
+        );
 
-                    parcel.setSenderEmail(parcelData[5]);
-                    parcel.setSenderId(parcelData[6]);
-                    parcel.setParcelStatus(parcelData[7]);
+        parcel.setSenderId(
+                data[6].trim()
+        );
 
-                    parcel.setDeliveryCharge(Double.parseDouble(parcelData[8]));
+        parcel.setParcelStatus(
+                data[7].trim()
+        );
 
-                    parcel.setRiderId(parcelData[9].equals("null") ? null : parcelData[9]);
+        parcel.setDeliveryCharge(
+                deliveryCharge
+        );
 
-                    return parcel;
-                }
-            }
 
-        } catch (IOException e) {
-            System.out.println("Exception from AdminFile: " + e.getMessage());
+        if (data[9].trim().isEmpty()
+                || data[9].trim()
+                .equalsIgnoreCase("null")) {
+
+            parcel.setRiderId(null);
+
+        } else {
+
+            parcel.setRiderId(
+                    data[9].trim()
+            );
         }
 
-        throw new NotFoundException("Parcel not found!");
+        return parcel;
     }
 
-    public static boolean deleteParcel(String parcelId) throws NotFoundException {
 
-        File file = new File(PARCEL_FILE);
 
-        if (!file.exists()) {
-            throw new NotFoundException("Parcel database not found!");
-        }
+    public static Parcel searchParcel(
+            String parcelID
+    ) throws NotFoundException,
+            UnauthorizedAccessException,
+            InvalidAmountException {
 
-        ArrayList<String> parcels = new ArrayList<>();
-        boolean deleted = false;
+        if (parcelID == null
+                || parcelID.trim().isEmpty()) {
 
-        try (Scanner scanner = new Scanner(file)) {
-
-            while (scanner.hasNextLine()) {
-
-                String data = scanner.nextLine().trim();
-
-                if (data.isEmpty()) {
-                    continue;
-                }
-
-                data = data.replace("#", "");
-
-                String[] parcelData = data.split("-");
-
-                if (parcelData.length >= 10 && parcelData[3].equals(parcelId)) {
-
-                    deleted = true;
-                    continue;
-                }
-
-                parcels.add(data);
-            }
-
-        } catch (IOException e) {
-            System.out.println("Exception from AdminFile: " + e.getMessage());
-        }
-
-        if (!deleted) {
-            throw new NotFoundException("Parcel not found!");
-        }
-
-        try (FileWriter writer = new FileWriter(PARCEL_FILE, false)) {
-
-            for (String parcel : parcels) {
-                writer.write(parcel + "#\n");
-            }
-
-        } catch (IOException e) {
-            System.out.println("Exception from AdminFile: " + e.getMessage());
-            return false;
-        }
-
-        return true;
-    }
-
-    public static ArrayList<User> getAllRiders() throws NotFoundException {
-
-        ArrayList<User> riders = new ArrayList<>();
-        File file = new File(USER_FILE);
-
-        if (!file.exists()) {
-            throw new NotFoundException("User database not found!");
-        }
-
-        try (Scanner scanner = new Scanner(file)) {
-
-            while (scanner.hasNextLine()) {
-
-                String data = scanner.nextLine().trim();
-
-                if (data.isEmpty()) {
-                    continue;
-                }
-
-                data = data.replace("#", "");
-
-                String[] userData = data.split("-");
-
-                if (userData.length >= 5 && userData[3].equals(String.valueOf(User.UserRole.RIDER))) {
-
-                    User rider = new User(userData[0], userData[1], userData[2]);
-
-                    rider.setUser_role(userData[3]);
-                    rider.setUser_id(userData[4]);
-
-                    riders.add(rider);
-                }
-            }
-
-        } catch (IOException e) {
-            System.out.println("Exception from AdminFile: " + e.getMessage());
-        }
-
-        if (riders.isEmpty()) {
-            throw new NotFoundException("No riders found!");
-        }
-
-        return riders;
-    }
-
-    public static boolean updateParcelStatus(String parcelId, String newStatus) throws NotFoundException {
-
-        File file = new File(PARCEL_FILE);
-
-        if (!file.exists()) {
-            throw new NotFoundException("Parcel database not found!");
+            throw new NotFoundException(
+                    "Parcel ID is required!"
+            );
         }
 
         try {
-            Parcel.ParcelStatus.valueOf(newStatus.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new NotFoundException("Invalid parcel status!");
-        }
 
-        ArrayList<String> parcels = new ArrayList<>();
-        boolean updated = false;
+            ArrayList<String> lines =
+                    readLines(PARCEL_FILE);
 
-        try (Scanner scanner = new Scanner(file)) {
+            for (String line : lines) {
 
-            while (scanner.hasNextLine()) {
+                String[] data =
+                        parseParcel(line);
 
-                String data = scanner.nextLine().trim();
-
-                if (data.isEmpty()) {
+                if (!isValidParcelRecord(data)) {
                     continue;
                 }
 
-                data = data.replace("#", "");
+                // Parcel ID = index 3
+                if (data[3].trim()
+                        .equals(parcelID.trim())) {
 
-                String[] parcelData = data.split("-");
-
-                if (parcelData.length >= 10 && parcelData[3].equals(parcelId)) {
-
-                    parcelData[7] = newStatus.toUpperCase();
-
-                    data = String.join("-", parcelData);
-
-                    updated = true;
+                    return createParcelFromData(data);
                 }
-
-                parcels.add(data);
             }
 
         } catch (IOException e) {
-            System.out.println("Exception from AdminFile: " + e.getMessage());
+
+            throw new NotFoundException(
+                    "Unable to read parcel database!"
+            );
         }
 
-        if (!updated) {
-            throw new NotFoundException("Parcel not found!");
-        }
+        throw new NotFoundException(
+                "Parcel not found!"
+        );
+    }
 
-        try (FileWriter writer = new FileWriter(PARCEL_FILE, false)) {
 
-            for (String parcel : parcels) {
-                writer.write(parcel + "#\n");
-            }
 
-        } catch (IOException e) {
-            System.out.println("Exception from AdminFile: " + e.getMessage());
+    public static boolean deleteParcel(
+            String parcelID
+    ) throws NotFoundException {
+
+        if (parcelID == null
+                || parcelID.trim().isEmpty()) {
+
             return false;
         }
 
-        return true;
+        try {
+
+            ArrayList<String> lines =
+                    readLines(PARCEL_FILE);
+
+            ArrayList<String> updatedLines =
+                    new ArrayList<>();
+
+            boolean found = false;
+
+            for (String line : lines) {
+
+                String[] data =
+                        parseParcel(line);
+
+                if (!isValidParcelRecord(data)) {
+
+                    updatedLines.add(line);
+                    continue;
+                }
+
+                // Parcel ID = index 3
+                if (data[3].trim()
+                        .equals(parcelID.trim())) {
+
+                    found = true;
+
+                } else {
+
+                    updatedLines.add(line);
+                }
+            }
+
+            if (!found) {
+
+                throw new NotFoundException(
+                        "Parcel not found."
+                );
+            }
+
+            writeLines(
+                    PARCEL_FILE,
+                    updatedLines
+            );
+
+            return true;
+
+        } catch (IOException e) {
+
+            return false;
+        }
+    }
+
+    public static boolean updateParcelStatus(
+            String parcelID,
+            String newStatus
+    ) throws NotFoundException {
+
+        if (parcelID == null
+                || parcelID.trim().isEmpty()) {
+
+            return false;
+        }
+
+        if (newStatus == null
+                || newStatus.trim().isEmpty()) {
+
+            return false;
+        }
+
+        String status =
+                newStatus.trim().toUpperCase();
+
+
+        try {
+
+            Parcel.ParcelStatus.valueOf(status);
+
+        } catch (IllegalArgumentException e) {
+
+            return false;
+        }
+
+
+        try {
+
+            ArrayList<String> lines =
+                    readLines(PARCEL_FILE);
+
+            ArrayList<String> updatedLines =
+                    new ArrayList<>();
+
+            boolean found = false;
+
+            for (String line : lines) {
+
+                String[] data =
+                        parseParcel(line);
+
+                if (!isValidParcelRecord(data)) {
+
+                    updatedLines.add(line);
+                    continue;
+                }
+
+                // Parcel ID = index 3
+                if (data[3].trim()
+                        .equals(parcelID.trim())) {
+
+                    // Status = index 7
+                    data[7] = status;
+
+                    String updatedRecord =
+                            String.join(
+                                    SEPARATOR,
+                                    data
+                            );
+
+                    updatedLines.add(
+                            updatedRecord
+                    );
+
+                    found = true;
+
+                } else {
+
+                    updatedLines.add(line);
+                }
+            }
+
+            if (!found) {
+
+                throw new NotFoundException(
+                        "Parcel not found."
+                );
+            }
+
+            writeLines(
+                    PARCEL_FILE,
+                    updatedLines
+            );
+
+            return true;
+
+        } catch (IOException e) {
+
+            return false;
+        }
     }
 }

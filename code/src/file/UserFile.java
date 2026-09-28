@@ -10,9 +10,20 @@ import java.util.Scanner;
 
 public class UserFile {
 
-    private static final String USER_FILE = "code/src/database/users_db.txt";
+    private static final String USER_FILE =
+            "code/src/database/users_db.txt";
+
+    // New database separator
+    private static final String SEPARATOR = "|";
 
     public static boolean IsUserExists(User user) {
+
+        if (user == null
+                || user.getUser_email() == null
+                || user.getUser_email().trim().isEmpty()) {
+
+            return false;
+        }
 
         File file = new File(USER_FILE);
 
@@ -23,41 +34,74 @@ public class UserFile {
         try (Scanner scanner = new Scanner(file)) {
 
             while (scanner.hasNextLine()) {
+
                 String data = scanner.nextLine().trim();
 
                 if (data.isEmpty()) {
                     continue;
                 }
 
-                data = data.replace("#", "");
+                User storedUser = parseUser(data);
 
-                String[] userData = data.split("-");
+                if (storedUser != null
+                        && storedUser.getUser_email() != null
+                        && storedUser.getUser_email()
+                        .equalsIgnoreCase(user.getUser_email().trim())) {
 
-                if (userData.length >= 5) {
-                    String storedEmail = userData[1];
-
-                    if (storedEmail.equals(user.getUser_email())) {
-                        return true;
-                    }
+                    return true;
                 }
             }
 
         } catch (IOException e) {
-            System.out.println("Exception from UserFile: " + e.getMessage());
+
+            System.err.println(
+                    "Exception from UserFile: " + e.getMessage());
         }
 
         return false;
     }
 
-    public boolean createNewUser(User user) {
+
+    public static boolean createNewUser(User user) {
+
+        if (user == null
+                || user.getUser_name() == null
+                || user.getUser_email() == null
+                || user.getUserPassword() == null) {
+
+            return false;
+        }
+
+        String name = user.getUser_name().trim();
+        String email = user.getUser_email().trim();
+        String password = user.getUserPassword();
+
+        if (name.isEmpty()
+                || email.isEmpty()
+                || password.isEmpty()) {
+
+            return false;
+        }
+
+
+        if (name.contains("|")
+                || email.contains("|")
+                || password.contains("|")
+                || name.contains("#")
+                || email.contains("#")
+                || password.contains("#")) {
+
+            return false;
+        }
+
+        user.setUser_name(name);
+        user.setUser_email(email);
+
 
         if (IsUserExists(user)) {
             return false;
         }
 
-        String name = user.getUser_name();
-        String email = user.getUser_email();
-        String password = user.getUserPassword();
         String role = String.valueOf(User.UserRole.USER);
         String userId = user.generateUserID();
 
@@ -65,34 +109,70 @@ public class UserFile {
 
             File file = new File(USER_FILE);
 
-            if (!file.exists()) {
-                file.createNewFile();
+            File parent = file.getParentFile();
+
+            if (parent != null && !parent.exists()) {
+
+                if (!parent.mkdirs()) {
+                    return false;
+                }
             }
 
-            String newUser = name + "-" + email + "-" + password + "-" + role + "-" + userId + "#\n";
+            if (!file.exists()) {
 
-            try (FileWriter writer = new FileWriter(USER_FILE, true)) {
+                if (!file.createNewFile()) {
+                    return false;
+                }
+            }
+
+            String newUser =
+                    name + SEPARATOR
+                            + email + SEPARATOR
+                            + password + SEPARATOR
+                            + role + SEPARATOR
+                            + userId
+                            + "#"
+                            + System.lineSeparator();
+
+            try (FileWriter writer =
+                         new FileWriter(file, true)) {
 
                 writer.write(newUser);
             }
 
+            // Update current User object
             user.setUser_id(userId);
             user.setUser_role(role);
 
             return true;
 
         } catch (IOException e) {
-            System.out.println("Exception from UserFile: " + e.getMessage());
+
+            System.err.println(
+                    "Exception from UserFile: " + e.getMessage());
+
             return false;
         }
     }
 
-    public User loginUser(String email, String password) throws NotFoundException {
+    public User loginUser(String email, String password)
+            throws NotFoundException {
+
+        if (email == null
+                || email.trim().isEmpty()
+                || password == null
+                || password.isEmpty()) {
+
+            throw new NotFoundException(
+                    "Email and password are required!");
+        }
 
         File file = new File(USER_FILE);
 
         if (!file.exists()) {
-            throw new NotFoundException("User database not found!");
+
+            throw new NotFoundException(
+                    "User database not found!");
         }
 
         try (Scanner scanner = new Scanner(file)) {
@@ -105,32 +185,93 @@ public class UserFile {
                     continue;
                 }
 
-                data = data.replace("#", "");
+                User storedUser = parseUser(data);
 
-                String[] userData = data.split("-");
+                if (storedUser == null) {
+                    continue;
+                }
 
-                if (userData.length >= 5) {
+                String storedEmail =
+                        storedUser.getUser_email();
 
-                    String storedName = userData[0];
-                    String storedEmail = userData[1];
-                    String storedPassword = userData[2];
-                    String storedRole = userData[3];
-                    String storedId = userData[4];
+                String storedPassword =
+                        storedUser.getUserPassword();
 
-                    if (storedEmail.equals(email) && storedPassword.equals(password)) {
-                        User user = new User(storedName, storedEmail, storedPassword);
-                        user.setUser_role(storedRole);
-                        user.setUser_id(storedId);
+                if (storedEmail != null
+                        && storedPassword != null
+                        && storedEmail.equalsIgnoreCase(email.trim())
+                        && storedPassword.equals(password)) {
 
-                        return user;
-                    }
+                    return storedUser;
                 }
             }
 
         } catch (IOException e) {
-            System.out.println("Exception from UserFile: " + e.getMessage());
+
+            throw new NotFoundException(
+                    "Unable to read user database!");
         }
 
-        throw new NotFoundException("User not found or invalid email/password!");
+        throw new NotFoundException(
+                "User not found or invalid email/password!");
+    }
+
+    private static User parseUser(String data) {
+
+        if (data == null || data.trim().isEmpty()) {
+            return null;
+        }
+
+        // Remove only the ending # character
+        String cleanData = data.trim();
+
+        if (cleanData.endsWith("#")) {
+            cleanData =
+                    cleanData.substring(0, cleanData.length() - 1);
+        }
+
+        String[] userData;
+
+
+        if (cleanData.contains("|")) {
+
+            userData = cleanData.split("\\|", -1);
+
+        }
+
+        else {
+
+            userData = cleanData.split("-", -1);
+        }
+
+        if (userData.length < 5) {
+            return null;
+        }
+
+        String storedName = userData[0].trim();
+        String storedEmail = userData[1].trim();
+        String storedPassword = userData[2];
+        String storedRole = userData[3].trim();
+        String storedId = userData[4].trim();
+
+        if (storedName.isEmpty()
+                || storedEmail.isEmpty()
+                || storedPassword.isEmpty()
+                || storedRole.isEmpty()
+                || storedId.isEmpty()) {
+
+            return null;
+        }
+
+        User user = new User(
+                storedName,
+                storedEmail,
+                storedPassword
+        );
+
+        user.setUser_role(storedRole);
+        user.setUser_id(storedId);
+
+        return user;
     }
 }
