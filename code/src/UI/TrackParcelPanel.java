@@ -11,8 +11,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 
 public class TrackParcelPanel extends JPanel {
@@ -22,82 +21,44 @@ public class TrackParcelPanel extends JPanel {
     private JTextField parcelIdField;
     private JTextArea resultArea;
 
-    // =====================================================
-    // THEME COLORS
-    // =====================================================
+    private static final Color BG = new Color(241, 248, 253);
+    private static final Color WHITE = Color.WHITE;
+    private static final Color BLACK = new Color(15, 18, 20);
+    private static final Color TEXT_DARK = new Color(31, 38, 43);
+    private static final Color TEXT_MUTED = new Color(103, 117, 128);
 
-    private final Color BLUE =
-            new Color(0, 97, 153);
+    private static final Color ORANGE = new Color(248, 116, 35);
+    private static final Color ORANGE_HOVER = new Color(235, 94, 20);
 
-    private final Color SKY_BLUE =
-            new Color(138, 207, 248);
+    private static final Color BLUE = new Color(0, 97, 153);
+    private static final Color LIGHT_BLUE = new Color(225, 240, 249);
+    private static final Color SKY_BLUE = new Color(181, 219, 241);
 
-    private final Color SOFT_YELLOW =
-            new Color(244, 235, 108);
+    private static final Color BORDER = new Color(216, 227, 234);
+    private static final Color INPUT_BG = new Color(249, 251, 252);
+    private static final Color INPUT_BORDER = new Color(198, 211, 220);
 
-    private final Color GOLD =
-            new Color(255, 212, 68);
-
-    private final Color BG_TOP =
-            new Color(3, 39, 63);
-
-    private final Color BG_BOTTOM =
-            new Color(0, 72, 110);
-
-    private final Color CARD_BG =
-            new Color(0, 55, 88, 235);
-
-    private final Color CARD_BORDER =
-            new Color(138, 207, 248, 90);
-
-    private final Color INPUT_BG =
-            new Color(8, 67, 99);
-
-    private final Color INPUT_BORDER =
-            new Color(138, 207, 248, 100);
-
-    private final Color TEXT_WHITE =
-            Color.WHITE;
-
-    private final Color TEXT_MUTED =
-            new Color(190, 220, 235);
-
-    private final Color BTN_TEXT =
-            new Color(20, 55, 70);
-
-    // =====================================================
-    // CONSTRUCTOR
-    // =====================================================
+    private static final Color SUCCESS = new Color(48, 148, 94);
+    private static final Color SUCCESS_BG = new Color(233, 248, 240);
 
     public TrackParcelPanel(User user) {
-
         this.user = user;
 
-        setLayout(
-                new GridBagLayout()
-        );
-    }
+        setOpaque(false);
+        setLayout(new BorderLayout());
 
-    // =====================================================
-    // INITIALIZE UI
-    // =====================================================
-
-    {
         buildUI();
     }
 
-    // =====================================================
-    // BUILD UI
-    // =====================================================
-
     private void buildUI() {
 
-        // =================================================
-        // MAIN CARD
-        // =================================================
-
-        JPanel mainPanel =
-                new JPanel() {
+        JPanel mainCard =
+                new JPanel(
+                        new BorderLayout(
+                                0,
+                                18
+                        )
+                ) {
 
                     @Override
                     protected void paintComponent(
@@ -106,131 +67,196 @@ public class TrackParcelPanel extends JPanel {
 
                         super.paintComponent(g);
 
-                        Graphics2D g2d =
+                        Graphics2D g2 =
                                 (Graphics2D) g.create();
 
-                        g2d.setRenderingHint(
+                        g2.setRenderingHint(
                                 RenderingHints.KEY_ANTIALIASING,
                                 RenderingHints.VALUE_ANTIALIAS_ON
                         );
 
-                        // Card background
-                        g2d.setColor(
-                                CARD_BG
-                        );
+                        g2.setColor(WHITE);
 
-                        g2d.fill(
+                        g2.fill(
                                 new RoundRectangle2D.Float(
                                         0,
                                         0,
                                         getWidth(),
                                         getHeight(),
-                                        24,
-                                        24
+                                        22,
+                                        22
                                 )
                         );
 
-                        // Card border
-                        g2d.setColor(
-                                CARD_BORDER
-                        );
+                        g2.setColor(BORDER);
 
-                        g2d.setStroke(
-                                new BasicStroke(
-                                        1.2f
-                                )
-                        );
-
-                        g2d.draw(
+                        g2.draw(
                                 new RoundRectangle2D.Float(
-                                        1,
-                                        1,
-                                        getWidth() - 2,
-                                        getHeight() - 2,
-                                        24,
-                                        24
+                                        0.5f,
+                                        0.5f,
+                                        getWidth() - 1,
+                                        getHeight() - 1,
+                                        22,
+                                        22
                                 )
                         );
 
-                        // Gold accent
-                        g2d.setColor(
-                                GOLD
-                        );
+                        g2.setColor(ORANGE);
 
-                        g2d.fillRoundRect(
-                                30,
+                        g2.fillRoundRect(
+                                26,
                                 0,
-                                getWidth() - 60,
+                                105,
                                 4,
                                 4,
                                 4
                         );
 
-                        g2d.dispose();
+                        g2.dispose();
                     }
                 };
 
-        mainPanel.setOpaque(false);
+        mainCard.setOpaque(false);
 
-        mainPanel.setLayout(
-                new BorderLayout(
-                        0,
-                        18
-                )
-        );
-
-        mainPanel.setPreferredSize(
-                new Dimension(
-                        620,
-                        500
-                )
-        );
-
-        mainPanel.setBorder(
+        mainCard.setBorder(
                 new EmptyBorder(
                         24,
-                        30,
+                        28,
                         24,
-                        30
+                        28
                 )
         );
 
-        // =================================================
-        // TITLE
-        // =================================================
+        mainCard.add(
+                createHeader(),
+                BorderLayout.NORTH
+        );
 
-        JPanel titlePanel =
+        mainCard.add(
+                createContent(),
+                BorderLayout.CENTER
+        );
+
+        add(
+                mainCard,
+                BorderLayout.CENTER
+        );
+    }
+
+    @Override
+    protected void paintComponent(
+            Graphics g
+    ) {
+
+        super.paintComponent(g);
+
+        Graphics2D g2 =
+                (Graphics2D) g.create();
+
+        g2.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON
+        );
+
+        g2.setColor(BG);
+
+        g2.fillRect(
+                0,
+                0,
+                getWidth(),
+                getHeight()
+        );
+
+        g2.setColor(
+                new Color(
+                        196,
+                        226,
+                        243,
+                        90
+                )
+        );
+
+        g2.fill(
+                new Ellipse2D.Float(
+                        -120,
+                        -120,
+                        360,
+                        360
+                )
+        );
+
+        g2.setColor(
+                new Color(
+                        179,
+                        216,
+                        237,
+                        65
+                )
+        );
+
+        g2.fill(
+                new Ellipse2D.Float(
+                        getWidth() - 280,
+                        getHeight() - 260,
+                        450,
+                        450
+                )
+        );
+
+        g2.setColor(
+                new Color(
+                        ORANGE.getRed(),
+                        ORANGE.getGreen(),
+                        ORANGE.getBlue(),
+                        65
+                )
+        );
+
+        g2.fillOval(
+                55,
+                getHeight() - 85,
+                7,
+                7
+        );
+
+        g2.dispose();
+    }
+
+    private JPanel createHeader() {
+
+        JPanel header =
+                new JPanel(
+                        new BorderLayout()
+                );
+
+        header.setOpaque(false);
+
+        JPanel titleGroup =
                 new JPanel();
 
-        titlePanel.setOpaque(false);
+        titleGroup.setOpaque(false);
 
-        titlePanel.setLayout(
+        titleGroup.setLayout(
                 new BoxLayout(
-                        titlePanel,
+                        titleGroup,
                         BoxLayout.Y_AXIS
                 )
         );
 
-        JLabel icon =
+        JLabel section =
                 new JLabel(
-                        "⌕"
+                        "TRACKING"
                 );
 
-        icon.setFont(
+        section.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        30
+                        9
                 )
         );
 
-        icon.setForeground(
-                GOLD
-        );
-
-        icon.setAlignmentX(
-                Component.CENTER_ALIGNMENT
-        );
+        section.setForeground(ORANGE);
 
         JLabel title =
                 new JLabel(
@@ -241,112 +267,224 @@ public class TrackParcelPanel extends JPanel {
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        23
+                        28
                 )
         );
 
-        title.setForeground(
-                TEXT_WHITE
-        );
-
-        title.setAlignmentX(
-                Component.CENTER_ALIGNMENT
-        );
+        title.setForeground(BLACK);
 
         JLabel subtitle =
                 new JLabel(
-                        "Enter your parcel ID to view delivery information"
+                        "Enter your parcel ID to check the current delivery status"
                 );
 
         subtitle.setFont(
                 new Font(
                         "SansSerif",
                         Font.PLAIN,
-                        12
+                        11
                 )
         );
 
-        subtitle.setForeground(
-                TEXT_MUTED
+        subtitle.setForeground(TEXT_MUTED);
+
+        titleGroup.add(section);
+
+        titleGroup.add(
+                Box.createVerticalStrut(5)
         );
 
-        subtitle.setAlignmentX(
-                Component.CENTER_ALIGNMENT
+        titleGroup.add(title);
+
+        titleGroup.add(
+                Box.createVerticalStrut(5)
         );
 
-        titlePanel.add(
-                icon
+        titleGroup.add(subtitle);
+
+        header.add(
+                titleGroup,
+                BorderLayout.WEST
         );
 
-        titlePanel.add(
-                Box.createVerticalStrut(
-                        2
-                )
-        );
-
-        titlePanel.add(
-                title
-        );
-
-        titlePanel.add(
-                Box.createVerticalStrut(
-                        4
-                )
-        );
-
-        titlePanel.add(
-                subtitle
-        );
-
-        mainPanel.add(
-                titlePanel,
-                BorderLayout.NORTH
-        );
-
-        // =================================================
-        // CENTER AREA
-        // =================================================
-
-        JPanel centerPanel =
+        JPanel status =
                 new JPanel(
                         new BorderLayout(
-                                0,
-                                15
-                        )
-                );
-
-        centerPanel.setOpaque(false);
-
-        // =================================================
-        // SEARCH PANEL
-        // =================================================
-
-        JPanel searchPanel =
-                new JPanel(
-                        new BorderLayout(
-                                10,
+                                7,
                                 0
                         )
                 );
 
-        searchPanel.setOpaque(false);
+        status.setOpaque(true);
 
-        JLabel searchLabel =
-                new JLabel(
-                        "Parcel ID"
-                );
+        status.setBackground(
+                SUCCESS_BG
+        );
 
-        searchLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        12
+        status.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(
+                                new Color(
+                                        188,
+                                        226,
+                                        204
+                                ),
+                                1,
+                                true
+                        ),
+                        new EmptyBorder(
+                                8,
+                                11,
+                                8,
+                                11
+                        )
                 )
         );
 
-        searchLabel.setForeground(
-                SKY_BLUE
+        JLabel dot =
+                new JLabel(
+                        "●"
+                );
+
+        dot.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        11
+                )
         );
+
+        dot.setForeground(SUCCESS);
+
+        JLabel statusText =
+                new JLabel(
+                        "LIVE STATUS"
+                );
+
+        statusText.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        8
+                )
+        );
+
+        statusText.setForeground(
+                new Color(
+                        48,
+                        114,
+                        76
+                )
+        );
+
+        status.add(
+                dot,
+                BorderLayout.WEST
+        );
+
+        status.add(
+                statusText,
+                BorderLayout.CENTER
+        );
+
+        header.add(
+                status,
+                BorderLayout.EAST
+        );
+
+        return header;
+    }
+
+    private JPanel createContent() {
+
+        JPanel content =
+                new JPanel(
+                        new BorderLayout(
+                                0,
+                                16
+                        )
+                );
+
+        content.setOpaque(false);
+
+        content.add(
+                createSearchCard(),
+                BorderLayout.NORTH
+        );
+
+        content.add(
+                createResultCard(),
+                BorderLayout.CENTER
+        );
+
+        return content;
+    }
+
+    private JPanel createSearchCard() {
+
+        JPanel card =
+                createWhiteCard();
+
+        card.setLayout(
+                new BorderLayout(
+                        16,
+                        0
+                )
+        );
+
+        JPanel labelPanel =
+                new JPanel();
+
+        labelPanel.setOpaque(false);
+
+        labelPanel.setLayout(
+                new BoxLayout(
+                        labelPanel,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        JLabel small =
+                new JLabel(
+                        "PARCEL ID"
+                );
+
+        small.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        9
+                )
+        );
+
+        small.setForeground(
+                ORANGE
+        );
+
+        JLabel title =
+                new JLabel(
+                        "Tracking Number"
+                );
+
+        title.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        13
+                )
+        );
+
+        title.setForeground(
+                TEXT_DARK
+        );
+
+        labelPanel.add(small);
+
+        labelPanel.add(
+                Box.createVerticalStrut(4)
+        );
+
+        labelPanel.add(title);
 
         parcelIdField =
                 new JTextField();
@@ -360,155 +498,31 @@ public class TrackParcelPanel extends JPanel {
         );
 
         JButton trackButton =
-                createGoldenButton(
-                        "⌕  Track"
+                createPrimaryButton(
+                        "Track Parcel  →"
                 );
 
         trackButton.setPreferredSize(
                 new Dimension(
-                        105,
-                        38
+                        145,
+                        42
                 )
         );
 
-        searchPanel.add(
-                searchLabel,
+        card.add(
+                labelPanel,
                 BorderLayout.WEST
         );
 
-        searchPanel.add(
+        card.add(
                 parcelIdField,
                 BorderLayout.CENTER
         );
 
-        searchPanel.add(
+        card.add(
                 trackButton,
                 BorderLayout.EAST
         );
-
-        centerPanel.add(
-                searchPanel,
-                BorderLayout.NORTH
-        );
-
-        // =================================================
-        // RESULT AREA
-        // =================================================
-
-        resultArea =
-                new JTextArea();
-
-        resultArea.setEditable(
-                false
-        );
-
-        resultArea.setFont(
-                new Font(
-                        "Monospaced",
-                        Font.PLAIN,
-                        13
-                )
-        );
-
-        resultArea.setForeground(
-                TEXT_WHITE
-        );
-
-        resultArea.setBackground(
-                new Color(
-                        4,
-                        48,
-                        75
-                )
-        );
-
-        resultArea.setCaretColor(
-                TEXT_WHITE
-        );
-
-        resultArea.setLineWrap(
-                true
-        );
-
-        resultArea.setWrapStyleWord(
-                true
-        );
-
-        resultArea.setBorder(
-                new EmptyBorder(
-                        15,
-                        17,
-                        15,
-                        17
-                )
-        );
-
-        resultArea.setText(
-                "Parcel information will appear here..."
-        );
-
-        resultArea.setForeground(
-                TEXT_MUTED
-        );
-
-        JScrollPane scrollPane =
-                new JScrollPane(
-                        resultArea
-                );
-
-        scrollPane.setOpaque(
-                false
-        );
-
-        scrollPane.getViewport().setOpaque(
-                true
-        );
-
-        scrollPane.getViewport().setBackground(
-                new Color(
-                        4,
-                        48,
-                        75
-                )
-        );
-
-        scrollPane.setBorder(
-                BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(
-                                INPUT_BORDER,
-                                1,
-                                true
-                        ),
-                        BorderFactory.createEmptyBorder(
-                                1,
-                                1,
-                                1,
-                                1
-                        )
-                )
-        );
-
-        centerPanel.add(
-                scrollPane,
-                BorderLayout.CENTER
-        );
-
-        mainPanel.add(
-                centerPanel,
-                BorderLayout.CENTER
-        );
-
-        // =================================================
-        // ADD CARD
-        // =================================================
-
-        add(
-                mainPanel
-        );
-
-        // =================================================
-        // ACTION LISTENERS
-        // =================================================
 
         trackButton.addActionListener(
                 e -> trackParcel()
@@ -517,115 +531,394 @@ public class TrackParcelPanel extends JPanel {
         parcelIdField.addActionListener(
                 e -> trackParcel()
         );
+
+        return card;
     }
 
-    // =====================================================
-    // ROOT BACKGROUND
-    // =====================================================
+    private JPanel createResultCard() {
 
-    @Override
-    protected void paintComponent(
-            Graphics g
-    ) {
+        JPanel card =
+                new JPanel(
+                        new BorderLayout(
+                                0,
+                                14
+                        )
+                ) {
 
-        super.paintComponent(g);
+                    @Override
+                    protected void paintComponent(
+                            Graphics g
+                    ) {
 
-        Graphics2D g2d =
-                (Graphics2D) g.create();
+                        super.paintComponent(g);
 
-        g2d.setRenderingHint(
-                RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON
+                        Graphics2D g2 =
+                                (Graphics2D) g.create();
+
+                        g2.setRenderingHint(
+                                RenderingHints.KEY_ANTIALIASING,
+                                RenderingHints.VALUE_ANTIALIAS_ON
+                        );
+
+                        g2.setColor(WHITE);
+
+                        g2.fill(
+                                new RoundRectangle2D.Float(
+                                        0,
+                                        0,
+                                        getWidth(),
+                                        getHeight(),
+                                        18,
+                                        18
+                                )
+                        );
+
+                        g2.setColor(BORDER);
+
+                        g2.draw(
+                                new RoundRectangle2D.Float(
+                                        0.5f,
+                                        0.5f,
+                                        getWidth() - 1,
+                                        getHeight() - 1,
+                                        18,
+                                        18
+                                )
+                        );
+
+                        g2.setColor(BLUE);
+
+                        g2.fillRoundRect(
+                                22,
+                                0,
+                                90,
+                                4,
+                                4,
+                                4
+                        );
+
+                        g2.dispose();
+                    }
+                };
+
+        card.setOpaque(false);
+
+        card.setBorder(
+                new EmptyBorder(
+                        20,
+                        22,
+                        20,
+                        22
+                )
         );
 
-        int width =
-                getWidth();
-
-        int height =
-                getHeight();
-
-        // Deep blue gradient
-        GradientPaint background =
-                new GradientPaint(
-                        0,
-                        0,
-                        BG_TOP,
-                        width,
-                        height,
-                        BG_BOTTOM
+        JPanel header =
+                new JPanel(
+                        new BorderLayout()
                 );
 
-        g2d.setPaint(
-                background
-        );
+        header.setOpaque(false);
 
-        g2d.fillRect(
-                0,
-                0,
-                width,
-                height
-        );
+        JPanel titleGroup =
+                new JPanel();
 
-        // Top-right glow
-        g2d.setColor(
-                new Color(
-                        138,
-                        207,
-                        248,
-                        16
+        titleGroup.setOpaque(false);
+
+        titleGroup.setLayout(
+                new BoxLayout(
+                        titleGroup,
+                        BoxLayout.Y_AXIS
                 )
         );
 
-        g2d.fillOval(
-                width - 230,
-                -110,
-                310,
-                310
+        JLabel title =
+                new JLabel(
+                        "Delivery Information"
+                );
+
+        title.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        18
+                )
         );
 
-        // Bottom-left glow
-        g2d.setColor(
+        title.setForeground(BLACK);
+
+        JLabel subtitle =
+                new JLabel(
+                        "Your parcel tracking details will appear here"
+                );
+
+        subtitle.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        10
+                )
+        );
+
+        subtitle.setForeground(TEXT_MUTED);
+
+        titleGroup.add(title);
+
+        titleGroup.add(
+                Box.createVerticalStrut(4)
+        );
+
+        titleGroup.add(subtitle);
+
+        header.add(
+                titleGroup,
+                BorderLayout.WEST
+        );
+
+        JLabel ready =
+                new JLabel(
+                        "TRACKING READY"
+                );
+
+        ready.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        8
+                )
+        );
+
+        ready.setForeground(ORANGE);
+
+        ready.setOpaque(true);
+
+        ready.setBackground(
                 new Color(
                         255,
-                        212,
-                        68,
-                        12
+                        243,
+                        235
                 )
         );
 
-        g2d.fillOval(
-                -130,
-                height - 180,
-                280,
-                280
+        ready.setBorder(
+                new EmptyBorder(
+                        7,
+                        10,
+                        7,
+                        10
+                )
         );
 
-        // Decorative dots
-        g2d.setColor(
+        header.add(
+                ready,
+                BorderLayout.EAST
+        );
+
+        card.add(
+                header,
+                BorderLayout.NORTH
+        );
+
+        resultArea =
+                new JTextArea();
+
+        resultArea.setEditable(false);
+
+        resultArea.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        13
+                )
+        );
+
+        resultArea.setForeground(
+                TEXT_MUTED
+        );
+
+        resultArea.setBackground(
                 new Color(
-                        138,
-                        207,
-                        248,
-                        70
+                        247,
+                        250,
+                        252
                 )
         );
 
-        for (int i = 0; i < 5; i++) {
+        resultArea.setCaretColor(
+                ORANGE
+        );
 
-            g2d.fillOval(
-                    25 + (i * 20),
-                    25,
-                    4,
-                    4
-            );
-        }
+        resultArea.setLineWrap(true);
 
-        g2d.dispose();
+        resultArea.setWrapStyleWord(true);
+
+        resultArea.setBorder(
+                new EmptyBorder(
+                        20,
+                        22,
+                        20,
+                        22
+                )
+        );
+
+        resultArea.setText(
+                "Enter a Parcel ID above to view delivery information."
+        );
+
+        JScrollPane scrollPane =
+                new JScrollPane(
+                        resultArea
+                );
+
+        scrollPane.setOpaque(false);
+
+        scrollPane.getViewport().setOpaque(true);
+
+        scrollPane.getViewport().setBackground(
+                new Color(
+                        247,
+                        250,
+                        252
+                )
+        );
+
+        scrollPane.setBorder(
+                BorderFactory.createLineBorder(
+                        BORDER,
+                        1,
+                        true
+                )
+        );
+
+        scrollPane.getVerticalScrollBar()
+                .setUnitIncrement(14);
+
+        card.add(
+                scrollPane,
+                BorderLayout.CENTER
+        );
+
+        JPanel footer =
+                new JPanel(
+                        new BorderLayout()
+                );
+
+        footer.setOpaque(false);
+
+        JLabel info =
+                new JLabel(
+                        "●  Enter a valid parcel ID to retrieve its current status"
+                );
+
+        info.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        9
+                )
+        );
+
+        info.setForeground(
+                TEXT_MUTED
+        );
+
+        JLabel tracking =
+                new JLabel(
+                        "PARCEL TRACKING"
+                );
+
+        tracking.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        9
+                )
+        );
+
+        tracking.setForeground(
+                BLUE
+        );
+
+        footer.add(
+                info,
+                BorderLayout.WEST
+        );
+
+        footer.add(
+                tracking,
+                BorderLayout.EAST
+        );
+
+        card.add(
+                footer,
+                BorderLayout.SOUTH
+        );
+
+        return card;
     }
 
-    // =====================================================
-    // INPUT FIELD STYLE
-    // =====================================================
+    private JPanel createWhiteCard() {
+
+        JPanel card =
+                new JPanel() {
+
+                    @Override
+                    protected void paintComponent(
+                            Graphics g
+                    ) {
+
+                        super.paintComponent(g);
+
+                        Graphics2D g2 =
+                                (Graphics2D) g.create();
+
+                        g2.setRenderingHint(
+                                RenderingHints.KEY_ANTIALIASING,
+                                RenderingHints.VALUE_ANTIALIAS_ON
+                        );
+
+                        g2.setColor(WHITE);
+
+                        g2.fill(
+                                new RoundRectangle2D.Float(
+                                        0,
+                                        0,
+                                        getWidth(),
+                                        getHeight(),
+                                        18,
+                                        18
+                                )
+                        );
+
+                        g2.setColor(BORDER);
+
+                        g2.draw(
+                                new RoundRectangle2D.Float(
+                                        0.5f,
+                                        0.5f,
+                                        getWidth() - 1,
+                                        getHeight() - 1,
+                                        18,
+                                        18
+                                )
+                        );
+
+                        g2.dispose();
+                    }
+                };
+
+        card.setOpaque(false);
+
+        card.setBorder(
+                new EmptyBorder(
+                        16,
+                        18,
+                        16,
+                        18
+                )
+        );
+
+        return card;
+    }
 
     private void styleInputField(
             JTextField field
@@ -638,11 +931,11 @@ public class TrackParcelPanel extends JPanel {
         );
 
         field.setForeground(
-                TEXT_WHITE
+                TEXT_DARK
         );
 
         field.setCaretColor(
-                SOFT_YELLOW
+                ORANGE
         );
 
         field.setFont(
@@ -661,11 +954,25 @@ public class TrackParcelPanel extends JPanel {
                                 true
                         ),
                         BorderFactory.createEmptyBorder(
-                                7,
-                                11,
-                                7,
-                                11
+                                8,
+                                12,
+                                8,
+                                12
                         )
+                )
+        );
+
+        field.setPreferredSize(
+                new Dimension(
+                        0,
+                        42
+                )
+        );
+
+        field.setMaximumSize(
+                new Dimension(
+                        Integer.MAX_VALUE,
+                        42
                 )
         );
 
@@ -680,15 +987,15 @@ public class TrackParcelPanel extends JPanel {
                         field.setBorder(
                                 BorderFactory.createCompoundBorder(
                                         BorderFactory.createLineBorder(
-                                                SOFT_YELLOW,
-                                                2,
+                                                ORANGE,
+                                                1,
                                                 true
                                         ),
                                         BorderFactory.createEmptyBorder(
-                                                6,
-                                                10,
-                                                6,
-                                                10
+                                                8,
+                                                12,
+                                                8,
+                                                12
                                         )
                                 )
                         );
@@ -707,114 +1014,68 @@ public class TrackParcelPanel extends JPanel {
                                                 true
                                         ),
                                         BorderFactory.createEmptyBorder(
-                                                7,
-                                                11,
-                                                7,
-                                                11
+                                                8,
+                                                12,
+                                                8,
+                                                12
                                         )
                                 )
                         );
                     }
                 }
         );
-
-        field.setMaximumSize(
-                new Dimension(
-                        Integer.MAX_VALUE,
-                        38
-                )
-        );
     }
 
-    // =====================================================
-    // GOLDEN BUTTON
-    // =====================================================
-
-    private JButton createGoldenButton(
+    private JButton createPrimaryButton(
             String text
     ) {
 
         JButton button =
                 new JButton(text) {
 
-                    private boolean isHovered =
-                            false;
-
-                    {
-                        addMouseListener(
-                                new MouseAdapter() {
-
-                                    @Override
-                                    public void mouseEntered(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered = true;
-                                        repaint();
-                                    }
-
-                                    @Override
-                                    public void mouseExited(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered = false;
-                                        repaint();
-                                    }
-                                }
-                        );
-                    }
-
                     @Override
                     protected void paintComponent(
                             Graphics g
                     ) {
 
-                        Graphics2D g2d =
+                        Graphics2D g2 =
                                 (Graphics2D) g.create();
 
-                        g2d.setRenderingHint(
+                        g2.setRenderingHint(
                                 RenderingHints.KEY_ANTIALIASING,
                                 RenderingHints.VALUE_ANTIALIAS_ON
                         );
 
                         Color top =
-                                isHovered
+                                getModel().isRollover()
                                         ? new Color(
                                         255,
-                                        230,
-                                        100
-                                )
-                                        : GOLD;
-
-                        Color bottom =
-                                isHovered
-                                        ? new Color(
-                                        255,
-                                        190,
-                                        45
+                                        151,
+                                        68
                                 )
                                         : new Color(
                                         255,
-                                        195,
-                                        35
+                                        137,
+                                        48
                                 );
 
-                        GradientPaint gp =
+                        Color bottom =
+                                getModel().isRollover()
+                                        ? ORANGE_HOVER
+                                        : ORANGE;
+
+                        g2.setPaint(
                                 new GradientPaint(
                                         0,
                                         0,
                                         top,
+                                        getWidth(),
                                         0,
-                                        getHeight(),
                                         bottom
-                                );
-
-                        g2d.setPaint(
-                                gp
+                                )
                         );
 
-                        g2d.fill(
+                        g2.fill(
                                 new RoundRectangle2D.Float(
                                         0,
                                         0,
@@ -825,26 +1086,7 @@ public class TrackParcelPanel extends JPanel {
                                 )
                         );
 
-                        // Highlight
-                        g2d.setColor(
-                                new Color(
-                                        255,
-                                        255,
-                                        255,
-                                        45
-                                )
-                        );
-
-                        g2d.fillRoundRect(
-                                1,
-                                1,
-                                getWidth() - 2,
-                                getHeight() / 2,
-                                11,
-                                11
-                        );
-
-                        g2d.dispose();
+                        g2.dispose();
 
                         super.paintComponent(g);
                     }
@@ -854,25 +1096,19 @@ public class TrackParcelPanel extends JPanel {
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        13
+                        12
                 )
         );
 
-        button.setForeground(
-                BTN_TEXT
-        );
+        button.setForeground(WHITE);
 
-        button.setContentAreaFilled(
-                false
-        );
+        button.setContentAreaFilled(false);
 
-        button.setFocusPainted(
-                false
-        );
+        button.setOpaque(false);
 
-        button.setBorderPainted(
-                false
-        );
+        button.setFocusPainted(false);
+
+        button.setBorderPainted(false);
 
         button.setCursor(
                 new Cursor(
@@ -882,10 +1118,6 @@ public class TrackParcelPanel extends JPanel {
 
         return button;
     }
-
-    // =====================================================
-    // TRACK PARCEL
-    // =====================================================
 
     private void trackParcel() {
 
@@ -920,97 +1152,133 @@ public class TrackParcelPanel extends JPanel {
                     new StringBuilder();
 
             result.append(
-                    "========== PARCEL DETAILS ==========\n\n"
+                    "PARCEL DETAILS\n"
             );
 
             result.append(
-                    "Parcel ID       : "
-            ).append(
-                    tracked.getParcelID()
-            ).append(
-                    "\n"
+                    "────────────────────────────────────────\n\n"
             );
 
             result.append(
-                    "Parcel Name     : "
-            ).append(
-                    tracked.getParcelName()
-            ).append(
-                    "\n"
+                    "Parcel ID\n"
             );
 
             result.append(
-                    "Receiver Address: "
-            ).append(
-                    tracked.getReciverAddress()
-            ).append(
-                    "\n"
+                    safeValue(
+                            tracked.getParcelID()
+                    )
             );
 
             result.append(
-                    "Receiver Phone  : "
-            ).append(
-                    tracked.getReciverPhone()
-            ).append(
-                    "\n"
+                    "\n\nParcel Name\n"
             );
 
             result.append(
-                    "Weight          : "
-            ).append(
-                    tracked.getWeight()
-            ).append(
-                    " kg\n"
+                    safeValue(
+                            tracked.getParcelName()
+                    )
             );
 
             result.append(
-                    "Delivery Charge : "
-            ).append(
-                    tracked.getDeliveryCharge()
-            ).append(
-                    "\n"
+                    "\n\nReceiver Address\n"
             );
 
             result.append(
-                    "Status          : "
-            ).append(
-                    tracked.getParcelStatus()
-            ).append(
-                    "\n"
+                    safeValue(
+                            tracked.getReciverAddress()
+                    )
+            );
+
+            result.append(
+                    "\n\nReceiver Phone\n"
+            );
+
+            result.append(
+                    safeValue(
+                            tracked.getReciverPhone()
+                    )
+            );
+
+            result.append(
+                    "\n\nWeight\n"
+            );
+
+            result.append(
+                    safeValue(
+                            String.valueOf(
+                                    tracked.getWeight()
+                            )
+                    )
+            );
+
+            result.append(
+                    " kg"
+            );
+
+            result.append(
+                    "\n\nDelivery Charge\n"
+            );
+
+            result.append(
+                    safeValue(
+                            String.valueOf(
+                                    tracked.getDeliveryCharge()
+                            )
+                    )
+            );
+
+            result.append(
+                    "\n\nStatus\n"
+            );
+
+            result.append(
+                    safeValue(
+                            tracked.getParcelStatus()
+                    )
+            );
+
+            result.append(
+                    "\n\nRider ID\n"
             );
 
             String riderId =
                     tracked.getRiderId();
 
             result.append(
-                    "Rider ID        : "
-            ).append(
                     riderId == null
+                            || riderId.trim().isEmpty()
                             ? "Not Assigned"
                             : riderId
-            ).append(
-                    "\n"
             );
 
             result.append(
-                    "\n===================================="
+                    "\n\n────────────────────────────────────────"
             );
 
             resultArea.setForeground(
-                    TEXT_WHITE
+                    TEXT_DARK
             );
 
             resultArea.setText(
                     result.toString()
             );
 
-            resultArea.setCaretPosition(
-                    0
-            );
+            resultArea.setCaretPosition(0);
 
         } catch (NotFoundException e) {
 
-            resultArea.setText("");
+            resultArea.setForeground(
+                    new Color(
+                            175,
+                            75,
+                            65
+                    )
+            );
+
+            resultArea.setText(
+                    "Parcel not found.\n\n"
+                            + e.getMessage()
+            );
 
             JOptionPane.showMessageDialog(
                     this,
@@ -1024,14 +1292,33 @@ public class TrackParcelPanel extends JPanel {
                 | InvalidAmountException e
         ) {
 
-            resultArea.setText("");
+            resultArea.setForeground(
+                    new Color(
+                            175,
+                            75,
+                            65
+                    )
+            );
+
+            resultArea.setText(
+                    e.getMessage()
+            );
 
             JOptionPane.showMessageDialog(
                     this,
                     e.getMessage(),
-                    "Error",
+                    "Tracking Error",
                     JOptionPane.ERROR_MESSAGE
             );
         }
+    }
+
+    private String safeValue(
+            String value
+    ) {
+
+        return value == null
+                ? "N/A"
+                : value;
     }
 }

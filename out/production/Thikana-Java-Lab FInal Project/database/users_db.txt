@@ -4,3 +4,4 @@ Test User 3|user3@test.com|123456|USER|U28a32de252e741f79357394c9c28c120#
 Test User 4|user4@test.com|123456|ADMIN|U60029eaf648d4a63bf1ada0e8086273b#
 Test User 5|user5@test.com|123456|USER|U98c157b1b35c47e78be5d8b27a307b2e#
 Test Rider|rider@test.com|123456|RIDER|Rbbe92de22b0c4caaaaa4a7f7bfe78c26#
+admin|admin1@gmail.com|123456|ADMIN|Ud8dcb2f5e78b4dde89c858a941667b10#

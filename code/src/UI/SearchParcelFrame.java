@@ -23,1065 +23,379 @@ public class SearchParcelFrame extends JPanel {
     private JTextField parcelIdField;
     private JTextArea resultArea;
 
-    // =========================================================
-    // THEME COLORS
-    // =========================================================
-
-    private final Color BLUE =
-            new Color(0, 97, 153);
-
-    private final Color SKY_BLUE =
-            new Color(138, 207, 248);
-
-    private final Color SOFT_YELLOW =
-            new Color(244, 235, 108);
-
-    private final Color GOLD =
-            new Color(255, 212, 68);
-
-    private final Color BG_TOP =
-            new Color(3, 39, 63);
-
-    private final Color BG_BOTTOM =
-            new Color(0, 72, 110);
-
-    private final Color CARD_BG =
-            new Color(0, 55, 88, 235);
-
-    private final Color CARD_BORDER =
-            new Color(138, 207, 248, 90);
-
-    private final Color INPUT_BG =
-            new Color(248, 252, 255);
-
-    private final Color INPUT_TEXT =
-            new Color(30, 45, 55);
-
-    private final Color INPUT_BORDER =
-            new Color(138, 207, 248, 130);
-
-    private final Color TEXT_WHITE =
-            Color.WHITE;
-
-    private final Color TEXT_MUTED =
-            new Color(190, 220, 235);
-
-    // =========================================================
-    // CONSTRUCTOR
-    // =========================================================
+    private final Color BG = new Color(241, 248, 253);
+    private final Color WHITE = Color.WHITE;
+    private final Color BLACK = new Color(15, 18, 20);
+    private final Color TEXT_DARK = new Color(31, 38, 43);
+    private final Color TEXT_MUTED = new Color(103, 117, 128);
+    private final Color ORANGE = new Color(248, 116, 35);
+    private final Color ORANGE_HOVER = new Color(235, 94, 20);
+    private final Color BLUE = new Color(0, 97, 153);
+    private final Color LIGHT_BLUE = new Color(225, 240, 249);
+    private final Color BORDER = new Color(216, 227, 234);
+    private final Color INPUT_BG = new Color(249, 251, 252);
+    private final Color INPUT_BORDER = new Color(198, 211, 220);
+    private final Color SUCCESS = new Color(48, 148, 94);
+    private final Color SUCCESS_BG = new Color(233, 248, 240);
 
     public SearchParcelFrame(User user) {
-
         this.user = user;
 
         setLayout(new BorderLayout());
-        setOpaque(false);
+        setBackground(BG);
 
         buildUI();
     }
 
-    // =========================================================
-    // BUILD UI
-    // =========================================================
-
     private void buildUI() {
+        JPanel page = new JPanel(new BorderLayout(0, 18));
+        page.setOpaque(false);
+        page.setBorder(new EmptyBorder(24, 28, 24, 28));
 
-        // =====================================================
-        // ROOT BACKGROUND
-        // =====================================================
+        JPanel header = new JPanel(new BorderLayout(14, 0));
+        header.setOpaque(false);
 
-        JPanel rootPanel = new JPanel() {
+        JPanel icon = new RoundedPanel(BLUE, 16);
+        icon.setPreferredSize(new Dimension(52, 52));
+        icon.setLayout(new GridBagLayout());
 
-            @Override
-            protected void paintComponent(Graphics g) {
+        JLabel iconLabel = new JLabel("⌕");
+        iconLabel.setFont(new Font("SansSerif", Font.BOLD, 30));
+        iconLabel.setForeground(Color.WHITE);
+        icon.add(iconLabel);
 
-                super.paintComponent(g);
+        header.add(icon, BorderLayout.WEST);
 
-                Graphics2D g2d =
-                        (Graphics2D) g.create();
+        JPanel titlePanel = new JPanel();
+        titlePanel.setOpaque(false);
+        titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
 
-                g2d.setRenderingHint(
-                        RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON
-                );
+        JLabel smallTitle = new JLabel("PARCEL MANAGEMENT");
+        smallTitle.setFont(new Font("SansSerif", Font.BOLD, 11));
+        smallTitle.setForeground(ORANGE);
 
-                int width = getWidth();
-                int height = getHeight();
+        JLabel title = new JLabel("Search Parcel");
+        title.setFont(new Font("SansSerif", Font.BOLD, 26));
+        title.setForeground(TEXT_DARK);
 
-                GradientPaint background =
-                        new GradientPaint(
-                                0,
-                                0,
-                                BG_TOP,
-                                0,
-                                height,
-                                BG_BOTTOM
-                        );
+        JLabel subtitle = new JLabel("Find parcel information using Parcel ID");
+        subtitle.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        subtitle.setForeground(TEXT_MUTED);
 
-                g2d.setPaint(background);
+        titlePanel.add(smallTitle);
+        titlePanel.add(Box.createVerticalStrut(3));
+        titlePanel.add(title);
+        titlePanel.add(Box.createVerticalStrut(3));
+        titlePanel.add(subtitle);
 
-                g2d.fillRect(
-                        0,
-                        0,
-                        width,
-                        height
-                );
+        header.add(titlePanel, BorderLayout.CENTER);
 
-                // Top-right decorative glow
-                g2d.setColor(
-                        new Color(
-                                138,
-                                207,
-                                248,
-                                18
-                        )
-                );
+        page.add(header, BorderLayout.NORTH);
 
-                g2d.fillOval(
-                        width - 190,
-                        -90,
-                        260,
-                        260
-                );
+        JPanel mainCard = new RoundedPanel(WHITE, 22);
+        mainCard.setLayout(new BorderLayout(0, 18));
+        mainCard.setBorder(new EmptyBorder(22, 24, 22, 24));
 
-                // Bottom-left decorative glow
-                g2d.setColor(
-                        new Color(
-                                255,
-                                212,
-                                68,
-                                12
-                        )
-                );
+        JPanel searchCard = new RoundedPanel(LIGHT_BLUE, 16);
+        searchCard.setLayout(new BorderLayout(14, 0));
+        searchCard.setBorder(new EmptyBorder(16, 18, 16, 18));
 
-                g2d.fillOval(
-                        -110,
-                        height - 170,
-                        240,
-                        240
-                );
+        JPanel searchText = new JPanel();
+        searchText.setOpaque(false);
+        searchText.setLayout(new BoxLayout(searchText, BoxLayout.Y_AXIS));
 
-                // Decorative dots
-                g2d.setColor(
-                        new Color(
-                                138,
-                                207,
-                                248,
-                                90
-                        )
-                );
+        JLabel searchTitle = new JLabel("Search by Parcel ID");
+        searchTitle.setFont(new Font("SansSerif", Font.BOLD, 15));
+        searchTitle.setForeground(TEXT_DARK);
 
-                for (int i = 0; i < 6; i++) {
+        JLabel searchHint = new JLabel("Enter the unique Parcel ID to view complete details.");
+        searchHint.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        searchHint.setForeground(TEXT_MUTED);
 
-                    int x = 35 + (i * 25);
-                    int y = 30 + ((i % 2) * 18);
+        searchText.add(searchTitle);
+        searchText.add(Box.createVerticalStrut(3));
+        searchText.add(searchHint);
 
-                    g2d.fillOval(
-                            x,
-                            y,
-                            3,
-                            3
-                    );
-                }
+        JPanel fieldPanel = new JPanel(new BorderLayout(10, 0));
+        fieldPanel.setOpaque(false);
 
-                g2d.dispose();
-            }
-        };
+        parcelIdField = new JTextField();
+        styleInputField(parcelIdField);
+        parcelIdField.setToolTipText("Enter Parcel ID");
 
-        rootPanel.setOpaque(false);
+        JButton searchButton = createPrimaryButton("Search");
 
-        rootPanel.setLayout(
-                new GridBagLayout()
+        fieldPanel.add(parcelIdField, BorderLayout.CENTER);
+        fieldPanel.add(searchButton, BorderLayout.EAST);
+
+        searchCard.add(searchText, BorderLayout.CENTER);
+        searchCard.add(fieldPanel, BorderLayout.SOUTH);
+
+        mainCard.add(searchCard, BorderLayout.NORTH);
+
+        JPanel resultCard = new RoundedPanel(new Color(251, 253, 254), 16);
+        resultCard.setLayout(new BorderLayout(0, 12));
+        resultCard.setBorder(new EmptyBorder(18, 18, 18, 18));
+
+        JPanel resultHeader = new JPanel(new BorderLayout());
+        resultHeader.setOpaque(false);
+
+        JPanel resultTitlePanel = new JPanel();
+        resultTitlePanel.setOpaque(false);
+        resultTitlePanel.setLayout(new BoxLayout(resultTitlePanel, BoxLayout.Y_AXIS));
+
+        JLabel resultTitle = new JLabel("Parcel Details");
+        resultTitle.setFont(new Font("SansSerif", Font.BOLD, 17));
+        resultTitle.setForeground(TEXT_DARK);
+
+        JLabel resultSubtitle = new JLabel("Information retrieved from the parcel record");
+        resultSubtitle.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        resultSubtitle.setForeground(TEXT_MUTED);
+
+        resultTitlePanel.add(resultTitle);
+        resultTitlePanel.add(Box.createVerticalStrut(3));
+        resultTitlePanel.add(resultSubtitle);
+
+        JLabel statusBadge = new JLabel("SEARCH");
+        statusBadge.setOpaque(true);
+        statusBadge.setBackground(SUCCESS_BG);
+        statusBadge.setForeground(SUCCESS);
+        statusBadge.setFont(new Font("SansSerif", Font.BOLD, 10));
+        statusBadge.setBorder(new EmptyBorder(6, 10, 6, 10));
+
+        resultHeader.add(resultTitlePanel, BorderLayout.CENTER);
+        resultHeader.add(statusBadge, BorderLayout.EAST);
+
+        resultCard.add(resultHeader, BorderLayout.NORTH);
+
+        resultArea = new JTextArea();
+        resultArea.setEditable(false);
+        resultArea.setFocusable(false);
+        resultArea.setFont(new Font("Monospaced", Font.PLAIN, 13));
+        resultArea.setForeground(TEXT_DARK);
+        resultArea.setBackground(WHITE);
+        resultArea.setLineWrap(false);
+        resultArea.setWrapStyleWord(false);
+        resultArea.setBorder(new EmptyBorder(18, 18, 18, 18));
+
+        JScrollPane resultScrollPane = new JScrollPane(resultArea);
+        resultScrollPane.setBorder(
+                BorderFactory.createLineBorder(BORDER, 1, true)
+        );
+        resultScrollPane.setBackground(WHITE);
+        resultScrollPane.getViewport().setBackground(WHITE);
+        resultScrollPane.setHorizontalScrollBarPolicy(
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
+        );
+        resultScrollPane.setVerticalScrollBarPolicy(
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
         );
 
-        // =====================================================
-        // MAIN CARD
-        // =====================================================
+        resultCard.add(resultScrollPane, BorderLayout.CENTER);
 
-        JPanel mainPanel = new JPanel() {
+        mainCard.add(resultCard, BorderLayout.CENTER);
+
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        bottomPanel.setOpaque(false);
+
+        JButton clearButton = createOutlineButton("Clear");
+        clearButton.setPreferredSize(new Dimension(95, 38));
+
+        bottomPanel.add(clearButton);
+
+        mainCard.add(bottomPanel, BorderLayout.SOUTH);
+
+        page.add(mainCard, BorderLayout.CENTER);
+
+        add(page, BorderLayout.CENTER);
+
+        searchButton.addActionListener(e -> searchParcel());
+
+        parcelIdField.addActionListener(e -> searchParcel());
+
+        clearButton.addActionListener(e -> {
+            parcelIdField.setText("");
+            resultArea.setText("");
+            parcelIdField.requestFocus();
+        });
+    }
+
+    private void styleInputField(JTextField field) {
+        field.setOpaque(true);
+        field.setBackground(WHITE);
+        field.setForeground(TEXT_DARK);
+        field.setCaretColor(BLUE);
+        field.setFont(new Font("SansSerif", Font.PLAIN, 13));
+
+        field.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(INPUT_BORDER, 1, true),
+                        BorderFactory.createEmptyBorder(8, 12, 8, 12)
+                )
+        );
+
+        field.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                field.setBorder(
+                        BorderFactory.createCompoundBorder(
+                                BorderFactory.createLineBorder(ORANGE, 2, true),
+                                BorderFactory.createEmptyBorder(7, 11, 7, 11)
+                        )
+                );
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                field.setBorder(
+                        BorderFactory.createCompoundBorder(
+                                BorderFactory.createLineBorder(INPUT_BORDER, 1, true),
+                                BorderFactory.createEmptyBorder(8, 12, 8, 12)
+                        )
+                );
+            }
+        });
+    }
+
+    private JButton createPrimaryButton(String text) {
+        JButton button = new JButton(text) {
+
+            private boolean hovered;
+
+            {
+                addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        hovered = true;
+                        repaint();
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        hovered = false;
+                        repaint();
+                    }
+                });
+            }
 
             @Override
             protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
 
-                Graphics2D g2d =
-                        (Graphics2D) g.create();
-
-                g2d.setRenderingHint(
+                g2.setRenderingHint(
                         RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON
                 );
 
-                // Card background
-                g2d.setColor(
-                        CARD_BG
-                );
+                g2.setColor(hovered ? ORANGE_HOVER : ORANGE);
 
-                g2d.fill(
+                g2.fill(
                         new RoundRectangle2D.Float(
                                 0,
                                 0,
                                 getWidth(),
                                 getHeight(),
-                                22,
-                                22
+                                12,
+                                12
                         )
                 );
 
-                // Card border
-                g2d.setColor(
-                        CARD_BORDER
-                );
-
-                g2d.setStroke(
-                        new BasicStroke(
-                                1.2f
-                        )
-                );
-
-                g2d.draw(
-                        new RoundRectangle2D.Float(
-                                1,
-                                1,
-                                getWidth() - 2,
-                                getHeight() - 2,
-                                22,
-                                22
-                        )
-                );
-
-                g2d.dispose();
+                g2.dispose();
 
                 super.paintComponent(g);
             }
         };
 
-        mainPanel.setOpaque(false);
-
-        mainPanel.setLayout(
-                new BorderLayout(
-                        0,
-                        16
-                )
-        );
-
-        mainPanel.setPreferredSize(
-                new Dimension(
-                        580,
-                        500
-                )
-        );
-
-        mainPanel.setBorder(
-                new EmptyBorder(
-                        24,
-                        30,
-                        24,
-                        30
-                )
-        );
-
-        // =====================================================
-        // TITLE
-        // =====================================================
-
-        JPanel titlePanel =
-                new JPanel(
-                        new BorderLayout()
-                );
-
-        titlePanel.setOpaque(false);
-
-        JLabel iconLabel =
-                new JLabel("⌕");
-
-        iconLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        28
-                )
-        );
-
-        iconLabel.setForeground(
-                GOLD
-        );
-
-        iconLabel.setHorizontalAlignment(
-                SwingConstants.CENTER
-        );
-
-        iconLabel.setPreferredSize(
-                new Dimension(
-                        42,
-                        42
-                )
-        );
-
-        titlePanel.add(
-                iconLabel,
-                BorderLayout.WEST
-        );
-
-        JPanel titleTextPanel =
-                new JPanel();
-
-        titleTextPanel.setOpaque(false);
-
-        titleTextPanel.setLayout(
-                new BoxLayout(
-                        titleTextPanel,
-                        BoxLayout.Y_AXIS
-                )
-        );
-
-        JLabel titleLabel =
-                new JLabel(
-                        "Search Parcel"
-                );
-
-        titleLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        23
-                )
-        );
-
-        titleLabel.setForeground(
-                TEXT_WHITE
-        );
-
-        titleLabel.setAlignmentX(
-                Component.LEFT_ALIGNMENT
-        );
-
-        JLabel subtitleLabel =
-                new JLabel(
-                        "Find parcel information using Parcel ID"
-                );
-
-        subtitleLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.PLAIN,
-                        12
-                )
-        );
-
-        subtitleLabel.setForeground(
-                TEXT_MUTED
-        );
-
-        subtitleLabel.setAlignmentX(
-                Component.LEFT_ALIGNMENT
-        );
-
-        titleTextPanel.add(
-                titleLabel
-        );
-
-        titleTextPanel.add(
-                Box.createVerticalStrut(
-                        3
-                )
-        );
-
-        titleTextPanel.add(
-                subtitleLabel
-        );
-
-        titlePanel.add(
-                titleTextPanel,
-                BorderLayout.CENTER
-        );
-
-        mainPanel.add(
-                titlePanel,
-                BorderLayout.NORTH
-        );
-
-        // =====================================================
-        // CENTER PANEL
-        // =====================================================
-
-        JPanel centerPanel =
-                new JPanel(
-                        new BorderLayout(
-                                0,
-                                14
-                        )
-                );
-
-        centerPanel.setOpaque(false);
-
-        // =====================================================
-        // SEARCH SECTION
-        // =====================================================
-
-        JPanel searchContainer =
-                new JPanel(
-                        new BorderLayout(
-                                0,
-                                6
-                        )
-                );
-
-        searchContainer.setOpaque(false);
-
-        JLabel parcelIdLabel =
-                new JLabel(
-                        "PARCEL ID"
-                );
-
-        parcelIdLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        11
-                )
-        );
-
-        parcelIdLabel.setForeground(
-                SKY_BLUE
-        );
-
-        searchContainer.add(
-                parcelIdLabel,
-                BorderLayout.NORTH
-        );
-
-        JPanel searchPanel =
-                new JPanel(
-                        new BorderLayout(
-                                10,
-                                0
-                        )
-                );
-
-        searchPanel.setOpaque(false);
-
-        parcelIdField =
-                new JTextField();
-
-        styleInputField(
-                parcelIdField
-        );
-
-        parcelIdField.setToolTipText(
-                "Enter Parcel ID"
-        );
-
-        JButton searchButton =
-                createGoldenButton(
-                        "Search"
-                );
-
-        searchButton.setPreferredSize(
-                new Dimension(
-                        105,
-                        36
-                )
-        );
-
-        searchPanel.add(
-                parcelIdField,
-                BorderLayout.CENTER
-        );
-
-        searchPanel.add(
-                searchButton,
-                BorderLayout.EAST
-        );
-
-        searchContainer.add(
-                searchPanel,
-                BorderLayout.CENTER
-        );
-
-        centerPanel.add(
-                searchContainer,
-                BorderLayout.NORTH
-        );
-
-        // =====================================================
-        // RESULT SECTION
-        // =====================================================
-
-        JLabel resultLabel =
-                new JLabel(
-                        "PARCEL DETAILS"
-                );
-
-        resultLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        11
-                )
-        );
-
-        resultLabel.setForeground(
-                SKY_BLUE
-        );
-
-        resultArea =
-                new JTextArea();
-
-        resultArea.setEditable(false);
-
-        resultArea.setFont(
-                new Font(
-                        "Monospaced",
-                        Font.PLAIN,
-                        13
-                )
-        );
-
-        resultArea.setForeground(
-                new Color(
-                        30,
-                        45,
-                        55
-                )
-        );
-
-        resultArea.setBackground(
-                INPUT_BG
-        );
-
-        resultArea.setLineWrap(true);
-
-        resultArea.setWrapStyleWord(true);
-
-        resultArea.setBorder(
-                new EmptyBorder(
-                        14,
-                        16,
-                        14,
-                        16
-                )
-        );
-
-        JScrollPane resultScrollPane =
-                new JScrollPane(
-                        resultArea
-                );
-
-        resultScrollPane.setOpaque(
-                false
-        );
-
-        resultScrollPane
-                .getViewport()
-                .setOpaque(true);
-
-        resultScrollPane
-                .getViewport()
-                .setBackground(
-                        INPUT_BG
-                );
-
-        resultScrollPane.setBorder(
-                BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(
-                                INPUT_BORDER,
-                                1,
-                                true
-                        ),
-                        BorderFactory.createEmptyBorder(
-                                1,
-                                1,
-                                1,
-                                1
-                        )
-                )
-        );
-
-        JPanel resultContainer =
-                new JPanel(
-                        new BorderLayout(
-                                0,
-                                6
-                        )
-                );
-
-        resultContainer.setOpaque(false);
-
-        resultContainer.add(
-                resultLabel,
-                BorderLayout.NORTH
-        );
-
-        resultContainer.add(
-                resultScrollPane,
-                BorderLayout.CENTER
-        );
-
-        centerPanel.add(
-                resultContainer,
-                BorderLayout.CENTER
-        );
-
-        mainPanel.add(
-                centerPanel,
-                BorderLayout.CENTER
-        );
-
-        // =====================================================
-        // BOTTOM
-        // =====================================================
-
-        JPanel bottomPanel =
-                new JPanel(
-                        new FlowLayout(
-                                FlowLayout.RIGHT,
-                                0,
-                                0
-                        )
-                );
-
-        bottomPanel.setOpaque(false);
-
-        JButton clearButton =
-                createOutlineButton(
-                        "Clear"
-                );
-
-        clearButton.setPreferredSize(
-                new Dimension(
-                        90,
-                        35
-                )
-        );
-
-        bottomPanel.add(
-                clearButton
-        );
-
-        mainPanel.add(
-                bottomPanel,
-                BorderLayout.SOUTH
-        );
-
-        // =====================================================
-        // ADD ROOT
-        // =====================================================
-
-        rootPanel.add(
-                mainPanel
-        );
-
-        add(
-                rootPanel,
-                BorderLayout.CENTER
-        );
-
-        // =====================================================
-        // ACTION LISTENERS
-        // =====================================================
-
-        searchButton.addActionListener(
-                e -> searchParcel()
-        );
-
-        parcelIdField.addActionListener(
-                e -> searchParcel()
-        );
-
-        clearButton.addActionListener(
-                e -> {
-                    parcelIdField.setText("");
-                    resultArea.setText("");
-                    parcelIdField.requestFocus();
-                }
-        );
-    }
-
-    // =========================================================
-    // INPUT FIELD STYLE
-    // =========================================================
-
-    private void styleInputField(
-            JTextField field
-    ) {
-
-        field.setOpaque(true);
-
-        field.setBackground(
-                INPUT_BG
-        );
-
-        field.setForeground(
-                INPUT_TEXT
-        );
-
-        field.setCaretColor(
-                BLUE
-        );
-
-        field.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.PLAIN,
-                        13
-                )
-        );
-
-        field.setBorder(
-                BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(
-                                INPUT_BORDER,
-                                1,
-                                true
-                        ),
-                        BorderFactory.createEmptyBorder(
-                                7,
-                                11,
-                                7,
-                                11
-                        )
-                )
-        );
-
-        field.addFocusListener(
-                new FocusAdapter() {
-
-                    @Override
-                    public void focusGained(
-                            FocusEvent e
-                    ) {
-
-                        field.setBorder(
-                                BorderFactory.createCompoundBorder(
-                                        BorderFactory.createLineBorder(
-                                                SKY_BLUE,
-                                                2,
-                                                true
-                                        ),
-                                        BorderFactory.createEmptyBorder(
-                                                6,
-                                                10,
-                                                6,
-                                                10
-                                        )
-                                )
-                        );
-                    }
-
-                    @Override
-                    public void focusLost(
-                            FocusEvent e
-                    ) {
-
-                        field.setBorder(
-                                BorderFactory.createCompoundBorder(
-                                        BorderFactory.createLineBorder(
-                                                INPUT_BORDER,
-                                                1,
-                                                true
-                                        ),
-                                        BorderFactory.createEmptyBorder(
-                                                7,
-                                                11,
-                                                7,
-                                                11
-                                        )
-                                )
-                        );
-                    }
-                }
-        );
-
-        field.setMaximumSize(
-                new Dimension(
-                        Integer.MAX_VALUE,
-                        36
-                )
-        );
-    }
-
-    // =========================================================
-    // GOLD BUTTON
-    // =========================================================
-
-    private JButton createGoldenButton(
-            String text
-    ) {
-
-        JButton button =
-                new JButton(text) {
-
-                    private boolean isHovered = false;
-
-                    {
-                        addMouseListener(
-                                new MouseAdapter() {
-
-                                    @Override
-                                    public void mouseEntered(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered = true;
-                                        repaint();
-                                    }
-
-                                    @Override
-                                    public void mouseExited(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered = false;
-                                        repaint();
-                                    }
-                                }
-                        );
-                    }
-
-                    @Override
-                    protected void paintComponent(
-                            Graphics g
-                    ) {
-
-                        Graphics2D g2d =
-                                (Graphics2D) g.create();
-
-                        g2d.setRenderingHint(
-                                RenderingHints.KEY_ANTIALIASING,
-                                RenderingHints.VALUE_ANTIALIAS_ON
-                        );
-
-                        Color top =
-                                isHovered
-                                        ? SOFT_YELLOW
-                                        : GOLD;
-
-                        Color bottom =
-                                isHovered
-                                        ? GOLD
-                                        : new Color(
-                                        240,
-                                        190,
-                                        35
-                                );
-
-                        GradientPaint gradient =
-                                new GradientPaint(
-                                        0,
-                                        0,
-                                        top,
-                                        0,
-                                        getHeight(),
-                                        bottom
-                                );
-
-                        g2d.setPaint(
-                                gradient
-                        );
-
-                        g2d.fill(
-                                new RoundRectangle2D.Float(
-                                        0,
-                                        0,
-                                        getWidth(),
-                                        getHeight(),
-                                        11,
-                                        11
-                                )
-                        );
-
-                        g2d.dispose();
-
-                        super.paintComponent(g);
-                    }
-                };
-
-        button.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        13
-                )
-        );
-
-        button.setForeground(
-                new Color(
-                        20,
-                        55,
-                        70
-                )
-        );
-
-        button.setContentAreaFilled(
-                false
-        );
-
-        button.setFocusPainted(
-                false
-        );
-
-        button.setBorderPainted(
-                false
-        );
-
-        button.setCursor(
-                new Cursor(
-                        Cursor.HAND_CURSOR
-                )
-        );
+        button.setFont(new Font("SansSerif", Font.BOLD, 13));
+        button.setForeground(Color.WHITE);
+        button.setPreferredSize(new Dimension(110, 40));
+        button.setContentAreaFilled(false);
+        button.setOpaque(false);
+        button.setBorderPainted(false);
+        button.setFocusPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         return button;
     }
 
-    // =========================================================
-    // OUTLINE BUTTON
-    // =========================================================
+    private JButton createOutlineButton(String text) {
+        JButton button = new JButton(text) {
 
-    private JButton createOutlineButton(
-            String text
-    ) {
+            private boolean hovered;
 
-        JButton button =
-                new JButton(text) {
-
-                    private boolean isHovered = false;
-
-                    {
-                        addMouseListener(
-                                new MouseAdapter() {
-
-                                    @Override
-                                    public void mouseEntered(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered = true;
-                                        repaint();
-                                    }
-
-                                    @Override
-                                    public void mouseExited(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered = false;
-                                        repaint();
-                                    }
-                                }
-                        );
+            {
+                addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        hovered = true;
+                        repaint();
                     }
 
                     @Override
-                    protected void paintComponent(
-                            Graphics g
-                    ) {
-
-                        Graphics2D g2d =
-                                (Graphics2D) g.create();
-
-                        g2d.setRenderingHint(
-                                RenderingHints.KEY_ANTIALIASING,
-                                RenderingHints.VALUE_ANTIALIAS_ON
-                        );
-
-                        if (isHovered) {
-
-                            g2d.setColor(
-                                    new Color(
-                                            138,
-                                            207,
-                                            248,
-                                            25
-                                    )
-                            );
-
-                            g2d.fill(
-                                    new RoundRectangle2D.Float(
-                                            0,
-                                            0,
-                                            getWidth(),
-                                            getHeight(),
-                                            11,
-                                            11
-                                    )
-                            );
-                        }
-
-                        g2d.setColor(
-                                new Color(
-                                        138,
-                                        207,
-                                        248,
-                                        170
-                                )
-                        );
-
-                        g2d.setStroke(
-                                new BasicStroke(
-                                        1.2f
-                                )
-                        );
-
-                        g2d.draw(
-                                new RoundRectangle2D.Float(
-                                        1,
-                                        1,
-                                        getWidth() - 2,
-                                        getHeight() - 2,
-                                        11,
-                                        11
-                                )
-                        );
-
-                        g2d.dispose();
-
-                        super.paintComponent(g);
+                    public void mouseExited(MouseEvent e) {
+                        hovered = false;
+                        repaint();
                     }
-                };
+                });
+            }
 
-        button.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        13
-                )
-        );
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
 
-        button.setForeground(
-                TEXT_WHITE
-        );
+                g2.setRenderingHint(
+                        RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON
+                );
 
-        button.setContentAreaFilled(
-                false
-        );
+                if (hovered) {
+                    g2.setColor(LIGHT_BLUE);
+                    g2.fill(
+                            new RoundRectangle2D.Float(
+                                    0,
+                                    0,
+                                    getWidth(),
+                                    getHeight(),
+                                    12,
+                                    12
+                            )
+                    );
+                }
 
-        button.setFocusPainted(
-                false
-        );
+                g2.setColor(BLUE);
+                g2.setStroke(new BasicStroke(1.2f));
 
-        button.setBorderPainted(
-                false
-        );
+                g2.draw(
+                        new RoundRectangle2D.Float(
+                                1,
+                                1,
+                                getWidth() - 2,
+                                getHeight() - 2,
+                                12,
+                                12
+                        )
+                );
 
-        button.setCursor(
-                new Cursor(
-                        Cursor.HAND_CURSOR
-                )
-        );
+                g2.dispose();
+
+                super.paintComponent(g);
+            }
+        };
+
+        button.setFont(new Font("SansSerif", Font.BOLD, 13));
+        button.setForeground(BLUE);
+        button.setContentAreaFilled(false);
+        button.setOpaque(false);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         return button;
     }
-
-    // =========================================================
-    // SEARCH PARCEL
-    // =========================================================
 
     private void searchParcel() {
 
-        String parcelID =
-                parcelIdField
-                        .getText()
-                        .trim();
+        String parcelID = parcelIdField.getText().trim();
 
         if (parcelID.isEmpty()) {
 
@@ -1097,70 +411,56 @@ public class SearchParcelFrame extends JPanel {
 
         try {
 
-            Parcel parcel =
-                    AdminFile.searchParcel(parcelID);
+            Parcel parcel = AdminFile.searchParcel(parcelID);
 
-            StringBuilder result =
-                    new StringBuilder();
+            StringBuilder result = new StringBuilder();
 
-            result.append(
-                    "========== PARCEL DETAILS ==========\n\n"
-            );
+            result.append("PARCEL INFORMATION\n\n");
 
-            result.append("Parcel ID       : ")
+            result.append("Parcel ID        : ")
                     .append(parcel.getParcelID())
-                    .append("\n");
-
-            result.append("Parcel Name     : ")
-                    .append(parcel.getParcelName())
-                    .append("\n");
-
-            result.append("Receiver Address: ")
-                    .append(parcel.getReciverAddress())
-                    .append("\n");
-
-            result.append("Receiver Phone  : ")
-                    .append(parcel.getReciverPhone())
-                    .append("\n");
-
-            result.append("Weight          : ")
-                    .append(parcel.getWeight())
-                    .append(" kg\n");
-
-            result.append("Sender Email    : ")
-                    .append(parcel.getSenderEmail())
-                    .append("\n");
-
-            result.append("Sender ID       : ")
-                    .append(parcel.getSenderId())
-                    .append("\n");
-
-            result.append("Status          : ")
-                    .append(parcel.getParcelStatus())
-                    .append("\n");
-
-            result.append("Delivery Charge : ")
-                    .append(parcel.getDeliveryCharge())
-                    .append("\n");
-
-            String riderId =
-                    parcel.getRiderId();
-
-            result.append("Rider ID        : ")
-                    .append(
-                            riderId == null
-                                    ? "Not Assigned"
-                                    : riderId
-                    )
                     .append("\n\n");
 
-            result.append(
-                    "===================================="
-            );
+            result.append("Parcel Name      : ")
+                    .append(parcel.getParcelName())
+                    .append("\n\n");
 
-            resultArea.setText(
-                    result.toString()
-            );
+            result.append("Receiver Address : ")
+                    .append(parcel.getReciverAddress())
+                    .append("\n\n");
+
+            result.append("Receiver Phone   : ")
+                    .append(parcel.getReciverPhone())
+                    .append("\n\n");
+
+            result.append("Weight           : ")
+                    .append(parcel.getWeight())
+                    .append(" kg\n\n");
+
+            result.append("Sender Email     : ")
+                    .append(parcel.getSenderEmail())
+                    .append("\n\n");
+
+            result.append("Sender ID        : ")
+                    .append(parcel.getSenderId())
+                    .append("\n\n");
+
+            result.append("Status           : ")
+                    .append(parcel.getParcelStatus())
+                    .append("\n\n");
+
+            result.append("Delivery Charge  : ")
+                    .append(parcel.getDeliveryCharge())
+                    .append(" BDT\n\n");
+
+            String riderId = parcel.getRiderId();
+
+            result.append("Rider ID         : ")
+                    .append(riderId == null ? "Not Assigned" : riderId)
+                    .append("\n");
+
+            resultArea.setText(result.toString());
+            resultArea.setCaretPosition(0);
 
         } catch (NotFoundException e) {
 
@@ -1199,6 +499,43 @@ public class SearchParcelFrame extends JPanel {
                     "Error",
                     JOptionPane.ERROR_MESSAGE
             );
+        }
+    }
+
+    private static class RoundedPanel extends JPanel {
+
+        private final Color background;
+        private final int radius;
+
+        public RoundedPanel(Color background, int radius) {
+            this.background = background;
+            this.radius = radius;
+            setOpaque(false);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+
+            g2.setRenderingHint(
+                    RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON
+            );
+
+            g2.setColor(background);
+
+            g2.fillRoundRect(
+                    0,
+                    0,
+                    getWidth(),
+                    getHeight(),
+                    radius,
+                    radius
+            );
+
+            g2.dispose();
+
+            super.paintComponent(g);
         }
     }
 }

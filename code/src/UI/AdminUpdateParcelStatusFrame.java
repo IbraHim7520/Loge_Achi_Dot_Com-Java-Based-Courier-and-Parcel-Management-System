@@ -1,4 +1,4 @@
- package UI;
+package UI;
 
 import custom_exception.NotFoundException;
 import model.Admin;
@@ -7,7 +7,6 @@ import model.User;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicComboBoxUI;
-
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -22,107 +21,40 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
     private JTextField parcelIdField;
     private JComboBox<String> statusComboBox;
 
-    // =========================================================
-    // THEME COLORS
-    // =========================================================
-
+    private final Color BG = new Color(241, 248, 253);
+    private final Color WHITE = Color.WHITE;
+    private final Color TEXT_DARK = new Color(31, 38, 43);
+    private final Color TEXT_MUTED = new Color(103, 117, 128);
+    private final Color ORANGE = new Color(248, 116, 35);
+    private final Color ORANGE_HOVER = new Color(235, 94, 20);
     private final Color BLUE = new Color(0, 97, 153);
-    private final Color SKY_BLUE = new Color(138, 207, 248);
-    private final Color SOFT_YELLOW = new Color(244, 235, 108);
-    private final Color GOLD = new Color(255, 212, 68);
+    private final Color LIGHT_BLUE = new Color(225, 240, 249);
+    private final Color BORDER = new Color(216, 227, 234);
+    private final Color INPUT_BG = new Color(249, 251, 252);
+    private final Color INPUT_BORDER = new Color(198, 211, 220);
 
-    private final Color CARD_BG = new Color(0, 55, 88, 238);
-    private final Color CARD_BORDER = new Color(138, 207, 248, 90);
-
-    private final Color INPUT_BG = new Color(248, 252, 255);
-    private final Color INPUT_BORDER = new Color(138, 207, 248, 130);
-    private final Color INPUT_FOCUS_BORDER = new Color(244, 235, 108);
-
-    private final Color TEXT_WHITE = Color.WHITE;
-    private final Color TEXT_MUTED = new Color(190, 220, 235);
-    private final Color INPUT_TEXT = new Color(20, 55, 75);
-
-    // Golden button colors
-    private final Color BTN_TOP = new Color(255, 224, 90);
-    private final Color BTN_BOTTOM = new Color(255, 212, 68);
-    private final Color BTN_HOVER_TOP = new Color(255, 235, 135);
-    private final Color BTN_HOVER_BOTTOM = new Color(255, 202, 45);
-    private final Color BTN_TEXT = new Color(35, 55, 65);
+    private final Color SUCCESS = new Color(48, 148, 94);
+    private final Color SUCCESS_BG = new Color(233, 248, 240);
 
     public AdminUpdateParcelStatusFrame(User user) {
 
         this.user = user;
 
         setLayout(new BorderLayout());
-        setOpaque(false);
+        setBackground(BG);
 
         buildUI();
     }
 
-    // =========================================================
-    // BUILD UI
-    // =========================================================
-
     private void buildUI() {
 
-        JPanel mainPanel = new JPanel() {
-
-            @Override
-            protected void paintComponent(Graphics g) {
-
-                super.paintComponent(g);
-
-                Graphics2D g2d =
-                        (Graphics2D) g.create();
-
-                g2d.setRenderingHint(
-                        RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON
-                );
-
-                // Card background
-                g2d.setColor(CARD_BG);
-
-                g2d.fill(
-                        new RoundRectangle2D.Float(
-                                0,
-                                0,
-                                getWidth(),
-                                getHeight(),
-                                18,
-                                18
-                        )
-                );
-
-                // Border
-                g2d.setColor(CARD_BORDER);
-
-                g2d.setStroke(
-                        new BasicStroke(1f)
-                );
-
-                g2d.draw(
-                        new RoundRectangle2D.Float(
-                                0.5f,
-                                0.5f,
-                                getWidth() - 1,
-                                getHeight() - 1,
-                                18,
-                                18
-                        )
-                );
-
-                g2d.dispose();
-            }
-        };
-
-        mainPanel.setOpaque(false);
-
-        mainPanel.setLayout(
-                new BorderLayout(0, 20)
+        JPanel page = new JPanel(
+                new BorderLayout(0, 18)
         );
 
-        mainPanel.setBorder(
+        page.setOpaque(false);
+
+        page.setBorder(
                 new EmptyBorder(
                         24,
                         28,
@@ -131,90 +63,101 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
                 )
         );
 
-        // =====================================================
-        // HEADER
-        // =====================================================
+        JPanel headerPanel = new JPanel(
+                new BorderLayout(14, 0)
+        );
 
-        JPanel titlePanel =
-                new JPanel(new BorderLayout());
+        headerPanel.setOpaque(false);
+
+        JPanel iconPanel = new RoundedPanel(
+                BLUE,
+                16
+        );
+
+        iconPanel.setPreferredSize(
+                new Dimension(
+                        52,
+                        52
+                )
+        );
+
+        iconPanel.setLayout(
+                new GridBagLayout()
+        );
+
+        JLabel iconLabel = new JLabel("↻");
+
+        iconLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        27
+                )
+        );
+
+        iconLabel.setForeground(
+                Color.WHITE
+        );
+
+        iconPanel.add(iconLabel);
+
+        headerPanel.add(
+                iconPanel,
+                BorderLayout.WEST
+        );
+
+        JPanel titlePanel = new JPanel();
 
         titlePanel.setOpaque(false);
 
-        // Gold accent
-        JPanel titleAccent = new JPanel() {
-
-            @Override
-            protected void paintComponent(Graphics g) {
-
-                super.paintComponent(g);
-
-                Graphics2D g2 =
-                        (Graphics2D) g.create();
-
-                g2.setRenderingHint(
-                        RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON
-                );
-
-                g2.setColor(GOLD);
-
-                g2.fillRoundRect(
-                        0,
-                        2,
-                        5,
-                        48,
-                        4,
-                        4
-                );
-
-                g2.dispose();
-            }
-        };
-
-        titleAccent.setOpaque(false);
-
-        titleAccent.setPreferredSize(
-                new Dimension(12, 52)
-        );
-
-        // Header text
-        JPanel headerTextGroup =
-                new JPanel();
-
-        headerTextGroup.setLayout(
+        titlePanel.setLayout(
                 new BoxLayout(
-                        headerTextGroup,
+                        titlePanel,
                         BoxLayout.Y_AXIS
                 )
         );
 
-        headerTextGroup.setOpaque(false);
+        JLabel sectionLabel = new JLabel(
+                "PARCEL MANAGEMENT"
+        );
 
-        JLabel titleLabel =
-                new JLabel("Update Parcel Status");
+        sectionLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        11
+                )
+        );
+
+        sectionLabel.setForeground(
+                ORANGE
+        );
+
+        JLabel titleLabel = new JLabel(
+                "Update Parcel Status"
+        );
 
         titleLabel.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        22
+                        26
                 )
         );
 
         titleLabel.setForeground(
-                TEXT_WHITE
+                TEXT_DARK
         );
 
-        JLabel subtitleLabel =
-                new JLabel(
-                        "Modify tracking status for active shipments"
-                );
+        JLabel subtitleLabel = new JLabel(
+                "Modify the current tracking status of a parcel"
+        );
 
         subtitleLabel.setFont(
                 new Font(
                         "SansSerif",
                         Font.PLAIN,
-                        12
+                        13
                 )
         );
 
@@ -222,38 +165,38 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
                 TEXT_MUTED
         );
 
-        headerTextGroup.add(
-                titleLabel
+        titlePanel.add(sectionLabel);
+
+        titlePanel.add(
+                Box.createVerticalStrut(3)
         );
 
-        headerTextGroup.add(
-                Box.createVerticalStrut(5)
+        titlePanel.add(titleLabel);
+
+        titlePanel.add(
+                Box.createVerticalStrut(3)
         );
 
-        headerTextGroup.add(
-                subtitleLabel
-        );
+        titlePanel.add(subtitleLabel);
 
-        JPanel headerLeft =
-                new JPanel(
-                        new BorderLayout(8, 0)
-                );
-
-        headerLeft.setOpaque(false);
-
-        headerLeft.add(
-                titleAccent,
-                BorderLayout.WEST
-        );
-
-        headerLeft.add(
-                headerTextGroup,
+        headerPanel.add(
+                titlePanel,
                 BorderLayout.CENTER
         );
 
-        // Header badge
-        JLabel badge =
-                new JLabel("STATUS CONTROL");
+        JLabel badge = new JLabel(
+                "STATUS CONTROL"
+        );
+
+        badge.setOpaque(true);
+
+        badge.setBackground(
+                SUCCESS_BG
+        );
+
+        badge.setForeground(
+                SUCCESS
+        );
 
         badge.setFont(
                 new Font(
@@ -263,244 +206,195 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
                 )
         );
 
-        badge.setForeground(
-                new Color(255, 245, 180)
-        );
-
-        badge.setHorizontalAlignment(
-                SwingConstants.CENTER
-        );
-
         badge.setBorder(
-                BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(
-                                new Color(
-                                        255,
-                                        212,
-                                        68,
-                                        130
-                                ),
-                                1
-                        ),
-                        new EmptyBorder(
-                                6,
-                                12,
-                                6,
-                                12
-                        )
+                new EmptyBorder(
+                        7,
+                        11,
+                        7,
+                        11
                 )
         );
 
-        titlePanel.add(
-                headerLeft,
-                BorderLayout.WEST
-        );
-
-        titlePanel.add(
+        headerPanel.add(
                 badge,
                 BorderLayout.EAST
         );
 
-        mainPanel.add(
-                titlePanel,
+        page.add(
+                headerPanel,
                 BorderLayout.NORTH
         );
 
-        // =====================================================
-        // FORM
-        // =====================================================
+        JPanel mainCard = new RoundedPanel(
+                WHITE,
+                22
+        );
 
-        JPanel formPanel =
-                new JPanel(
-                        new GridBagLayout()
-                );
+        mainCard.setLayout(
+                new BorderLayout(
+                        18,
+                        0
+                )
+        );
 
-        formPanel.setOpaque(false);
+        mainCard.setBorder(
+                new EmptyBorder(
+                        22,
+                        24,
+                        22,
+                        24
+                )
+        );
+
+        JPanel formCard = new RoundedPanel(
+                new Color(251, 253, 254),
+                18
+        );
+
+        formCard.setLayout(
+                new GridBagLayout()
+        );
+
+        formCard.setBorder(
+                new EmptyBorder(
+                        22,
+                        24,
+                        22,
+                        24
+                )
+        );
 
         GridBagConstraints gbc =
                 new GridBagConstraints();
 
-        gbc.insets =
-                new Insets(
-                        10,
-                        10,
-                        10,
-                        10
-                );
-
+        gbc.gridx = 0;
+        gbc.weightx = 1;
         gbc.fill =
                 GridBagConstraints.HORIZONTAL;
 
-        // =====================================================
-        // PARCEL ID LABEL
-        // =====================================================
+        JLabel formTitle = new JLabel(
+                "Update Delivery Status"
+        );
 
-        JLabel parcelIdLabel =
-                new JLabel("Parcel ID");
-
-        parcelIdLabel.setFont(
+        formTitle.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        13
+                        18
                 )
         );
 
-        parcelIdLabel.setForeground(
-                TEXT_WHITE
+        formTitle.setForeground(
+                TEXT_DARK
         );
 
-        // =====================================================
-        // PARCEL ID FIELD
-        // =====================================================
+        JLabel formSubtitle = new JLabel(
+                "Enter the parcel ID and select its new status."
+        );
 
-        parcelIdField =
-                new JTextField() {
-
-                    private boolean isFocused = false;
-
-                    {
-                        addFocusListener(
-                                new FocusAdapter() {
-
-                                    @Override
-                                    public void focusGained(
-                                            FocusEvent e
-                                    ) {
-
-                                        isFocused = true;
-                                        repaint();
-                                    }
-
-                                    @Override
-                                    public void focusLost(
-                                            FocusEvent e
-                                    ) {
-
-                                        isFocused = false;
-                                        repaint();
-                                    }
-                                }
-                        );
-                    }
-
-                    @Override
-                    protected void paintComponent(
-                            Graphics g
-                    ) {
-
-                        Graphics2D g2d =
-                                (Graphics2D) g.create();
-
-                        g2d.setRenderingHint(
-                                RenderingHints.KEY_ANTIALIASING,
-                                RenderingHints.VALUE_ANTIALIAS_ON
-                        );
-
-                        // Input background
-                        g2d.setColor(
-                                INPUT_BG
-                        );
-
-                        g2d.fill(
-                                new RoundRectangle2D.Float(
-                                        0,
-                                        0,
-                                        getWidth(),
-                                        getHeight(),
-                                        9,
-                                        9
-                                )
-                        );
-
-                        // Input border
-                        g2d.setColor(
-                                isFocused
-                                        ? INPUT_FOCUS_BORDER
-                                        : INPUT_BORDER
-                        );
-
-                        g2d.setStroke(
-                                new BasicStroke(
-                                        isFocused
-                                                ? 1.6f
-                                                : 1.0f
-                                )
-                        );
-
-                        g2d.draw(
-                                new RoundRectangle2D.Float(
-                                        0.5f,
-                                        0.5f,
-                                        getWidth() - 1,
-                                        getHeight() - 1,
-                                        9,
-                                        9
-                                )
-                        );
-
-                        g2d.dispose();
-
-                        super.paintComponent(g);
-                    }
-                };
-
-        parcelIdField.setFont(
+        formSubtitle.setFont(
                 new Font(
                         "SansSerif",
                         Font.PLAIN,
-                        13
-                )
-        );
-
-        parcelIdField.setForeground(
-                INPUT_TEXT
-        );
-
-        parcelIdField.setCaretColor(
-                BLUE
-        );
-
-        parcelIdField.setOpaque(false);
-
-        parcelIdField.setBorder(
-                BorderFactory.createEmptyBorder(
-                        6,
-                        12,
-                        6,
                         12
                 )
         );
 
-        parcelIdField.setPreferredSize(
-                new Dimension(
-                        260,
-                        40
-                )
+        formSubtitle.setForeground(
+                TEXT_MUTED
         );
 
-        // =====================================================
-        // STATUS LABEL
-        // =====================================================
+        gbc.gridy = 0;
+
+        gbc.insets =
+                new Insets(
+                        0,
+                        0,
+                        4,
+                        0
+                );
+
+        formCard.add(
+                formTitle,
+                gbc
+        );
+
+        gbc.gridy = 1;
+
+        gbc.insets =
+                new Insets(
+                        0,
+                        0,
+                        22,
+                        0
+                );
+
+        formCard.add(
+                formSubtitle,
+                gbc
+        );
+
+        JLabel parcelIdLabel =
+                createFormLabel(
+                        "PARCEL ID"
+                );
+
+        gbc.gridy = 2;
+
+        gbc.insets =
+                new Insets(
+                        0,
+                        0,
+                        7,
+                        0
+                );
+
+        formCard.add(
+                parcelIdLabel,
+                gbc
+        );
+
+        parcelIdField =
+                new JTextField();
+
+        styleInputField(
+                parcelIdField
+        );
+
+        gbc.gridy = 3;
+
+        gbc.insets =
+                new Insets(
+                        0,
+                        0,
+                        18,
+                        0
+                );
+
+        formCard.add(
+                parcelIdField,
+                gbc
+        );
 
         JLabel statusLabel =
-                new JLabel("New Status");
+                createFormLabel(
+                        "NEW STATUS"
+                );
 
-        statusLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        13
-                )
+        gbc.gridy = 4;
+
+        gbc.insets =
+                new Insets(
+                        0,
+                        0,
+                        7,
+                        0
+                );
+
+        formCard.add(
+                statusLabel,
+                gbc
         );
-
-        statusLabel.setForeground(
-                TEXT_WHITE
-        );
-
-        // =====================================================
-        // STATUS COMBO BOX
-        // =====================================================
 
         String[] statuses = {
                 "PENDING",
@@ -512,9 +406,453 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
         };
 
         statusComboBox =
-                new JComboBox<>(statuses);
+                new JComboBox<>(
+                        statuses
+                );
 
-        statusComboBox.setFont(
+        styleComboBox(
+                statusComboBox
+        );
+
+        gbc.gridy = 5;
+
+        gbc.insets =
+                new Insets(
+                        0,
+                        0,
+                        18,
+                        0
+                );
+
+        formCard.add(
+                statusComboBox,
+                gbc
+        );
+
+        JPanel noteCard = new RoundedPanel(
+                LIGHT_BLUE,
+                14
+        );
+
+        noteCard.setLayout(
+                new BorderLayout(
+                        10,
+                        0
+                )
+        );
+
+        noteCard.setBorder(
+                new EmptyBorder(
+                        13,
+                        14,
+                        13,
+                        14
+                )
+        );
+
+        JPanel noteIcon = new RoundedPanel(
+                BLUE,
+                10
+        );
+
+        noteIcon.setPreferredSize(
+                new Dimension(
+                        32,
+                        32
+                )
+        );
+
+        noteIcon.setLayout(
+                new GridBagLayout()
+        );
+
+        JLabel noteSymbol = new JLabel(
+                "i"
+        );
+
+        noteSymbol.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        15
+                )
+        );
+
+        noteSymbol.setForeground(
+                Color.WHITE
+        );
+
+        noteIcon.add(noteSymbol);
+
+        noteCard.add(
+                noteIcon,
+                BorderLayout.WEST
+        );
+
+        JLabel noteLabel = new JLabel(
+                "<html><b>Status update</b><br>" +
+                        "<span style='color:#687580'>" +
+                        "The selected status will be saved for this parcel." +
+                        "</span></html>"
+        );
+
+        noteLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        11
+                )
+        );
+
+        noteCard.add(
+                noteLabel,
+                BorderLayout.CENTER
+        );
+
+        gbc.gridy = 6;
+
+        gbc.insets =
+                new Insets(
+                        0,
+                        0,
+                        0,
+                        0
+                );
+
+        formCard.add(
+                noteCard,
+                gbc
+        );
+
+        mainCard.add(
+                formCard,
+                BorderLayout.CENTER
+        );
+
+        JPanel guideCard = new RoundedPanel(
+                LIGHT_BLUE,
+                18
+        );
+
+        guideCard.setLayout(
+                new BorderLayout(
+                        0,
+                        18
+                )
+        );
+
+        guideCard.setBorder(
+                new EmptyBorder(
+                        22,
+                        22,
+                        22,
+                        22
+                )
+        );
+
+        guideCard.setPreferredSize(
+                new Dimension(
+                        285,
+                        0
+                )
+        );
+
+        JPanel guideHeader = new JPanel();
+
+        guideHeader.setOpaque(false);
+
+        guideHeader.setLayout(
+                new BoxLayout(
+                        guideHeader,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        JLabel guideTitle = new JLabel(
+                "Status Flow"
+        );
+
+        guideTitle.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        17
+                )
+        );
+
+        guideTitle.setForeground(
+                TEXT_DARK
+        );
+
+        JLabel guideSubtitle = new JLabel(
+                "Typical parcel delivery progress"
+        );
+
+        guideSubtitle.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        12
+                )
+        );
+
+        guideSubtitle.setForeground(
+                TEXT_MUTED
+        );
+
+        guideHeader.add(
+                guideTitle
+        );
+
+        guideHeader.add(
+                Box.createVerticalStrut(3)
+        );
+
+        guideHeader.add(
+                guideSubtitle
+        );
+
+        guideCard.add(
+                guideHeader,
+                BorderLayout.NORTH
+        );
+
+        JPanel steps = new JPanel();
+
+        steps.setOpaque(false);
+
+        steps.setLayout(
+                new BoxLayout(
+                        steps,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        steps.add(
+                createStatusStep(
+                        "01",
+                        "PENDING",
+                        "Parcel is waiting for processing."
+                )
+        );
+
+        steps.add(
+                Box.createVerticalStrut(13)
+        );
+
+        steps.add(
+                createStatusStep(
+                        "02",
+                        "ACCEPTED",
+                        "Parcel has been accepted."
+                )
+        );
+
+        steps.add(
+                Box.createVerticalStrut(13)
+        );
+
+        steps.add(
+                createStatusStep(
+                        "03",
+                        "ON_TRANSIT",
+                        "Parcel is moving to destination."
+                )
+        );
+
+        steps.add(
+                Box.createVerticalStrut(13)
+        );
+
+        steps.add(
+                createStatusStep(
+                        "04",
+                        "DELIVERED",
+                        "Parcel delivery is completed."
+                )
+        );
+
+        guideCard.add(
+                steps,
+                BorderLayout.CENTER
+        );
+
+        JPanel accessCard = new RoundedPanel(
+                WHITE,
+                14
+        );
+
+        accessCard.setLayout(
+                new BorderLayout(
+                        10,
+                        0
+                )
+        );
+
+        accessCard.setBorder(
+                new EmptyBorder(
+                        13,
+                        14,
+                        13,
+                        14
+                )
+        );
+
+        JPanel dot = new RoundedPanel(
+                ORANGE,
+                10
+        );
+
+        dot.setPreferredSize(
+                new Dimension(
+                        10,
+                        10
+                )
+        );
+
+        accessCard.add(
+                dot,
+                BorderLayout.WEST
+        );
+
+        JLabel accessLabel = new JLabel(
+                "<html><b>ADMIN CONTROL</b><br>" +
+                        "<span style='color:#687580'>" +
+                        "Status can be updated by an authorized administrator." +
+                        "</span></html>"
+        );
+
+        accessLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        11
+                )
+        );
+
+        accessCard.add(
+                accessLabel,
+                BorderLayout.CENTER
+        );
+
+        guideCard.add(
+                accessCard,
+                BorderLayout.SOUTH
+        );
+
+        mainCard.add(
+                guideCard,
+                BorderLayout.EAST
+        );
+
+        page.add(
+                mainCard,
+                BorderLayout.CENTER
+        );
+
+        JPanel bottomPanel =
+                new JPanel(
+                        new FlowLayout(
+                                FlowLayout.RIGHT,
+                                10,
+                                0
+                        )
+                );
+
+        bottomPanel.setOpaque(false);
+
+        JButton clearButton =
+                createOutlineButton(
+                        "Clear"
+                );
+
+        JButton updateButton =
+                createPrimaryButton(
+                        "Update Status  →"
+                );
+
+        clearButton.setPreferredSize(
+                new Dimension(
+                        95,
+                        40
+                )
+        );
+
+        updateButton.setPreferredSize(
+                new Dimension(
+                        155,
+                        40
+                )
+        );
+
+        clearButton.addActionListener(
+                e -> clearFields()
+        );
+
+        updateButton.addActionListener(
+                e -> updateStatus()
+        );
+
+        bottomPanel.add(
+                clearButton
+        );
+
+        bottomPanel.add(
+                updateButton
+        );
+
+        page.add(
+                bottomPanel,
+                BorderLayout.SOUTH
+        );
+
+        add(
+                page,
+                BorderLayout.CENTER
+        );
+    }
+
+    private JLabel createFormLabel(
+            String text
+    ) {
+
+        JLabel label =
+                new JLabel(text);
+
+        label.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        10
+                )
+        );
+
+        label.setForeground(
+                BLUE
+        );
+
+        return label;
+    }
+
+    private void styleInputField(
+            JTextField field
+    ) {
+
+        field.setOpaque(true);
+
+        field.setBackground(
+                WHITE
+        );
+
+        field.setForeground(
+                TEXT_DARK
+        );
+
+        field.setCaretColor(
+                ORANGE
+        );
+
+        field.setFont(
                 new Font(
                         "SansSerif",
                         Font.PLAIN,
@@ -522,28 +860,102 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
                 )
         );
 
-        statusComboBox.setBackground(
-                INPUT_BG
-        );
-
-        statusComboBox.setForeground(
-                INPUT_TEXT
-        );
-
-        statusComboBox.setPreferredSize(
-                new Dimension(
-                        260,
-                        40
+        field.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(
+                                INPUT_BORDER,
+                                1,
+                                true
+                        ),
+                        BorderFactory.createEmptyBorder(
+                                9,
+                                12,
+                                9,
+                                12
+                        )
                 )
         );
 
-        statusComboBox.setFocusable(false);
+        field.addFocusListener(
+                new FocusAdapter() {
 
-        // =====================================================
-        // COMBO BOX RENDERER
-        // =====================================================
+                    @Override
+                    public void focusGained(
+                            FocusEvent e
+                    ) {
 
-        statusComboBox.setRenderer(
+                        field.setBorder(
+                                BorderFactory.createCompoundBorder(
+                                        BorderFactory.createLineBorder(
+                                                ORANGE,
+                                                2,
+                                                true
+                                        ),
+                                        BorderFactory.createEmptyBorder(
+                                                8,
+                                                11,
+                                                8,
+                                                11
+                                        )
+                                )
+                        );
+                    }
+
+                    @Override
+                    public void focusLost(
+                            FocusEvent e
+                    ) {
+
+                        field.setBorder(
+                                BorderFactory.createCompoundBorder(
+                                        BorderFactory.createLineBorder(
+                                                INPUT_BORDER,
+                                                1,
+                                                true
+                                        ),
+                                        BorderFactory.createEmptyBorder(
+                                                9,
+                                                12,
+                                                9,
+                                                12
+                                        )
+                                )
+                        );
+                    }
+                }
+        );
+    }
+
+    private void styleComboBox(
+            JComboBox<String> comboBox
+    ) {
+
+        comboBox.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        13
+                )
+        );
+
+        comboBox.setBackground(
+                WHITE
+        );
+
+        comboBox.setForeground(
+                TEXT_DARK
+        );
+
+        comboBox.setPreferredSize(
+                new Dimension(
+                        0,
+                        44
+                )
+        );
+
+        comboBox.setFocusable(false);
+
+        comboBox.setRenderer(
                 new DefaultListCellRenderer() {
 
                     @Override
@@ -552,8 +964,8 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
                             JList<?> list,
                             Object value,
                             int index,
-                            boolean isSelected,
-                            boolean cellHasFocus
+                            boolean selected,
+                            boolean focus
                     ) {
 
                         JLabel label =
@@ -562,9 +974,17 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
                                                 list,
                                                 value,
                                                 index,
-                                                isSelected,
-                                                cellHasFocus
+                                                selected,
+                                                focus
                                         );
+
+                        label.setFont(
+                                new Font(
+                                        "SansSerif",
+                                        Font.PLAIN,
+                                        13
+                                )
+                        );
 
                         label.setBorder(
                                 new EmptyBorder(
@@ -575,7 +995,7 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
                                 )
                         );
 
-                        if (isSelected) {
+                        if (selected) {
 
                             label.setBackground(
                                     BLUE
@@ -588,11 +1008,11 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
                         } else {
 
                             label.setBackground(
-                                    INPUT_BG
+                                    WHITE
                             );
 
                             label.setForeground(
-                                    INPUT_TEXT
+                                    TEXT_DARK
                             );
                         }
 
@@ -601,11 +1021,7 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
                 }
         );
 
-        // =====================================================
-        // COMBO BOX UI
-        // =====================================================
-
-        statusComboBox.setUI(
+        comboBox.setUI(
                 new BasicComboBoxUI() {
 
                     @Override
@@ -616,143 +1032,157 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
                                 super
                                         .createArrowButton();
 
-                        button.setContentAreaFilled(
-                                false
+                        button.setBackground(
+                                WHITE
                         );
 
                         button.setBorder(
-                                BorderFactory
-                                        .createEmptyBorder()
+                                BorderFactory.createEmptyBorder()
+                        );
+
+                        button.setContentAreaFilled(
+                                false
                         );
 
                         return button;
                     }
                 }
         );
+    }
 
-        // =====================================================
-        // ADD FORM COMPONENTS
-        // =====================================================
+    private JPanel createStatusStep(
+            String number,
+            String status,
+            String description
+    ) {
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 0.3;
-
-        formPanel.add(
-                parcelIdLabel,
-                gbc
-        );
-
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.weightx = 0.7;
-
-        formPanel.add(
-                parcelIdField,
-                gbc
-        );
-
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.weightx = 0.3;
-
-        formPanel.add(
-                statusLabel,
-                gbc
-        );
-
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.weightx = 0.7;
-
-        formPanel.add(
-                statusComboBox,
-                gbc
-        );
-
-        mainPanel.add(
-                formPanel,
-                BorderLayout.CENTER
-        );
-
-        // =====================================================
-        // BUTTONS
-        // =====================================================
-
-        JPanel buttonPanel =
+        JPanel panel =
                 new JPanel(
-                        new FlowLayout(
-                                FlowLayout.RIGHT,
+                        new BorderLayout(
                                 12,
                                 0
                         )
                 );
 
-        buttonPanel.setOpaque(false);
+        panel.setOpaque(false);
 
-        JButton clearButton =
-                createOutlineButton(
-                        "Clear"
+        JPanel numberPanel =
+                new RoundedPanel(
+                        ORANGE,
+                        10
                 );
 
-        JButton updateButton =
-                createGoldenButton(
-                        "Update Status"
-                );
-
-        clearButton.setPreferredSize(
+        numberPanel.setPreferredSize(
                 new Dimension(
-                        100,
-                        38
+                        36,
+                        36
                 )
         );
 
-        updateButton.setPreferredSize(
-                new Dimension(
-                        140,
-                        38
+        numberPanel.setLayout(
+                new GridBagLayout()
+        );
+
+        JLabel numberLabel =
+                new JLabel(number);
+
+        numberLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        10
                 )
         );
 
-        updateButton.addActionListener(
-                e -> updateStatus()
+        numberLabel.setForeground(
+                Color.WHITE
         );
 
-        clearButton.addActionListener(
-                e -> clearFields()
+        numberPanel.add(
+                numberLabel
         );
 
-        buttonPanel.add(
-                clearButton
+        panel.add(
+                numberPanel,
+                BorderLayout.WEST
         );
 
-        buttonPanel.add(
-                updateButton
+        JPanel textPanel =
+                new JPanel();
+
+        textPanel.setOpaque(false);
+
+        textPanel.setLayout(
+                new BoxLayout(
+                        textPanel,
+                        BoxLayout.Y_AXIS
+                )
         );
 
-        mainPanel.add(
-                buttonPanel,
-                BorderLayout.SOUTH
+        JLabel statusLabel =
+                new JLabel(
+                        status
+                );
+
+        statusLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        12
+                )
         );
 
-        add(
-                mainPanel,
+        statusLabel.setForeground(
+                TEXT_DARK
+        );
+
+        JLabel descriptionLabel =
+                new JLabel(
+                        "<html>"
+                                + description
+                                + "</html>"
+                );
+
+        descriptionLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        11
+                )
+        );
+
+        descriptionLabel.setForeground(
+                TEXT_MUTED
+        );
+
+        textPanel.add(
+                statusLabel
+        );
+
+        textPanel.add(
+                Box.createVerticalStrut(3)
+        );
+
+        textPanel.add(
+                descriptionLabel
+        );
+
+        panel.add(
+                textPanel,
                 BorderLayout.CENTER
         );
+
+        return panel;
     }
 
-    // =========================================================
-    // GOLDEN BUTTON
-    // =========================================================
-
-    private JButton createGoldenButton(
+    private JButton createPrimaryButton(
             String text
     ) {
 
         JButton button =
                 new JButton(text) {
 
-                    private boolean isHovered = false;
+                    private boolean hovered;
 
                     {
                         addMouseListener(
@@ -762,8 +1192,7 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
                                     public void mouseEntered(
                                             MouseEvent e
                                     ) {
-
-                                        isHovered = true;
+                                        hovered = true;
                                         repaint();
                                     }
 
@@ -771,8 +1200,7 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
                                     public void mouseExited(
                                             MouseEvent e
                                     ) {
-
-                                        isHovered = false;
+                                        hovered = false;
                                         repaint();
                                     }
                                 }
@@ -784,50 +1212,32 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
                             Graphics g
                     ) {
 
-                        Graphics2D g2d =
+                        Graphics2D g2 =
                                 (Graphics2D) g.create();
 
-                        g2d.setRenderingHint(
+                        g2.setRenderingHint(
                                 RenderingHints.KEY_ANTIALIASING,
                                 RenderingHints.VALUE_ANTIALIAS_ON
                         );
 
-                        Color top =
-                                isHovered
-                                        ? BTN_HOVER_TOP
-                                        : BTN_TOP;
-
-                        Color bottom =
-                                isHovered
-                                        ? BTN_HOVER_BOTTOM
-                                        : BTN_BOTTOM;
-
-                        GradientPaint gradient =
-                                new GradientPaint(
-                                        0,
-                                        0,
-                                        top,
-                                        0,
-                                        getHeight(),
-                                        bottom
-                                );
-
-                        g2d.setPaint(
-                                gradient
+                        g2.setColor(
+                                hovered
+                                        ? ORANGE_HOVER
+                                        : ORANGE
                         );
 
-                        g2d.fill(
+                        g2.fill(
                                 new RoundRectangle2D.Float(
                                         0,
                                         0,
                                         getWidth(),
                                         getHeight(),
-                                        10,
-                                        10
+                                        12,
+                                        12
                                 )
                         );
 
-                        g2d.dispose();
+                        g2.dispose();
 
                         super.paintComponent(g);
                     }
@@ -842,14 +1252,22 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
         );
 
         button.setForeground(
-                BTN_TEXT
+                Color.WHITE
         );
 
-        button.setContentAreaFilled(false);
+        button.setContentAreaFilled(
+                false
+        );
 
-        button.setFocusPainted(false);
+        button.setOpaque(false);
 
-        button.setBorderPainted(false);
+        button.setBorderPainted(
+                false
+        );
+
+        button.setFocusPainted(
+                false
+        );
 
         button.setCursor(
                 new Cursor(
@@ -860,10 +1278,6 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
         return button;
     }
 
-    // =========================================================
-    // OUTLINE BUTTON
-    // =========================================================
-
     private JButton createOutlineButton(
             String text
     ) {
@@ -871,7 +1285,7 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
         JButton button =
                 new JButton(text) {
 
-                    private boolean isHovered = false;
+                    private boolean hovered;
 
                     {
                         addMouseListener(
@@ -881,8 +1295,7 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
                                     public void mouseEntered(
                                             MouseEvent e
                                     ) {
-
-                                        isHovered = true;
+                                        hovered = true;
                                         repaint();
                                     }
 
@@ -890,8 +1303,7 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
                                     public void mouseExited(
                                             MouseEvent e
                                     ) {
-
-                                        isHovered = false;
+                                        hovered = false;
                                         repaint();
                                     }
                                 }
@@ -903,64 +1315,54 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
                             Graphics g
                     ) {
 
-                        Graphics2D g2d =
+                        Graphics2D g2 =
                                 (Graphics2D) g.create();
 
-                        g2d.setRenderingHint(
+                        g2.setRenderingHint(
                                 RenderingHints.KEY_ANTIALIASING,
                                 RenderingHints.VALUE_ANTIALIAS_ON
                         );
 
-                        if (isHovered) {
+                        if (hovered) {
 
-                            g2d.setColor(
-                                    new Color(
-                                            138,
-                                            207,
-                                            248,
-                                            25
-                                    )
+                            g2.setColor(
+                                    LIGHT_BLUE
                             );
 
-                            g2d.fill(
+                            g2.fill(
                                     new RoundRectangle2D.Float(
                                             0,
                                             0,
                                             getWidth(),
                                             getHeight(),
-                                            10,
-                                            10
+                                            12,
+                                            12
                                     )
                             );
                         }
 
-                        g2d.setColor(
-                                new Color(
-                                        138,
-                                        207,
-                                        248,
-                                        130
-                                )
+                        g2.setColor(
+                                BLUE
                         );
 
-                        g2d.setStroke(
+                        g2.setStroke(
                                 new BasicStroke(
                                         1.2f
                                 )
                         );
 
-                        g2d.draw(
+                        g2.draw(
                                 new RoundRectangle2D.Float(
-                                        0.5f,
-                                        0.5f,
-                                        getWidth() - 1,
-                                        getHeight() - 1,
-                                        10,
-                                        10
+                                        1,
+                                        1,
+                                        getWidth() - 2,
+                                        getHeight() - 2,
+                                        12,
+                                        12
                                 )
                         );
 
-                        g2d.dispose();
+                        g2.dispose();
 
                         super.paintComponent(g);
                     }
@@ -969,20 +1371,28 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
         button.setFont(
                 new Font(
                         "SansSerif",
-                        Font.PLAIN,
+                        Font.BOLD,
                         13
                 )
         );
 
         button.setForeground(
-                TEXT_WHITE
+                BLUE
         );
 
-        button.setContentAreaFilled(false);
+        button.setContentAreaFilled(
+                false
+        );
 
-        button.setFocusPainted(false);
+        button.setOpaque(false);
 
-        button.setBorderPainted(false);
+        button.setFocusPainted(
+                false
+        );
+
+        button.setBorderPainted(
+                false
+        );
 
         button.setCursor(
                 new Cursor(
@@ -992,10 +1402,6 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
 
         return button;
     }
-
-    // =========================================================
-    // UPDATE STATUS
-    // =========================================================
 
     private void updateStatus() {
 
@@ -1059,15 +1465,59 @@ public class AdminUpdateParcelStatusFrame extends JPanel {
         }
     }
 
-    // =========================================================
-    // CLEAR FIELDS
-    // =========================================================
-
     private void clearFields() {
 
         parcelIdField.setText("");
 
         statusComboBox.setSelectedIndex(0);
     }
-}
 
+    private static class RoundedPanel
+            extends JPanel {
+
+        private final Color background;
+        private final int radius;
+
+        public RoundedPanel(
+                Color background,
+                int radius
+        ) {
+
+            this.background = background;
+            this.radius = radius;
+
+            setOpaque(false);
+        }
+
+        @Override
+        protected void paintComponent(
+                Graphics g
+        ) {
+
+            Graphics2D g2 =
+                    (Graphics2D) g.create();
+
+            g2.setRenderingHint(
+                    RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON
+            );
+
+            g2.setColor(
+                    background
+            );
+
+            g2.fillRoundRect(
+                    0,
+                    0,
+                    getWidth(),
+                    getHeight(),
+                    radius,
+                    radius
+            );
+
+            g2.dispose();
+
+            super.paintComponent(g);
+        }
+    }
+}

@@ -22,589 +22,263 @@ public class RegisterRiderFrame extends JPanel {
     private JTextField emailField;
     private JPasswordField passwordField;
 
-    // =========================================================
-    // THEME COLORS
-    // =========================================================
-
+    private final Color BG = new Color(241, 248, 253);
+    private final Color WHITE = Color.WHITE;
+    private final Color TEXT_DARK = new Color(31, 38, 43);
+    private final Color TEXT_MUTED = new Color(103, 117, 128);
+    private final Color ORANGE = new Color(248, 116, 35);
+    private final Color ORANGE_HOVER = new Color(235, 94, 20);
     private final Color BLUE = new Color(0, 97, 153);
-    private final Color SKY_BLUE = new Color(138, 207, 248);
-    private final Color SOFT_YELLOW = new Color(244, 235, 108);
-    private final Color GOLD = new Color(255, 212, 68);
-
-    private final Color BG_TOP = new Color(3, 39, 63);
-    private final Color BG_BOTTOM = new Color(0, 72, 110);
-
-    private final Color CARD_BG = new Color(0, 55, 88, 238);
-    private final Color CARD_BORDER = new Color(138, 207, 248, 85);
-
-    private final Color INPUT_BG = new Color(248, 252, 255);
-    private final Color INPUT_TEXT = new Color(25, 45, 58);
-    private final Color INPUT_BORDER = new Color(138, 207, 248, 130);
-
-    private final Color TEXT_WHITE = Color.WHITE;
-    private final Color TEXT_MUTED = new Color(190, 220, 235);
-
-    private final Color BTN_TEXT = new Color(20, 55, 70);
+    private final Color LIGHT_BLUE = new Color(225, 240, 249);
+    private final Color BORDER = new Color(216, 227, 234);
+    private final Color INPUT_BORDER = new Color(198, 211, 220);
+    private final Color INPUT_BG = new Color(249, 251, 252);
+    private final Color SUCCESS = new Color(48, 148, 94);
+    private final Color SUCCESS_BG = new Color(233, 248, 240);
 
     public RegisterRiderFrame(User user) {
 
         this.user = user;
 
         setLayout(new BorderLayout());
-        setOpaque(false);
+        setBackground(BG);
 
-        // =====================================================
-        // ROOT BACKGROUND
-        // =====================================================
+        buildUI();
+    }
 
-        JPanel rootPanel = new JPanel() {
+    private void buildUI() {
 
-            @Override
-            protected void paintComponent(Graphics g) {
+        JPanel page = new JPanel(new BorderLayout(0, 18));
+        page.setOpaque(false);
+        page.setBorder(new EmptyBorder(24, 28, 24, 28));
 
-                super.paintComponent(g);
+        JPanel header = new JPanel(new BorderLayout(14, 0));
+        header.setOpaque(false);
 
-                Graphics2D g2d =
-                        (Graphics2D) g.create();
+        JPanel iconPanel = new RoundedPanel(BLUE, 16);
+        iconPanel.setPreferredSize(new Dimension(52, 52));
+        iconPanel.setLayout(new GridBagLayout());
 
-                g2d.setRenderingHint(
-                        RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON
-                );
+        JLabel iconLabel = new JLabel("♟");
+        iconLabel.setFont(new Font("SansSerif", Font.BOLD, 25));
+        iconLabel.setForeground(Color.WHITE);
 
-                int width = getWidth();
-                int height = getHeight();
+        iconPanel.add(iconLabel);
 
-                // Main gradient
-                GradientPaint gradient =
-                        new GradientPaint(
-                                0,
-                                0,
-                                BG_TOP,
-                                0,
-                                height,
-                                BG_BOTTOM
-                        );
+        header.add(iconPanel, BorderLayout.WEST);
 
-                g2d.setPaint(gradient);
-                g2d.fillRect(
-                        0,
-                        0,
-                        width,
-                        height
-                );
+        JPanel titlePanel = new JPanel();
+        titlePanel.setOpaque(false);
+        titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
 
-                // Decorative glow - top right
-                g2d.setColor(
-                        new Color(
-                                SKY_BLUE.getRed(),
-                                SKY_BLUE.getGreen(),
-                                SKY_BLUE.getBlue(),
-                                25
-                        )
-                );
+        JLabel sectionLabel = new JLabel("RIDER MANAGEMENT");
+        sectionLabel.setFont(new Font("SansSerif", Font.BOLD, 11));
+        sectionLabel.setForeground(ORANGE);
 
-                g2d.fillOval(
-                        width - 180,
-                        -80,
-                        260,
-                        260
-                );
+        JLabel titleLabel = new JLabel("Register New Rider");
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 26));
+        titleLabel.setForeground(TEXT_DARK);
 
-                // Decorative glow - bottom left
-                g2d.setColor(
-                        new Color(
-                                GOLD.getRed(),
-                                GOLD.getGreen(),
-                                GOLD.getBlue(),
-                                18
-                        )
-                );
-
-                g2d.fillOval(
-                        -100,
-                        height - 150,
-                        230,
-                        230
-                );
-
-                // Small decorative dots
-                g2d.setColor(
-                        new Color(
-                                255,
-                                255,
-                                255,
-                                45
-                        )
-                );
-
-                for (int i = 0; i < 8; i++) {
-
-                    int x = 30 + (i * 75);
-                    int y = 30 + ((i % 3) * 45);
-
-                    g2d.fillOval(
-                            x,
-                            y,
-                            4,
-                            4
-                    );
-                }
-
-                g2d.dispose();
-            }
-        };
-
-        rootPanel.setLayout(
-                new GridBagLayout()
+        JLabel subtitleLabel = new JLabel(
+                "Add a new rider to your delivery team"
         );
+        subtitleLabel.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        subtitleLabel.setForeground(TEXT_MUTED);
 
-        // =====================================================
-        // MAIN CARD
-        // =====================================================
+        titlePanel.add(sectionLabel);
+        titlePanel.add(Box.createVerticalStrut(3));
+        titlePanel.add(titleLabel);
+        titlePanel.add(Box.createVerticalStrut(3));
+        titlePanel.add(subtitleLabel);
 
-        JPanel mainPanel = new JPanel() {
+        header.add(titlePanel, BorderLayout.CENTER);
 
-            @Override
-            protected void paintComponent(Graphics g) {
+        JLabel badge = new JLabel("ADMIN ACTION");
+        badge.setOpaque(true);
+        badge.setBackground(SUCCESS_BG);
+        badge.setForeground(SUCCESS);
+        badge.setFont(new Font("SansSerif", Font.BOLD, 10));
+        badge.setBorder(new EmptyBorder(7, 11, 7, 11));
 
-                Graphics2D g2d =
-                        (Graphics2D) g.create();
+        header.add(badge, BorderLayout.EAST);
 
-                g2d.setRenderingHint(
-                        RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON
-                );
+        page.add(header, BorderLayout.NORTH);
 
-                // Card background
-                g2d.setColor(CARD_BG);
+        JPanel mainCard = new RoundedPanel(WHITE, 22);
+        mainCard.setLayout(new BorderLayout(18, 0));
+        mainCard.setBorder(new EmptyBorder(22, 24, 22, 24));
 
-                g2d.fill(
-                        new RoundRectangle2D.Float(
-                                0,
-                                0,
-                                getWidth(),
-                                getHeight(),
-                                24,
-                                24
-                        )
-                );
+        JPanel formCard = new RoundedPanel(new Color(251, 253, 254), 18);
+        formCard.setLayout(new GridBagLayout());
+        formCard.setBorder(new EmptyBorder(22, 22, 22, 22));
 
-                // Top accent
-                GradientPaint accent =
-                        new GradientPaint(
-                                0,
-                                0,
-                                GOLD,
-                                getWidth(),
-                                0,
-                                SOFT_YELLOW
-                        );
-
-                g2d.setPaint(accent);
-
-                g2d.fillRoundRect(
-                        0,
-                        0,
-                        getWidth(),
-                        5,
-                        24,
-                        24
-                );
-
-                // Border
-                g2d.setColor(CARD_BORDER);
-
-                g2d.setStroke(
-                        new BasicStroke(1.2f)
-                );
-
-                g2d.draw(
-                        new RoundRectangle2D.Float(
-                                1,
-                                1,
-                                getWidth() - 2,
-                                getHeight() - 2,
-                                24,
-                                24
-                        )
-                );
-
-                g2d.dispose();
-
-                super.paintComponent(g);
-            }
-        };
-
-        mainPanel.setOpaque(false);
-
-        mainPanel.setLayout(
-                new BorderLayout(
-                        0,
-                        12
-                )
-        );
-
-        mainPanel.setPreferredSize(
-                new Dimension(
-                        470,
-                        500
-                )
-        );
-
-        mainPanel.setBorder(
-                new EmptyBorder(
-                        25,
-                        32,
-                        25,
-                        32
-                )
-        );
-
-        // =====================================================
-        // HEADER
-        // =====================================================
-
-        JPanel headerPanel =
-                new JPanel(
-                        new BorderLayout()
-                );
-
-        headerPanel.setOpaque(false);
-
-        // Logo
-        JLabel logoLabel =
-                new JLabel("▣");
-
-        logoLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        28
-                )
-        );
-
-        logoLabel.setForeground(GOLD);
-
-        logoLabel.setHorizontalAlignment(
-                SwingConstants.CENTER
-        );
-
-        logoLabel.setPreferredSize(
-                new Dimension(
-                        48,
-                        48
-                )
-        );
-
-        JPanel logoPanel =
-                new JPanel(
-                        new GridBagLayout()
-                );
-
-        logoPanel.setOpaque(false);
-
-        logoPanel.add(logoLabel);
-
-        headerPanel.add(
-                logoPanel,
-                BorderLayout.WEST
-        );
-
-        // Header text
-        JPanel headerText =
-                new JPanel();
-
-        headerText.setOpaque(false);
-
-        headerText.setLayout(
-                new BoxLayout(
-                        headerText,
-                        BoxLayout.Y_AXIS
-                )
-        );
-
-        JLabel brandLabel =
-                new JLabel(
-                        "LOGE ACHI DOT COM"
-                );
-
-        brandLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        11
-                )
-        );
-
-        brandLabel.setForeground(
-                SKY_BLUE
-        );
-
-        JLabel titleLabel =
-                new JLabel(
-                        "Register New Rider"
-                );
-
-        titleLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        23
-                )
-        );
-
-        titleLabel.setForeground(
-                TEXT_WHITE
-        );
-
-        JLabel subtitleLabel =
-                new JLabel(
-                        "Add a rider to your delivery team"
-                );
-
-        subtitleLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.PLAIN,
-                        12
-                )
-        );
-
-        subtitleLabel.setForeground(
-                TEXT_MUTED
-        );
-
-        headerText.add(brandLabel);
-        headerText.add(
-                Box.createVerticalStrut(2)
-        );
-        headerText.add(titleLabel);
-        headerText.add(
-                Box.createVerticalStrut(3)
-        );
-        headerText.add(subtitleLabel);
-
-        headerPanel.add(
-                headerText,
-                BorderLayout.CENTER
-        );
-
-        mainPanel.add(
-                headerPanel,
-                BorderLayout.NORTH
-        );
-
-        // =====================================================
-        // FORM
-        // =====================================================
-
-        JPanel formPanel =
-                new JPanel(
-                        new GridBagLayout()
-                );
-
-        formPanel.setOpaque(false);
-
-        GridBagConstraints gbc =
-                new GridBagConstraints();
-
+        GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.weightx = 1.0;
-        gbc.fill =
-                GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 0, 7, 0);
 
-        gbc.insets =
-                new Insets(
-                        5,
-                        0,
-                        5,
-                        0
-                );
+        JLabel formTitle = new JLabel("Rider Information");
+        formTitle.setFont(new Font("SansSerif", Font.BOLD, 17));
+        formTitle.setForeground(TEXT_DARK);
 
-        // Name
-        JLabel nameLabel =
-                createFormLabel(
-                        "RIDER NAME"
-                );
-
-        nameField =
-                new JTextField();
-
-        styleInputField(
-                nameField
+        JLabel formSubtitle = new JLabel(
+                "Enter the account details for the new rider"
         );
+        formSubtitle.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        formSubtitle.setForeground(TEXT_MUTED);
 
         gbc.gridy = 0;
-
-        formPanel.add(
-                nameLabel,
-                gbc
-        );
+        gbc.insets = new Insets(0, 0, 3, 0);
+        formCard.add(formTitle, gbc);
 
         gbc.gridy = 1;
+        gbc.insets = new Insets(0, 0, 18, 0);
+        formCard.add(formSubtitle, gbc);
 
-        formPanel.add(
-                nameField,
-                gbc
-        );
-
-        // Email
-        JLabel emailLabel =
-                createFormLabel(
-                        "EMAIL ADDRESS"
-                );
-
-        emailField =
-                new JTextField();
-
-        styleInputField(
-                emailField
-        );
+        JLabel nameLabel = createFormLabel("RIDER NAME");
+        nameField = new JTextField();
+        styleInputField(nameField);
 
         gbc.gridy = 2;
-
-        formPanel.add(
-                emailLabel,
-                gbc
-        );
+        gbc.insets = new Insets(0, 0, 6, 0);
+        formCard.add(nameLabel, gbc);
 
         gbc.gridy = 3;
+        gbc.insets = new Insets(0, 0, 14, 0);
+        formCard.add(nameField, gbc);
 
-        formPanel.add(
-                emailField,
-                gbc
-        );
-
-        // Password
-        JLabel passwordLabel =
-                createFormLabel(
-                        "PASSWORD"
-                );
-
-        passwordField =
-                new JPasswordField();
-
-        styleInputField(
-                passwordField
-        );
+        JLabel emailLabel = createFormLabel("EMAIL ADDRESS");
+        emailField = new JTextField();
+        styleInputField(emailField);
 
         gbc.gridy = 4;
-
-        formPanel.add(
-                passwordLabel,
-                gbc
-        );
+        gbc.insets = new Insets(0, 0, 6, 0);
+        formCard.add(emailLabel, gbc);
 
         gbc.gridy = 5;
+        gbc.insets = new Insets(0, 0, 14, 0);
+        formCard.add(emailField, gbc);
 
-        formPanel.add(
-                passwordField,
-                gbc
-        );
-
-        // Small information text
-        JLabel infoLabel =
-                new JLabel(
-                        "Rider account will be created with rider access."
-                );
-
-        infoLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.PLAIN,
-                        11
-                )
-        );
-
-        infoLabel.setForeground(
-                TEXT_MUTED
-        );
+        JLabel passwordLabel = createFormLabel("PASSWORD");
+        passwordField = new JPasswordField();
+        styleInputField(passwordField);
 
         gbc.gridy = 6;
+        gbc.insets = new Insets(0, 0, 6, 0);
+        formCard.add(passwordLabel, gbc);
 
-        gbc.insets =
-                new Insets(
-                        8,
-                        0,
-                        2,
-                        0
-                );
+        gbc.gridy = 7;
+        gbc.insets = new Insets(0, 0, 14, 0);
+        formCard.add(passwordField, gbc);
 
-        formPanel.add(
-                infoLabel,
-                gbc
+        JLabel infoLabel = new JLabel(
+                "The account will be created with rider access."
         );
+        infoLabel.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        infoLabel.setForeground(TEXT_MUTED);
 
-        mainPanel.add(
-                formPanel,
-                BorderLayout.CENTER
+        gbc.gridy = 8;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        formCard.add(infoLabel, gbc);
+
+        mainCard.add(formCard, BorderLayout.CENTER);
+
+        JPanel guideCard = new RoundedPanel(LIGHT_BLUE, 18);
+        guideCard.setLayout(new BorderLayout(0, 16));
+        guideCard.setBorder(new EmptyBorder(22, 22, 22, 22));
+        guideCard.setPreferredSize(new Dimension(270, 0));
+
+        JPanel guideHeader = new JPanel();
+        guideHeader.setOpaque(false);
+        guideHeader.setLayout(new BoxLayout(guideHeader, BoxLayout.Y_AXIS));
+
+        JLabel guideTitle = new JLabel("Rider Setup");
+        guideTitle.setFont(new Font("SansSerif", Font.BOLD, 17));
+        guideTitle.setForeground(TEXT_DARK);
+
+        JLabel guideSubtitle = new JLabel(
+                "Account creation overview"
         );
+        guideSubtitle.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        guideSubtitle.setForeground(TEXT_MUTED);
 
-        // =====================================================
-        // BUTTONS
-        // =====================================================
+        guideHeader.add(guideTitle);
+        guideHeader.add(Box.createVerticalStrut(3));
+        guideHeader.add(guideSubtitle);
 
-        JPanel buttonPanel =
-                new JPanel(
-                        new FlowLayout(
-                                FlowLayout.CENTER,
-                                10,
-                                0
-                        )
-                );
+        guideCard.add(guideHeader, BorderLayout.NORTH);
 
-        buttonPanel.setOpaque(false);
+        JPanel steps = new JPanel();
+        steps.setOpaque(false);
+        steps.setLayout(new BoxLayout(steps, BoxLayout.Y_AXIS));
 
-        JButton registerButton =
-                createGoldenButton(
-                        "✓  Register Rider"
-                );
+        steps.add(createStep(
+                "01",
+                "Rider Name",
+                "Enter the rider's full name."
+        ));
 
-        JButton clearButton =
-                createOutlineButton(
-                        "Clear"
-                );
+        steps.add(Box.createVerticalStrut(14));
 
-        registerButton.setPreferredSize(
-                new Dimension(
-                        155,
-                        40
-                )
+        steps.add(createStep(
+                "02",
+                "Email Address",
+                "Use the account email for login."
+        ));
+
+        steps.add(Box.createVerticalStrut(14));
+
+        steps.add(createStep(
+                "03",
+                "Password",
+                "Set the rider's account password."
+        ));
+
+        guideCard.add(steps, BorderLayout.CENTER);
+
+        JPanel accessInfo = new RoundedPanel(WHITE, 14);
+        accessInfo.setLayout(new BorderLayout(10, 0));
+        accessInfo.setBorder(new EmptyBorder(13, 14, 13, 14));
+
+        JPanel accessDot = new RoundedPanel(ORANGE, 10);
+        accessDot.setPreferredSize(new Dimension(10, 10));
+
+        accessInfo.add(accessDot, BorderLayout.WEST);
+
+        JLabel accessLabel = new JLabel(
+                "<html><b>RIDER ACCESS</b><br>" +
+                        "<span style='color:#687580'>The new account will be registered as a rider.</span></html>"
         );
+        accessLabel.setFont(new Font("SansSerif", Font.PLAIN, 11));
 
-        clearButton.setPreferredSize(
-                new Dimension(
-                        90,
-                        40
-                )
+        accessInfo.add(accessLabel, BorderLayout.CENTER);
+
+        guideCard.add(accessInfo, BorderLayout.SOUTH);
+
+        mainCard.add(guideCard, BorderLayout.EAST);
+
+        page.add(mainCard, BorderLayout.CENTER);
+
+        JPanel bottomPanel = new JPanel(
+                new FlowLayout(FlowLayout.RIGHT, 10, 0)
         );
+        bottomPanel.setOpaque(false);
 
-        buttonPanel.add(
-                registerButton
+        JButton clearButton = createOutlineButton("Clear");
+        clearButton.setPreferredSize(new Dimension(95, 40));
+
+        JButton registerButton = createPrimaryButton(
+                "Register Rider  →"
         );
+        registerButton.setPreferredSize(new Dimension(160, 40));
 
-        buttonPanel.add(
-                clearButton
-        );
+        bottomPanel.add(clearButton);
+        bottomPanel.add(registerButton);
 
-        mainPanel.add(
-                buttonPanel,
-                BorderLayout.SOUTH
-        );
+        page.add(bottomPanel, BorderLayout.SOUTH);
 
-        rootPanel.add(
-                mainPanel
-        );
-
-        add(
-                rootPanel,
-                BorderLayout.CENTER
-        );
-
-        // =====================================================
-        // ACTION LISTENERS
-        // =====================================================
+        add(page, BorderLayout.CENTER);
 
         registerButton.addActionListener(
                 e -> registerRider()
@@ -615,54 +289,95 @@ public class RegisterRiderFrame extends JPanel {
         );
     }
 
-    // =========================================================
-    // FORM LABEL
-    // =========================================================
+    private JLabel createFormLabel(String text) {
 
-    private JLabel createFormLabel(
-            String text
-    ) {
-
-        JLabel label =
-                new JLabel(text);
+        JLabel label = new JLabel(text);
 
         label.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        11
+                        10
                 )
         );
 
-        label.setForeground(
-                SKY_BLUE
-        );
+        label.setForeground(BLUE);
 
         return label;
     }
 
-    // =========================================================
-    // INPUT FIELD STYLE
-    // =========================================================
-
-    private void styleInputField(
-            JTextField field
+    private JPanel createStep(
+            String number,
+            String title,
+            String description
     ) {
 
+        JPanel panel = new JPanel(new BorderLayout(12, 0));
+        panel.setOpaque(false);
+
+        JPanel numberPanel = new RoundedPanel(ORANGE, 10);
+        numberPanel.setPreferredSize(new Dimension(34, 34));
+        numberPanel.setLayout(new GridBagLayout());
+
+        JLabel numberLabel = new JLabel(number);
+        numberLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        10
+                )
+        );
+        numberLabel.setForeground(Color.WHITE);
+
+        numberPanel.add(numberLabel);
+
+        JPanel textPanel = new JPanel();
+        textPanel.setOpaque(false);
+        textPanel.setLayout(
+                new BoxLayout(
+                        textPanel,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        JLabel titleLabel = new JLabel(title);
+        titleLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        13
+                )
+        );
+        titleLabel.setForeground(TEXT_DARK);
+
+        JLabel descriptionLabel = new JLabel(
+                "<html>" + description + "</html>"
+        );
+        descriptionLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        11
+                )
+        );
+        descriptionLabel.setForeground(TEXT_MUTED);
+
+        textPanel.add(titleLabel);
+        textPanel.add(Box.createVerticalStrut(3));
+        textPanel.add(descriptionLabel);
+
+        panel.add(numberPanel, BorderLayout.WEST);
+        panel.add(textPanel, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    private void styleInputField(JTextField field) {
+
         field.setOpaque(true);
-
-        field.setBackground(
-                INPUT_BG
-        );
-
-        field.setForeground(
-                INPUT_TEXT
-        );
-
-        field.setCaretColor(
-                BLUE
-        );
-
+        field.setBackground(INPUT_BG);
+        field.setForeground(TEXT_DARK);
+        field.setCaretColor(ORANGE);
         field.setFont(
                 new Font(
                         "SansSerif",
@@ -679,10 +394,10 @@ public class RegisterRiderFrame extends JPanel {
                                 true
                         ),
                         BorderFactory.createEmptyBorder(
-                                7,
-                                11,
-                                7,
-                                11
+                                8,
+                                12,
+                                8,
+                                12
                         )
                 )
         );
@@ -691,37 +406,13 @@ public class RegisterRiderFrame extends JPanel {
                 new FocusAdapter() {
 
                     @Override
-                    public void focusGained(
-                            FocusEvent e
-                    ) {
+                    public void focusGained(FocusEvent e) {
 
                         field.setBorder(
                                 BorderFactory.createCompoundBorder(
                                         BorderFactory.createLineBorder(
-                                                GOLD,
+                                                ORANGE,
                                                 2,
-                                                true
-                                        ),
-                                        BorderFactory.createEmptyBorder(
-                                                6,
-                                                10,
-                                                6,
-                                                10
-                                        )
-                                )
-                        );
-                    }
-
-                    @Override
-                    public void focusLost(
-                            FocusEvent e
-                    ) {
-
-                        field.setBorder(
-                                BorderFactory.createCompoundBorder(
-                                        BorderFactory.createLineBorder(
-                                                INPUT_BORDER,
-                                                1,
                                                 true
                                         ),
                                         BorderFactory.createEmptyBorder(
@@ -733,117 +424,87 @@ public class RegisterRiderFrame extends JPanel {
                                 )
                         );
                     }
-                }
-        );
 
-        field.setPreferredSize(
-                new Dimension(
-                        0,
-                        36
-                )
+                    @Override
+                    public void focusLost(FocusEvent e) {
+
+                        field.setBorder(
+                                BorderFactory.createCompoundBorder(
+                                        BorderFactory.createLineBorder(
+                                                INPUT_BORDER,
+                                                1,
+                                                true
+                                        ),
+                                        BorderFactory.createEmptyBorder(
+                                                8,
+                                                12,
+                                                8,
+                                                12
+                                        )
+                                )
+                        );
+                    }
+                }
         );
     }
 
-    // =========================================================
-    // GOLDEN BUTTON
-    // =========================================================
+    private JButton createPrimaryButton(String text) {
 
-    private JButton createGoldenButton(
-            String text
-    ) {
+        JButton button = new JButton(text) {
 
-        JButton button =
-                new JButton(text) {
+            private boolean hovered;
 
-                    private boolean isHovered =
-                            false;
+            {
+                addMouseListener(
+                        new MouseAdapter() {
 
-                    {
-                        addMouseListener(
-                                new MouseAdapter() {
+                            @Override
+                            public void mouseEntered(MouseEvent e) {
+                                hovered = true;
+                                repaint();
+                            }
 
-                                    @Override
-                                    public void mouseEntered(
-                                            MouseEvent e
-                                    ) {
+                            @Override
+                            public void mouseExited(MouseEvent e) {
+                                hovered = false;
+                                repaint();
+                            }
+                        }
+                );
+            }
 
-                                        isHovered =
-                                                true;
+            @Override
+            protected void paintComponent(Graphics g) {
 
-                                        repaint();
-                                    }
+                Graphics2D g2 = (Graphics2D) g.create();
 
-                                    @Override
-                                    public void mouseExited(
-                                            MouseEvent e
-                                    ) {
+                g2.setRenderingHint(
+                        RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON
+                );
 
-                                        isHovered =
-                                                false;
+                g2.setColor(
+                        hovered
+                                ? ORANGE_HOVER
+                                : ORANGE
+                );
 
-                                        repaint();
-                                    }
-                                }
-                        );
-                    }
+                g2.fill(
+                        new RoundRectangle2D.Float(
+                                0,
+                                0,
+                                getWidth(),
+                                getHeight(),
+                                12,
+                                12
+                        )
+                );
 
-                    @Override
-                    protected void paintComponent(
-                            Graphics g
-                    ) {
+                g2.dispose();
 
-                        Graphics2D g2d =
-                                (Graphics2D) g.create();
-
-                        g2d.setRenderingHint(
-                                RenderingHints.KEY_ANTIALIASING,
-                                RenderingHints.VALUE_ANTIALIAS_ON
-                        );
-
-                        Color top =
-                                isHovered
-                                        ? SOFT_YELLOW
-                                        : GOLD;
-
-                        Color bottom =
-                                isHovered
-                                        ? GOLD
-                                        : new Color(
-                                        255,
-                                        190,
-                                        35
-                                );
-
-                        GradientPaint gradient =
-                                new GradientPaint(
-                                        0,
-                                        0,
-                                        top,
-                                        0,
-                                        getHeight(),
-                                        bottom
-                                );
-
-                        g2d.setPaint(
-                                gradient
-                        );
-
-                        g2d.fill(
-                                new RoundRectangle2D.Float(
-                                        0,
-                                        0,
-                                        getWidth(),
-                                        getHeight(),
-                                        12,
-                                        12
-                                )
-                        );
-
-                        g2d.dispose();
-
-                        super.paintComponent(g);
-                    }
-                };
+                super.paintComponent(g);
+            }
+        };
 
         button.setFont(
                 new Font(
@@ -853,22 +514,11 @@ public class RegisterRiderFrame extends JPanel {
                 )
         );
 
-        button.setForeground(
-                BTN_TEXT
-        );
-
-        button.setContentAreaFilled(
-                false
-        );
-
-        button.setFocusPainted(
-                false
-        );
-
-        button.setBorderPainted(
-                false
-        );
-
+        button.setForeground(Color.WHITE);
+        button.setContentAreaFilled(false);
+        button.setOpaque(false);
+        button.setBorderPainted(false);
+        button.setFocusPainted(false);
         button.setCursor(
                 new Cursor(
                         Cursor.HAND_CURSOR
@@ -878,141 +528,92 @@ public class RegisterRiderFrame extends JPanel {
         return button;
     }
 
-    // =========================================================
-    // OUTLINE BUTTON
-    // =========================================================
+    private JButton createOutlineButton(String text) {
 
-    private JButton createOutlineButton(
-            String text
-    ) {
+        JButton button = new JButton(text) {
 
-        JButton button =
-                new JButton(text) {
+            private boolean hovered;
 
-                    private boolean isHovered =
-                            false;
+            {
+                addMouseListener(
+                        new MouseAdapter() {
 
-                    {
-                        addMouseListener(
-                                new MouseAdapter() {
+                            @Override
+                            public void mouseEntered(MouseEvent e) {
+                                hovered = true;
+                                repaint();
+                            }
 
-                                    @Override
-                                    public void mouseEntered(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered =
-                                                true;
-
-                                        repaint();
-                                    }
-
-                                    @Override
-                                    public void mouseExited(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered =
-                                                false;
-
-                                        repaint();
-                                    }
-                                }
-                        );
-                    }
-
-                    @Override
-                    protected void paintComponent(
-                            Graphics g
-                    ) {
-
-                        Graphics2D g2d =
-                                (Graphics2D) g.create();
-
-                        g2d.setRenderingHint(
-                                RenderingHints.KEY_ANTIALIASING,
-                                RenderingHints.VALUE_ANTIALIAS_ON
-                        );
-
-                        if (isHovered) {
-
-                            g2d.setColor(
-                                    new Color(
-                                            138,
-                                            207,
-                                            248,
-                                            25
-                                    )
-                            );
-
-                            g2d.fill(
-                                    new RoundRectangle2D.Float(
-                                            0,
-                                            0,
-                                            getWidth(),
-                                            getHeight(),
-                                            12,
-                                            12
-                                    )
-                            );
+                            @Override
+                            public void mouseExited(MouseEvent e) {
+                                hovered = false;
+                                repaint();
+                            }
                         }
+                );
+            }
 
-                        g2d.setColor(
-                                new Color(
-                                        138,
-                                        207,
-                                        248,
-                                        170
-                                )
-                        );
+            @Override
+            protected void paintComponent(Graphics g) {
 
-                        g2d.setStroke(
-                                new BasicStroke(
-                                        1.2f
-                                )
-                        );
+                Graphics2D g2 = (Graphics2D) g.create();
 
-                        g2d.draw(
-                                new RoundRectangle2D.Float(
-                                        1,
-                                        1,
-                                        getWidth() - 2,
-                                        getHeight() - 2,
-                                        12,
-                                        12
-                                )
-                        );
+                g2.setRenderingHint(
+                        RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON
+                );
 
-                        g2d.dispose();
+                if (hovered) {
 
-                        super.paintComponent(g);
-                    }
-                };
+                    g2.setColor(LIGHT_BLUE);
+
+                    g2.fill(
+                            new RoundRectangle2D.Float(
+                                    0,
+                                    0,
+                                    getWidth(),
+                                    getHeight(),
+                                    12,
+                                    12
+                            )
+                    );
+                }
+
+                g2.setColor(BLUE);
+                g2.setStroke(
+                        new BasicStroke(1.2f)
+                );
+
+                g2.draw(
+                        new RoundRectangle2D.Float(
+                                1,
+                                1,
+                                getWidth() - 2,
+                                getHeight() - 2,
+                                12,
+                                12
+                        )
+                );
+
+                g2.dispose();
+
+                super.paintComponent(g);
+            }
+        };
 
         button.setFont(
                 new Font(
                         "SansSerif",
-                        Font.PLAIN,
+                        Font.BOLD,
                         13
                 )
         );
 
-        button.setForeground(
-                TEXT_WHITE
-        );
-
-        button.setContentAreaFilled(
-                false
-        );
-
-        button.setFocusPainted(
-                false
-        );
-
-        button.setBorderPainted(
-                false
-        );
-
+        button.setForeground(BLUE);
+        button.setContentAreaFilled(false);
+        button.setOpaque(false);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
         button.setCursor(
                 new Cursor(
                         Cursor.HAND_CURSOR
@@ -1021,21 +622,15 @@ public class RegisterRiderFrame extends JPanel {
 
         return button;
     }
-
-    // =========================================================
-    // CLEAR FORM
-    // =========================================================
 
     private void clearForm() {
 
         nameField.setText("");
         emailField.setText("");
         passwordField.setText("");
-    }
 
-    // =========================================================
-    // REGISTER RIDER
-    // =========================================================
+        nameField.requestFocus();
+    }
 
     private void registerRider() {
 
@@ -1072,7 +667,6 @@ public class RegisterRiderFrame extends JPanel {
             String password =
                     new String(passwordChars);
 
-            // Backend logic unchanged
             admin.registerNewRider(
                     name,
                     email,
@@ -1108,11 +702,54 @@ public class RegisterRiderFrame extends JPanel {
 
         } finally {
 
-            // Zero out password memory buffer
             Arrays.fill(
                     passwordChars,
                     '\0'
             );
+        }
+    }
+
+    private static class RoundedPanel extends JPanel {
+
+        private final Color background;
+        private final int radius;
+
+        public RoundedPanel(
+                Color background,
+                int radius
+        ) {
+
+            this.background = background;
+            this.radius = radius;
+
+            setOpaque(false);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+
+            Graphics2D g2 =
+                    (Graphics2D) g.create();
+
+            g2.setRenderingHint(
+                    RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON
+            );
+
+            g2.setColor(background);
+
+            g2.fillRoundRect(
+                    0,
+                    0,
+                    getWidth(),
+                    getHeight(),
+                    radius,
+                    radius
+            );
+
+            g2.dispose();
+
+            super.paintComponent(g);
         }
     }
 }

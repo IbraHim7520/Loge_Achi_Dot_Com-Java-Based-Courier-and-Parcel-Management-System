@@ -11,6 +11,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 
 public class UpdateUserFrame extends JFrame {
@@ -22,63 +23,89 @@ public class UpdateUserFrame extends JFrame {
     private JTextField emailField;
     private JPasswordField passwordField;
 
-    // =========================================================
-    // THEME
-    // =========================================================
+    private static final Color BG =
+            new Color(241, 248, 253);
 
-    private final Color BLUE = new Color(0, 97, 153);
-    private final Color BLUE_DARK = new Color(0, 61, 95);
-
-    private final Color SKY_BLUE = new Color(138, 207, 248);
-    private final Color SOFT_YELLOW = new Color(244, 235, 108);
-    private final Color GOLD = new Color(255, 212, 68);
-
-    private final Color BG_TOP = new Color(3, 39, 63);
-    private final Color BG_BOTTOM = new Color(0, 72, 110);
-
-    private final Color CARD_BG =
-            new Color(0, 55, 88, 235);
-
-    private final Color CARD_BORDER =
-            new Color(138, 207, 248, 80);
-
-    private final Color INPUT_BG =
-            new Color(245, 250, 253);
-
-    private final Color INPUT_BORDER =
-            new Color(138, 207, 248, 100);
-
-    private final Color INPUT_FOCUS =
-            new Color(138, 207, 248);
-
-    private final Color INPUT_TEXT =
-            new Color(25, 45, 58);
-
-    private final Color TEXT_WHITE =
+    private static final Color WHITE =
             Color.WHITE;
 
-    private final Color TEXT_LABEL =
-            new Color(225, 240, 248);
+    private static final Color BLACK =
+            new Color(15, 18, 20);
 
-    private final Color TEXT_HINT =
-            new Color(175, 210, 225);
+    private static final Color TEXT_DARK =
+            new Color(31, 38, 43);
 
-    // =========================================================
-    // CONSTRUCTOR
-    // =========================================================
+    private static final Color TEXT_MUTED =
+            new Color(103, 117, 128);
+
+    private static final Color ORANGE =
+            new Color(248, 116, 35);
+
+    private static final Color ORANGE_HOVER =
+            new Color(235, 94, 20);
+
+    private static final Color BLUE =
+            new Color(0, 97, 153);
+
+    private static final Color LIGHT_BLUE =
+            new Color(225, 240, 249);
+
+    private static final Color BORDER =
+            new Color(216, 227, 234);
+
+    private static final Color INPUT_BG =
+            new Color(249, 251, 252);
+
+    private static final Color INPUT_BORDER =
+            new Color(198, 211, 220);
+
+    private static final Color SUCCESS =
+            new Color(48, 148, 94);
+
+    private static final Color SUCCESS_BG =
+            new Color(233, 248, 240);
 
     public UpdateUserFrame(User user) {
 
         this.user = user;
 
         setTitle(
-                "Update User - Courier Management System"
+                "Update User - Loge Achi Dot Com"
         );
 
+        Dimension screen =
+                Toolkit.getDefaultToolkit()
+                        .getScreenSize();
+
+        int width =
+                Math.max(
+                        760,
+                        (int) (
+                                screen.width * 0.58
+                        )
+                );
+
+        int height =
+                Math.max(
+                        620,
+                        (int) (
+                                screen.height * 0.70
+                        )
+                );
+
         setSize(
-                520,
-                570
+                width,
+                height
         );
+
+        setMinimumSize(
+                new Dimension(
+                        700,
+                        580
+                )
+        );
+
+        setResizable(true);
 
         setLocationRelativeTo(null);
 
@@ -86,14 +113,19 @@ public class UpdateUserFrame extends JFrame {
                 JFrame.DISPOSE_ON_CLOSE
         );
 
-        setResizable(false);
+        setLayout(
+                new BorderLayout()
+        );
 
-        // =====================================================
-        // ROOT BACKGROUND
-        // =====================================================
+        buildUI();
+    }
 
-        JPanel rootPanel =
-                new JPanel() {
+    private void buildUI() {
+
+        JPanel root =
+                new JPanel(
+                        new BorderLayout()
+                ) {
 
                     @Override
                     protected void paintComponent(
@@ -102,281 +134,257 @@ public class UpdateUserFrame extends JFrame {
 
                         super.paintComponent(g);
 
-                        Graphics2D g2d =
+                        Graphics2D g2 =
                                 (Graphics2D) g.create();
 
-                        g2d.setRenderingHint(
+                        g2.setRenderingHint(
                                 RenderingHints.KEY_ANTIALIASING,
                                 RenderingHints.VALUE_ANTIALIAS_ON
                         );
 
-                        int width =
-                                getWidth();
+                        g2.setColor(BG);
 
-                        int height =
-                                getHeight();
-
-                        // Main blue gradient
-                        GradientPaint gradient =
-                                new GradientPaint(
-                                        0,
-                                        0,
-                                        BG_TOP,
-                                        width,
-                                        height,
-                                        BG_BOTTOM
-                                );
-
-                        g2d.setPaint(
-                                gradient
-                        );
-
-                        g2d.fillRect(
+                        g2.fillRect(
                                 0,
                                 0,
-                                width,
-                                height
+                                getWidth(),
+                                getHeight()
                         );
 
-                        // =================================================
-                        // DECORATIVE GLOW - TOP RIGHT
-                        // =================================================
-
-                        g2d.setColor(
+                        g2.setColor(
                                 new Color(
-                                        138,
-                                        207,
-                                        248,
-                                        18
+                                        196,
+                                        226,
+                                        243,
+                                        90
                                 )
                         );
 
-                        g2d.fillOval(
-                                width - 190,
-                                -110,
-                                300,
-                                300
-                        );
-
-                        // =================================================
-                        // DECORATIVE GLOW - BOTTOM LEFT
-                        // =================================================
-
-                        g2d.setColor(
-                                new Color(
-                                        255,
-                                        212,
-                                        68,
-                                        10
+                        g2.fill(
+                                new Ellipse2D.Float(
+                                        -140,
+                                        -130,
+                                        360,
+                                        360
                                 )
                         );
 
-                        g2d.fillOval(
-                                -130,
-                                height - 150,
-                                280,
-                                280
+                        g2.setColor(
+                                new Color(
+                                        179,
+                                        216,
+                                        237,
+                                        65
+                                )
                         );
 
-                        // =================================================
-                        // SMALL DECORATIVE DOTS
-                        // =================================================
+                        g2.fill(
+                                new Ellipse2D.Float(
+                                        getWidth() - 280,
+                                        getHeight() - 250,
+                                        430,
+                                        430
+                                )
+                        );
 
-                        g2d.setColor(
+                        g2.setColor(
                                 new Color(
-                                        138,
-                                        207,
-                                        248,
+                                        ORANGE.getRed(),
+                                        ORANGE.getGreen(),
+                                        ORANGE.getBlue(),
                                         70
                                 )
                         );
 
-                        g2d.fillOval(
-                                30,
-                                45,
-                                5,
-                                5
+                        g2.fillOval(
+                                getWidth() - 85,
+                                70,
+                                7,
+                                7
                         );
 
-                        g2d.fillOval(
-                                45,
-                                65,
-                                3,
-                                3
+                        g2.fillOval(
+                                50,
+                                getHeight() - 80,
+                                7,
+                                7
                         );
 
-                        g2d.fillOval(
-                                width - 55,
-                                height - 65,
-                                5,
-                                5
-                        );
-
-                        g2d.dispose();
+                        g2.dispose();
                     }
                 };
 
-        rootPanel.setLayout(
-                new GridBagLayout()
+        root.setBorder(
+                new EmptyBorder(
+                        18,
+                        22,
+                        18,
+                        22
+                )
         );
 
-        // =========================================================
-        // MAIN CARD
-        // =========================================================
-
-        JPanel mainPanel =
-                new JPanel() {
+        JPanel card =
+                new JPanel(
+                        new BorderLayout(
+                                0,
+                                20
+                        )
+                ) {
 
                     @Override
                     protected void paintComponent(
                             Graphics g
                     ) {
 
-                        Graphics2D g2d =
+                        super.paintComponent(g);
+
+                        Graphics2D g2 =
                                 (Graphics2D) g.create();
 
-                        g2d.setRenderingHint(
+                        g2.setRenderingHint(
                                 RenderingHints.KEY_ANTIALIASING,
                                 RenderingHints.VALUE_ANTIALIAS_ON
                         );
 
-                        // Card background
-                        g2d.setColor(
-                                CARD_BG
-                        );
+                        g2.setColor(WHITE);
 
-                        g2d.fill(
+                        g2.fill(
                                 new RoundRectangle2D.Float(
                                         0,
                                         0,
                                         getWidth(),
                                         getHeight(),
-                                        22,
-                                        22
+                                        24,
+                                        24
                                 )
                         );
 
-                        // Card border
-                        g2d.setColor(
-                                CARD_BORDER
-                        );
+                        g2.setColor(BORDER);
 
-                        g2d.setStroke(
-                                new BasicStroke(
-                                        1.2f
-                                )
-                        );
-
-                        g2d.draw(
+                        g2.draw(
                                 new RoundRectangle2D.Float(
-                                        1,
-                                        1,
-                                        getWidth() - 2,
-                                        getHeight() - 2,
-                                        22,
-                                        22
+                                        0.5f,
+                                        0.5f,
+                                        getWidth() - 1,
+                                        getHeight() - 1,
+                                        24,
+                                        24
                                 )
                         );
 
-                        g2d.dispose();
+                        g2.setColor(ORANGE);
 
-                        super.paintComponent(g);
+                        g2.fillRoundRect(
+                                28,
+                                0,
+                                110,
+                                4,
+                                4,
+                                4
+                        );
+
+                        g2.dispose();
                     }
                 };
 
-        mainPanel.setOpaque(
-                false
-        );
+        card.setOpaque(false);
 
-        mainPanel.setLayout(
-                new BorderLayout()
-        );
-
-        mainPanel.setPreferredSize(
-                new Dimension(
-                        430,
-                        490
-                )
-        );
-
-        mainPanel.setBorder(
+        card.setBorder(
                 new EmptyBorder(
-                        22,
-                        28,
-                        20,
-                        28
+                        26,
+                        30,
+                        26,
+                        30
                 )
         );
 
-        // =========================================================
-        // TITLE HEADER
-        // =========================================================
+        card.add(
+                createHeader(),
+                BorderLayout.NORTH
+        );
 
-        JPanel titlePanel =
+        card.add(
+                createMainContent(),
+                BorderLayout.CENTER
+        );
+
+        card.add(
+                createFooter(),
+                BorderLayout.SOUTH
+        );
+
+        root.add(
+                card,
+                BorderLayout.CENTER
+        );
+
+        add(
+                root,
+                BorderLayout.CENTER
+        );
+    }
+
+    private JPanel createHeader() {
+
+        JPanel header =
+                new JPanel(
+                        new BorderLayout()
+                );
+
+        header.setOpaque(false);
+
+        JPanel titleGroup =
                 new JPanel();
 
-        titlePanel.setOpaque(
-                false
-        );
+        titleGroup.setOpaque(false);
 
-        titlePanel.setLayout(
+        titleGroup.setLayout(
                 new BoxLayout(
-                        titlePanel,
+                        titleGroup,
                         BoxLayout.Y_AXIS
                 )
         );
 
-        // Icon
-        JLabel iconLabel =
+        JLabel section =
                 new JLabel(
-                        "♙"
+                        "ACCOUNT MANAGEMENT"
                 );
 
-        iconLabel.setFont(
+        section.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        25
+                        9
                 )
         );
 
-        iconLabel.setForeground(
-                GOLD
+        section.setForeground(
+                ORANGE
         );
 
-        iconLabel.setAlignmentX(
-                Component.CENTER_ALIGNMENT
-        );
-
-        // Title
-        JLabel titleLabel =
+        JLabel title =
                 new JLabel(
                         "Update User Account"
                 );
 
-        titleLabel.setFont(
+        title.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        22
+                        29
                 )
         );
 
-        titleLabel.setForeground(
-                TEXT_WHITE
+        title.setForeground(
+                BLACK
         );
 
-        titleLabel.setAlignmentX(
-                Component.CENTER_ALIGNMENT
-        );
-
-        // Subtitle
-        JLabel subtitleLabel =
+        JLabel subtitle =
                 new JLabel(
-                        "Modify user account information"
+                        "Modify account information without changing the user's role"
                 );
 
-        subtitleLabel.setFont(
+        subtitle.setFont(
                 new Font(
                         "SansSerif",
                         Font.PLAIN,
@@ -384,296 +392,903 @@ public class UpdateUserFrame extends JFrame {
                 )
         );
 
-        subtitleLabel.setForeground(
-                TEXT_HINT
+        subtitle.setForeground(
+                TEXT_MUTED
         );
 
-        subtitleLabel.setAlignmentX(
-                Component.CENTER_ALIGNMENT
-        );
+        titleGroup.add(section);
 
-        titlePanel.add(
-                iconLabel
-        );
-
-        titlePanel.add(
-                Box.createVerticalStrut(3)
-        );
-
-        titlePanel.add(
-                titleLabel
-        );
-
-        titlePanel.add(
-                Box.createVerticalStrut(4)
-        );
-
-        titlePanel.add(
-                subtitleLabel
-        );
-
-        titlePanel.add(
-                Box.createVerticalStrut(14)
-        );
-
-        mainPanel.add(
-                titlePanel,
-                BorderLayout.NORTH
-        );
-
-        // =========================================================
-        // FORM
-        // =========================================================
-
-        JPanel formPanel =
-                new JPanel();
-
-        formPanel.setOpaque(
-                false
-        );
-
-        formPanel.setLayout(
-                new BoxLayout(
-                        formPanel,
-                        BoxLayout.Y_AXIS
-                )
-        );
-
-        userIdField =
-                new JTextField();
-
-        styleInputField(
-                userIdField
-        );
-
-        nameField =
-                new JTextField();
-
-        styleInputField(
-                nameField
-        );
-
-        emailField =
-                new JTextField();
-
-        styleInputField(
-                emailField
-        );
-
-        passwordField =
-                new JPasswordField();
-
-        styleInputField(
-                passwordField
-        );
-
-        formPanel.add(
-                createFormRow(
-                        "User ID *",
-                        userIdField
-                )
-        );
-
-        formPanel.add(
-                Box.createVerticalStrut(
-                        9
-                )
-        );
-
-        formPanel.add(
-                createFormRow(
-                        "New Name *",
-                        nameField
-                )
-        );
-
-        formPanel.add(
-                Box.createVerticalStrut(
-                        9
-                )
-        );
-
-        formPanel.add(
-                createFormRow(
-                        "New Email *",
-                        emailField
-                )
-        );
-
-        formPanel.add(
-                Box.createVerticalStrut(
-                        9
-                )
-        );
-
-        formPanel.add(
-                createFormRow(
-                        "New Password",
-                        passwordField
-                )
-        );
-
-        formPanel.add(
+        titleGroup.add(
                 Box.createVerticalStrut(
                         5
                 )
         );
 
-        JLabel passwordHint =
-                new JLabel(
-                        "Leave password empty to keep the old password."
+        titleGroup.add(title);
+
+        titleGroup.add(
+                Box.createVerticalStrut(
+                        5
+                )
+        );
+
+        titleGroup.add(subtitle);
+
+        header.add(
+                titleGroup,
+                BorderLayout.WEST
+        );
+
+        JPanel badge =
+                new JPanel(
+                        new BorderLayout(
+                                7,
+                                0
+                        )
                 );
 
-        passwordHint.setFont(
+        badge.setOpaque(true);
+
+        badge.setBackground(
+                SUCCESS_BG
+        );
+
+        badge.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(
+                                new Color(
+                                        188,
+                                        226,
+                                        204
+                                ),
+                                1,
+                                true
+                        ),
+                        new EmptyBorder(
+                                8,
+                                11,
+                                8,
+                                11
+                        )
+                )
+        );
+
+        JLabel dot =
+                new JLabel(
+                        "●"
+                );
+
+        dot.setFont(
                 new Font(
                         "SansSerif",
-                        Font.ITALIC,
+                        Font.BOLD,
+                        11
+                )
+        );
+
+        dot.setForeground(
+                SUCCESS
+        );
+
+        JLabel text =
+                new JLabel(
+                        "USER MANAGEMENT"
+                );
+
+        text.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        8
+                )
+        );
+
+        text.setForeground(
+                new Color(
+                        48,
+                        114,
+                        76
+                )
+        );
+
+        badge.add(
+                dot,
+                BorderLayout.WEST
+        );
+
+        badge.add(
+                text,
+                BorderLayout.CENTER
+        );
+
+        header.add(
+                badge,
+                BorderLayout.EAST
+        );
+
+        return header;
+    }
+
+    private JPanel createMainContent() {
+
+        JPanel content =
+                new JPanel(
+                        new GridBagLayout()
+                );
+
+        content.setOpaque(false);
+
+        GridBagConstraints gbc =
+                new GridBagConstraints();
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.55;
+        gbc.weighty = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets =
+                new Insets(
+                        0,
+                        0,
+                        0,
+                        9
+                );
+
+        content.add(
+                createFormCard(),
+                gbc
+        );
+
+        gbc.gridx = 1;
+        gbc.weightx = 0.45;
+        gbc.insets =
+                new Insets(
+                        0,
+                        9,
+                        0,
+                        0
+                );
+
+        content.add(
+                createInfoCard(),
+                gbc
+        );
+
+        return content;
+    }
+
+    private JPanel createFormCard() {
+
+        JPanel card =
+                createWhiteCard();
+
+        card.setLayout(
+                new BorderLayout(
+                        0,
+                        18
+                )
+        );
+
+        JPanel header =
+                new JPanel();
+
+        header.setOpaque(false);
+
+        header.setLayout(
+                new BoxLayout(
+                        header,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        JLabel title =
+                new JLabel(
+                        "Account Details"
+                );
+
+        title.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        18
+                )
+        );
+
+        title.setForeground(
+                TEXT_DARK
+        );
+
+        JLabel subtitle =
+                new JLabel(
+                        "Enter the information you want to update"
+                );
+
+        subtitle.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
                         10
                 )
         );
 
-        passwordHint.setForeground(
-                TEXT_HINT
+        subtitle.setForeground(
+                TEXT_MUTED
         );
 
-        passwordHint.setAlignmentX(
-                Component.CENTER_ALIGNMENT
+        header.add(title);
+
+        header.add(
+                Box.createVerticalStrut(
+                        4
+                )
         );
 
-        formPanel.add(
-                passwordHint
+        header.add(subtitle);
+
+        card.add(
+                header,
+                BorderLayout.NORTH
         );
 
-        mainPanel.add(
-                formPanel,
+        JPanel form =
+                new JPanel(
+                        new GridLayout(
+                                4,
+                                1,
+                                0,
+                                12
+                        )
+                );
+
+        form.setOpaque(false);
+
+        userIdField =
+                new JTextField();
+
+        nameField =
+                new JTextField();
+
+        emailField =
+                new JTextField();
+
+        passwordField =
+                new JPasswordField();
+
+        styleInputField(
+                userIdField
+        );
+
+        styleInputField(
+                nameField
+        );
+
+        styleInputField(
+                emailField
+        );
+
+        styleInputField(
+                passwordField
+        );
+
+        form.add(
+                createFieldBlock(
+                        "USER ID *",
+                        userIdField,
+                        "Enter the target user ID"
+                )
+        );
+
+        form.add(
+                createFieldBlock(
+                        "FULL NAME *",
+                        nameField,
+                        "Enter the new user name"
+                )
+        );
+
+        form.add(
+                createFieldBlock(
+                        "EMAIL ADDRESS *",
+                        emailField,
+                        "Enter the new email address"
+                )
+        );
+
+        form.add(
+                createFieldBlock(
+                        "NEW PASSWORD",
+                        passwordField,
+                        "Leave empty to keep current password"
+                )
+        );
+
+        card.add(
+                form,
                 BorderLayout.CENTER
         );
 
-        // =========================================================
-        // BUTTONS
-        // =========================================================
-
-        JButton updateButton =
-                createGoldenButton(
-                        "Update User"
-                );
-
-        JButton clearButton =
-                createOutlineButton(
-                        "Clear"
-                );
-
-        JButton closeButton =
-                createOutlineButton(
-                        "Close"
-                );
-
-        updateButton.setPreferredSize(
-                new Dimension(
-                        130,
-                        38
-                )
-        );
-
-        clearButton.setPreferredSize(
-                new Dimension(
-                        85,
-                        38
-                )
-        );
-
-        closeButton.setPreferredSize(
-                new Dimension(
-                        85,
-                        38
-                )
-        );
-
-        JPanel buttonPanel =
+        JPanel passwordHint =
                 new JPanel(
-                        new FlowLayout(
-                                FlowLayout.CENTER,
-                                9,
-                                4
-                        )
+                        new BorderLayout()
                 );
 
-        buttonPanel.setOpaque(
-                false
+        passwordHint.setOpaque(true);
+
+        passwordHint.setBackground(
+                new Color(
+                        247,
+                        250,
+                        252
+                )
         );
 
-        buttonPanel.add(
-                updateButton
+        passwordHint.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(
+                                BORDER,
+                                1,
+                                true
+                        ),
+                        new EmptyBorder(
+                                9,
+                                11,
+                                9,
+                                11
+                        )
+                )
         );
 
-        buttonPanel.add(
-                clearButton
+        JLabel note =
+                new JLabel(
+                        "Password is optional"
+                );
+
+        note.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        9
+                )
         );
 
-        buttonPanel.add(
-                closeButton
+        note.setForeground(
+                ORANGE
         );
 
-        mainPanel.add(
-                buttonPanel,
+        JLabel noteText =
+                new JLabel(
+                        "Leave it blank if you do not want to change it."
+                );
+
+        noteText.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        9
+                )
+        );
+
+        noteText.setForeground(
+                TEXT_MUTED
+        );
+
+        passwordHint.add(
+                note,
+                BorderLayout.WEST
+        );
+
+        passwordHint.add(
+                noteText,
+                BorderLayout.EAST
+        );
+
+        card.add(
+                passwordHint,
                 BorderLayout.SOUTH
         );
 
-        // =========================================================
-        // ADD CARD
-        // =========================================================
-
-        rootPanel.add(
-                mainPanel
-        );
-
-        add(
-                rootPanel
-        );
-
-        // =========================================================
-        // ACTION LISTENERS
-        // =========================================================
-
-        updateButton.addActionListener(
-                e -> updateUser()
-        );
-
-        clearButton.addActionListener(
-                e -> {
-
-                    userIdField.setText("");
-                    nameField.setText("");
-                    emailField.setText("");
-                    passwordField.setText("");
-                }
-        );
-
-        closeButton.addActionListener(
-                e -> dispose()
-        );
+        return card;
     }
 
-    // =========================================================
-    // FORM ROW
-    // =========================================================
+    private JPanel createWhiteCard() {
+        return null;
+    }
 
-    private JPanel createFormRow(
-            String labelText,
-            JTextField field
-    ) {
+    private JPanel createInfoCard() {
 
-        JPanel row =
+        JPanel card =
                 new JPanel(
                         new BorderLayout(
                                 0,
+                                16
+                        )
+                ) {
+
+                    @Override
+                    protected void paintComponent(
+                            Graphics g
+                    ) {
+
+                        super.paintComponent(g);
+
+                        Graphics2D g2 =
+                                (Graphics2D) g.create();
+
+                        g2.setRenderingHint(
+                                RenderingHints.KEY_ANTIALIASING,
+                                RenderingHints.VALUE_ANTIALIAS_ON
+                        );
+
+                        g2.setColor(
+                                LIGHT_BLUE
+                        );
+
+                        g2.fill(
+                                new RoundRectangle2D.Float(
+                                        0,
+                                        0,
+                                        getWidth(),
+                                        getHeight(),
+                                        18,
+                                        18
+                                )
+                        );
+
+                        g2.setColor(
+                                new Color(
+                                        197,
+                                        221,
+                                        234
+                                )
+                        );
+
+                        g2.draw(
+                                new RoundRectangle2D.Float(
+                                        0.5f,
+                                        0.5f,
+                                        getWidth() - 1,
+                                        getHeight() - 1,
+                                        18,
+                                        18
+                                )
+                        );
+
+                        g2.setColor(BLUE);
+
+                        g2.fillRoundRect(
+                                22,
+                                0,
+                                95,
+                                4,
+                                4,
                                 4
+                        );
+
+                        g2.dispose();
+                    }
+                };
+
+        card.setOpaque(false);
+
+        card.setBorder(
+                new EmptyBorder(
+                        20,
+                        20,
+                        20,
+                        20
+                )
+        );
+
+        JPanel title =
+                new JPanel();
+
+        title.setOpaque(false);
+
+        title.setLayout(
+                new BoxLayout(
+                        title,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        JLabel heading =
+                new JLabel(
+                        "Update Guide"
+                );
+
+        heading.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        18
+                )
+        );
+
+        heading.setForeground(
+                BLACK
+        );
+
+        JLabel subtitle =
+                new JLabel(
+                        "Review before saving changes"
+                );
+
+        subtitle.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        10
+                )
+        );
+
+        subtitle.setForeground(
+                TEXT_MUTED
+        );
+
+        title.add(heading);
+
+        title.add(
+                Box.createVerticalStrut(
+                        4
+                )
+        );
+
+        title.add(subtitle);
+
+        card.add(
+                title,
+                BorderLayout.NORTH
+        );
+
+        JPanel guide =
+                new JPanel();
+
+        guide.setOpaque(false);
+
+        guide.setLayout(
+                new BoxLayout(
+                        guide,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        guide.add(
+                createGuideItem(
+                        "1",
+                        "Identify User",
+                        "Enter the User ID of the account you want to modify.",
+                        BLUE
+                )
+        );
+
+        guide.add(
+                Box.createVerticalStrut(
+                        12
+                )
+        );
+
+        guide.add(
+                createGuideItem(
+                        "2",
+                        "Update Details",
+                        "Provide the new name and email information.",
+                        ORANGE
+                )
+        );
+
+        guide.add(
+                Box.createVerticalStrut(
+                        12
+                )
+        );
+
+        guide.add(
+                createGuideItem(
+                        "3",
+                        "Password",
+                        "A blank password keeps the existing password unchanged.",
+                        new Color(
+                                64,
+                                151,
+                                194
+                        )
+                )
+        );
+
+        guide.add(
+                Box.createVerticalStrut(
+                        12
+                )
+        );
+
+        guide.add(
+                createGuideItem(
+                        "4",
+                        "Save Changes",
+                        "Use the Update User button below to apply the changes.",
+                        SUCCESS
+                )
+        );
+
+        card.add(
+                guide,
+                BorderLayout.CENTER
+        );
+
+        JPanel accountBox =
+                new JPanel(
+                        new BorderLayout(
+                                0,
+                                6
                         )
                 );
 
-        row.setOpaque(
-                false
+        accountBox.setOpaque(true);
+
+        accountBox.setBackground(
+                new Color(
+                        255,
+                        255,
+                        255,
+                        150
+                )
         );
+
+        accountBox.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(
+                                new Color(
+                                        205,
+                                        221,
+                                        231
+                                ),
+                                1,
+                                true
+                        ),
+                        new EmptyBorder(
+                                11,
+                                12,
+                                11,
+                                12
+                        )
+                )
+        );
+
+        JLabel accountTitle =
+                new JLabel(
+                        "ADMIN ACCESS"
+                );
+
+        accountTitle.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        8
+                )
+        );
+
+        accountTitle.setForeground(
+                ORANGE
+        );
+
+        JLabel accountText =
+                new JLabel(
+                        "User account changes are handled through the admin system."
+                );
+
+        accountText.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        9
+                )
+        );
+
+        accountText.setForeground(
+                TEXT_MUTED
+        );
+
+        accountBox.add(
+                accountTitle,
+                BorderLayout.NORTH
+        );
+
+        accountBox.add(
+                accountText,
+                BorderLayout.CENTER
+        );
+
+        card.add(
+                accountBox,
+                BorderLayout.SOUTH
+        );
+
+        return card;
+    }
+
+    private JPanel createGuideItem(
+            String number,
+            String titleText,
+            String description,
+            Color accent
+    ) {
+
+        JPanel item =
+                new JPanel(
+                        new BorderLayout(
+                                10,
+                                0
+                        )
+                );
+
+        item.setOpaque(true);
+
+        item.setBackground(
+                new Color(
+                        255,
+                        255,
+                        255,
+                        165
+                )
+        );
+
+        item.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(
+                                new Color(
+                                        205,
+                                        221,
+                                        231
+                                ),
+                                1,
+                                true
+                        ),
+                        new EmptyBorder(
+                                10,
+                                10,
+                                10,
+                                10
+                        )
+                )
+        );
+
+        JPanel badge =
+                new JPanel(
+                        new GridBagLayout()
+                );
+
+        badge.setOpaque(true);
+
+        badge.setBackground(
+                mixWithWhite(
+                        accent,
+                        0.84f
+                )
+        );
+
+        badge.setPreferredSize(
+                new Dimension(
+                        35,
+                        35
+                )
+        );
+
+        JLabel numberLabel =
+                new JLabel(
+                        number
+                );
+
+        numberLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        12
+                )
+        );
+
+        numberLabel.setForeground(
+                accent
+        );
+
+        badge.add(
+                numberLabel
+        );
+
+        item.add(
+                badge,
+                BorderLayout.WEST
+        );
+
+        JPanel text =
+                new JPanel();
+
+        text.setOpaque(false);
+
+        text.setLayout(
+                new BoxLayout(
+                        text,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        JLabel title =
+                new JLabel(
+                        titleText
+                );
+
+        title.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        11
+                )
+        );
+
+        title.setForeground(
+                TEXT_DARK
+        );
+
+        JLabel descriptionLabel =
+                new JLabel(
+                        "<html><div style='width:190px'>"
+                                + description
+                                + "</div></html>"
+                );
+
+        descriptionLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        9
+                )
+        );
+
+        descriptionLabel.setForeground(
+                TEXT_MUTED
+        );
+
+        text.add(title);
+
+        text.add(
+                Box.createVerticalStrut(
+                        3
+                )
+        );
+
+        text.add(
+                descriptionLabel
+        );
+
+        item.add(
+                text,
+                BorderLayout.CENTER
+        );
+
+        return item;
+    }
+
+    private JPanel createFieldBlock(
+            String labelText,
+            JTextField field,
+            String hint
+    ) {
+
+        JPanel panel =
+                new JPanel(
+                        new BorderLayout(
+                                0,
+                                5
+                        )
+                );
+
+        panel.setOpaque(false);
+
+        JPanel labelPanel =
+                new JPanel(
+                        new BorderLayout()
+                );
+
+        labelPanel.setOpaque(false);
 
         JLabel label =
                 new JLabel(
@@ -684,49 +1299,184 @@ public class UpdateUserFrame extends JFrame {
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        11
+                        9
                 )
         );
 
         label.setForeground(
-                TEXT_LABEL
+                TEXT_MUTED
         );
 
-        row.add(
+        JLabel hintLabel =
+                new JLabel(
+                        hint
+                );
+
+        hintLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        8
+                )
+        );
+
+        hintLabel.setForeground(
+                new Color(
+                        150,
+                        162,
+                        170
+                )
+        );
+
+        labelPanel.add(
                 label,
+                BorderLayout.WEST
+        );
+
+        labelPanel.add(
+                hintLabel,
+                BorderLayout.EAST
+        );
+
+        panel.add(
+                labelPanel,
                 BorderLayout.NORTH
         );
 
-        row.add(
+        panel.add(
                 field,
                 BorderLayout.CENTER
         );
 
-        return row;
+        return panel;
     }
 
-    // =========================================================
-    // INPUT FIELD STYLE
-    // =========================================================
+    private JPanel createFooter() {
+
+        JPanel footer =
+                new JPanel(
+                        new BorderLayout()
+                );
+
+        footer.setOpaque(false);
+
+        JLabel left =
+                new JLabel(
+                        "●  Admin account management"
+                );
+
+        left.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        9
+                )
+        );
+
+        left.setForeground(
+                TEXT_MUTED
+        );
+
+        JPanel buttons =
+                new JPanel(
+                        new FlowLayout(
+                                FlowLayout.RIGHT,
+                                9,
+                                0
+                        )
+                );
+
+        buttons.setOpaque(false);
+
+        JButton updateButton =
+                createPrimaryButton(
+                        "Update User  →"
+                );
+
+        updateButton.setPreferredSize(
+                new Dimension(
+                        145,
+                        40
+                )
+        );
+
+        JButton clearButton =
+                createOutlineButton(
+                        "Clear"
+                );
+
+        clearButton.setPreferredSize(
+                new Dimension(
+                        85,
+                        40
+                )
+        );
+
+        JButton closeButton =
+                createOutlineButton(
+                        "Close"
+                );
+
+        closeButton.setPreferredSize(
+                new Dimension(
+                        85,
+                        40
+                )
+        );
+
+        buttons.add(
+                updateButton
+        );
+
+        buttons.add(
+                clearButton
+        );
+
+        buttons.add(
+                closeButton
+        );
+
+        footer.add(
+                left,
+                BorderLayout.WEST
+        );
+
+        footer.add(
+                buttons,
+                BorderLayout.EAST
+        );
+
+        updateButton.addActionListener(
+                e -> updateUser()
+        );
+
+        clearButton.addActionListener(
+                e -> clearFields()
+        );
+
+        closeButton.addActionListener(
+                e -> dispose()
+        );
+
+        return footer;
+    }
 
     private void styleInputField(
             JTextField field
     ) {
 
-        field.setOpaque(
-                true
-        );
+        field.setOpaque(true);
 
         field.setBackground(
                 INPUT_BG
         );
 
         field.setForeground(
-                INPUT_TEXT
+                TEXT_DARK
         );
 
         field.setCaretColor(
-                BLUE
+                ORANGE
         );
 
         field.setFont(
@@ -745,11 +1495,25 @@ public class UpdateUserFrame extends JFrame {
                                 true
                         ),
                         BorderFactory.createEmptyBorder(
-                                6,
-                                10,
-                                6,
-                                10
+                                8,
+                                11,
+                                8,
+                                11
                         )
+                )
+        );
+
+        field.setPreferredSize(
+                new Dimension(
+                        0,
+                        40
+                )
+        );
+
+        field.setMaximumSize(
+                new Dimension(
+                        Integer.MAX_VALUE,
+                        40
                 )
         );
 
@@ -764,15 +1528,15 @@ public class UpdateUserFrame extends JFrame {
                         field.setBorder(
                                 BorderFactory.createCompoundBorder(
                                         BorderFactory.createLineBorder(
-                                                INPUT_FOCUS,
-                                                2,
+                                                ORANGE,
+                                                1,
                                                 true
                                         ),
                                         BorderFactory.createEmptyBorder(
-                                                5,
-                                                9,
-                                                5,
-                                                9
+                                                8,
+                                                11,
+                                                8,
+                                                11
                                         )
                                 )
                         );
@@ -791,123 +1555,79 @@ public class UpdateUserFrame extends JFrame {
                                                 true
                                         ),
                                         BorderFactory.createEmptyBorder(
-                                                6,
-                                                10,
-                                                6,
-                                                10
+                                                8,
+                                                11,
+                                                8,
+                                                11
                                         )
                                 )
                         );
                     }
                 }
         );
-
-        field.setMaximumSize(
-                new Dimension(
-                        Integer.MAX_VALUE,
-                        34
-                )
-        );
     }
 
-    // =========================================================
-    // GOLDEN BUTTON
-    // =========================================================
-
-    private JButton createGoldenButton(
+    private JButton createPrimaryButton(
             String text
     ) {
 
         JButton button =
                 new JButton(text) {
 
-                    private boolean isHovered =
-                            false;
-
-                    {
-                        addMouseListener(
-                                new MouseAdapter() {
-
-                                    @Override
-                                    public void mouseEntered(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered = true;
-
-                                        repaint();
-                                    }
-
-                                    @Override
-                                    public void mouseExited(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered = false;
-
-                                        repaint();
-                                    }
-                                }
-                        );
-                    }
-
                     @Override
                     protected void paintComponent(
                             Graphics g
                     ) {
 
-                        Graphics2D g2d =
+                        Graphics2D g2 =
                                 (Graphics2D) g.create();
 
-                        g2d.setRenderingHint(
+                        g2.setRenderingHint(
                                 RenderingHints.KEY_ANTIALIASING,
                                 RenderingHints.VALUE_ANTIALIAS_ON
                         );
 
                         Color top =
-                                isHovered
+                                getModel().isRollover()
                                         ? new Color(
                                         255,
-                                        225,
-                                        95
+                                        151,
+                                        68
                                 )
-                                        : SOFT_YELLOW;
+                                        : new Color(
+                                        255,
+                                        137,
+                                        48
+                                );
 
                         Color bottom =
-                                isHovered
-                                        ? new Color(
-                                        255,
-                                        195,
-                                        35
-                                )
-                                        : GOLD;
+                                getModel().isRollover()
+                                        ? ORANGE_HOVER
+                                        : ORANGE;
 
-                        GradientPaint gradient =
+                        g2.setPaint(
                                 new GradientPaint(
                                         0,
                                         0,
                                         top,
+                                        getWidth(),
                                         0,
-                                        getHeight(),
                                         bottom
-                                );
-
-                        g2d.setPaint(
-                                gradient
+                                )
                         );
 
-                        g2d.fill(
+                        g2.fill(
                                 new RoundRectangle2D.Float(
                                         0,
                                         0,
                                         getWidth(),
                                         getHeight(),
-                                        10,
-                                        10
+                                        12,
+                                        12
                                 )
                         );
 
-                        g2d.dispose();
+                        g2.dispose();
 
                         super.paintComponent(
                                 g
@@ -924,20 +1644,18 @@ public class UpdateUserFrame extends JFrame {
         );
 
         button.setForeground(
-                BLUE_DARK
+                WHITE
         );
 
         button.setContentAreaFilled(
                 false
         );
 
-        button.setFocusPainted(
-                false
-        );
+        button.setOpaque(false);
 
-        button.setBorderPainted(
-                false
-        );
+        button.setFocusPainted(false);
+
+        button.setBorderPainted(false);
 
         button.setCursor(
                 new Cursor(
@@ -948,10 +1666,6 @@ public class UpdateUserFrame extends JFrame {
         return button;
     }
 
-    // =========================================================
-    // OUTLINE BUTTON
-    // =========================================================
-
     private JButton createOutlineButton(
             String text
     ) {
@@ -959,99 +1673,70 @@ public class UpdateUserFrame extends JFrame {
         JButton button =
                 new JButton(text) {
 
-                    private boolean isHovered =
-                            false;
-
-                    {
-                        addMouseListener(
-                                new MouseAdapter() {
-
-                                    @Override
-                                    public void mouseEntered(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered = true;
-
-                                        repaint();
-                                    }
-
-                                    @Override
-                                    public void mouseExited(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered = false;
-
-                                        repaint();
-                                    }
-                                }
-                        );
-                    }
-
                     @Override
                     protected void paintComponent(
                             Graphics g
                     ) {
 
-                        Graphics2D g2d =
+                        Graphics2D g2 =
                                 (Graphics2D) g.create();
 
-                        g2d.setRenderingHint(
+                        g2.setRenderingHint(
                                 RenderingHints.KEY_ANTIALIASING,
                                 RenderingHints.VALUE_ANTIALIAS_ON
                         );
 
-                        if (isHovered) {
+                        if (
+                                getModel().isRollover()
+                        ) {
 
-                            g2d.setColor(
+                            g2.setColor(
                                     new Color(
-                                            138,
-                                            207,
                                             248,
-                                            35
+                                            116,
+                                            35,
+                                            18
                                     )
                             );
 
-                            g2d.fill(
+                            g2.fill(
                                     new RoundRectangle2D.Float(
                                             0,
                                             0,
                                             getWidth(),
                                             getHeight(),
-                                            10,
-                                            10
+                                            12,
+                                            12
                                     )
                             );
                         }
 
-                        g2d.setColor(
+                        g2.setColor(
                                 new Color(
                                         138,
-                                        207,
-                                        248,
-                                        150
+                                        167,
+                                        184
                                 )
                         );
 
-                        g2d.setStroke(
+                        g2.setStroke(
                                 new BasicStroke(
                                         1.1f
                                 )
                         );
 
-                        g2d.draw(
+                        g2.draw(
                                 new RoundRectangle2D.Float(
-                                        1,
-                                        1,
-                                        getWidth() - 2,
-                                        getHeight() - 2,
-                                        10,
-                                        10
+                                        0.5f,
+                                        0.5f,
+                                        getWidth() - 1,
+                                        getHeight() - 1,
+                                        12,
+                                        12
                                 )
                         );
 
-                        g2d.dispose();
+                        g2.dispose();
 
                         super.paintComponent(
                                 g
@@ -1062,26 +1747,22 @@ public class UpdateUserFrame extends JFrame {
         button.setFont(
                 new Font(
                         "SansSerif",
-                        Font.PLAIN,
+                        Font.BOLD,
                         12
                 )
         );
 
         button.setForeground(
-                TEXT_WHITE
+                TEXT_DARK
         );
 
-        button.setContentAreaFilled(
-                false
-        );
+        button.setContentAreaFilled(false);
 
-        button.setFocusPainted(
-                false
-        );
+        button.setOpaque(false);
 
-        button.setBorderPainted(
-                false
-        );
+        button.setFocusPainted(false);
+
+        button.setBorderPainted(false);
 
         button.setCursor(
                 new Cursor(
@@ -1092,24 +1773,37 @@ public class UpdateUserFrame extends JFrame {
         return button;
     }
 
-    // =========================================================
-    // UPDATE USER
-    // =========================================================
+    private void clearFields() {
+
+        userIdField.setText("");
+        nameField.setText("");
+        emailField.setText("");
+        passwordField.setText("");
+
+        userIdField.requestFocus();
+    }
 
     private void updateUser() {
 
         String userID =
-                userIdField.getText().trim();
+                userIdField
+                        .getText()
+                        .trim();
 
         String name =
-                nameField.getText().trim();
+                nameField
+                        .getText()
+                        .trim();
 
         String email =
-                emailField.getText().trim();
+                emailField
+                        .getText()
+                        .trim();
 
         String password =
                 new String(
-                        passwordField.getPassword()
+                        passwordField
+                                .getPassword()
                 );
 
         if (
@@ -1147,10 +1841,7 @@ public class UpdateUserFrame extends JFrame {
                     JOptionPane.INFORMATION_MESSAGE
             );
 
-            userIdField.setText("");
-            nameField.setText("");
-            emailField.setText("");
-            passwordField.setText("");
+            clearFields();
 
         } catch (NotFoundException e) {
 
@@ -1170,5 +1861,41 @@ public class UpdateUserFrame extends JFrame {
                     JOptionPane.ERROR_MESSAGE
             );
         }
+    }
+
+    private Color mixWithWhite(
+            Color color,
+            float amount
+    ) {
+
+        int r =
+                (int) (
+                        color.getRed()
+                                +
+                                (255 - color.getRed())
+                                        * amount
+                );
+
+        int g =
+                (int) (
+                        color.getGreen()
+                                +
+                                (255 - color.getGreen())
+                                        * amount
+                );
+
+        int b =
+                (int) (
+                        color.getBlue()
+                                +
+                                (255 - color.getBlue())
+                                        * amount
+                );
+
+        return new Color(
+                r,
+                g,
+                b
+        );
     }
 }

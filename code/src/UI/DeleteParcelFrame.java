@@ -18,297 +18,180 @@ public class DeleteParcelFrame extends JPanel {
     private final User user;
     private JTextField parcelIdField;
 
-    // =========================================================
-    // Theme
-    // =========================================================
-
+    private final Color BG = new Color(241, 248, 253);
+    private final Color WHITE = Color.WHITE;
+    private final Color TEXT_DARK = new Color(31, 38, 43);
+    private final Color TEXT_MUTED = new Color(103, 117, 128);
+    private final Color ORANGE = new Color(248, 116, 35);
+    private final Color ORANGE_HOVER = new Color(235, 94, 20);
     private final Color BLUE = new Color(0, 97, 153);
-    private final Color SKY_BLUE = new Color(138, 207, 248);
-    private final Color SOFT_YELLOW = new Color(244, 235, 108);
-    private final Color GOLD = new Color(255, 212, 68);
+    private final Color LIGHT_BLUE = new Color(225, 240, 249);
+    private final Color BORDER = new Color(216, 227, 234);
+    private final Color INPUT_BG = new Color(249, 251, 252);
+    private final Color INPUT_BORDER = new Color(198, 211, 220);
 
-    private final Color BG_TOP = new Color(3, 39, 63);
-    private final Color BG_BOTTOM = new Color(0, 72, 110);
-
-    private final Color CARD_BG = new Color(0, 55, 88, 238);
-    private final Color CARD_BORDER = new Color(138, 207, 248, 90);
-
-    private final Color INPUT_BG = new Color(248, 252, 255);
-    private final Color INPUT_BORDER = new Color(138, 207, 248, 130);
-    private final Color INPUT_FOCUS = new Color(244, 235, 108);
-
-    private final Color TEXT_WHITE = Color.WHITE;
-    private final Color TEXT_MUTED = new Color(190, 220, 235);
-
-    // Delete button
-    private final Color DELETE_TOP = new Color(210, 65, 75);
-    private final Color DELETE_BOTTOM = new Color(155, 35, 50);
-    private final Color DELETE_HOVER_TOP = new Color(235, 80, 90);
-    private final Color DELETE_HOVER_BOTTOM = new Color(180, 45, 60);
+    private final Color DANGER = new Color(205, 62, 73);
+    private final Color DANGER_HOVER = new Color(180, 45, 57);
+    private final Color DANGER_BG = new Color(252, 237, 239);
 
     public DeleteParcelFrame(User user) {
         this.user = user;
 
-        setOpaque(false);
         setLayout(new BorderLayout());
+        setBackground(BG);
 
         buildUI();
     }
 
-    // =========================================================
-    // UI
-    // =========================================================
-
     private void buildUI() {
 
-        JPanel rootPanel = new JPanel() {
+        JPanel page = new JPanel(new BorderLayout(0, 18));
+        page.setOpaque(false);
+        page.setBorder(new EmptyBorder(24, 28, 24, 28));
 
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
+        JPanel header = new JPanel(new BorderLayout(14, 0));
+        header.setOpaque(false);
 
-                Graphics2D g2d =
-                        (Graphics2D) g.create();
+        JPanel iconPanel = new RoundedPanel(BLUE, 16);
+        iconPanel.setPreferredSize(new Dimension(52, 52));
+        iconPanel.setLayout(new GridBagLayout());
 
-                g2d.setRenderingHint(
-                        RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON
-                );
+        JLabel iconLabel = new JLabel("▣");
+        iconLabel.setFont(new Font("SansSerif", Font.BOLD, 25));
+        iconLabel.setForeground(Color.WHITE);
 
-                int width = getWidth();
-                int height = getHeight();
+        iconPanel.add(iconLabel);
 
-                // Main blue gradient
-                GradientPaint gradient =
-                        new GradientPaint(
-                                0,
-                                0,
-                                BG_TOP,
-                                0,
-                                height,
-                                BG_BOTTOM
-                        );
+        header.add(iconPanel, BorderLayout.WEST);
 
-                g2d.setPaint(gradient);
-
-                g2d.fillRect(
-                        0,
-                        0,
-                        width,
-                        height
-                );
-
-                // Top-right sky blue glow
-                g2d.setColor(
-                        new Color(
-                                SKY_BLUE.getRed(),
-                                SKY_BLUE.getGreen(),
-                                SKY_BLUE.getBlue(),
-                                28
-                        )
-                );
-
-                g2d.fillOval(
-                        width - 180,
-                        -80,
-                        250,
-                        250
-                );
-
-                // Bottom-left gold glow
-                g2d.setColor(
-                        new Color(
-                                GOLD.getRed(),
-                                GOLD.getGreen(),
-                                GOLD.getBlue(),
-                                18
-                        )
-                );
-
-                g2d.fillOval(
-                        -100,
-                        height - 150,
-                        230,
-                        230
-                );
-
-                // Decorative dots
-                g2d.setColor(
-                        new Color(
-                                SKY_BLUE.getRed(),
-                                SKY_BLUE.getGreen(),
-                                SKY_BLUE.getBlue(),
-                                90
-                        )
-                );
-
-                for (int i = 0; i < 5; i++) {
-
-                    g2d.fillOval(
-                            30 + i * 18,
-                            30,
-                            4,
-                            4
-                    );
-                }
-
-                g2d.dispose();
-            }
-        };
-
-        rootPanel.setOpaque(false);
-
-        rootPanel.setLayout(
-                new GridBagLayout()
-        );
-
-        // =====================================================
-        // Main Card
-        // =====================================================
-
-        JPanel mainPanel = new JPanel() {
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-
-                Graphics2D g2d =
-                        (Graphics2D) g.create();
-
-                g2d.setRenderingHint(
-                        RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON
-                );
-
-                // Glass card
-                g2d.setColor(CARD_BG);
-
-                g2d.fill(
-                        new RoundRectangle2D.Float(
-                                0,
-                                0,
-                                getWidth(),
-                                getHeight(),
-                                24,
-                                24
-                        )
-                );
-
-                // Card border
-                g2d.setColor(CARD_BORDER);
-
-                g2d.setStroke(
-                        new BasicStroke(1f)
-                );
-
-                g2d.draw(
-                        new RoundRectangle2D.Float(
-                                0,
-                                0,
-                                getWidth() - 1,
-                                getHeight() - 1,
-                                24,
-                                24
-                        )
-                );
-
-                // Gold top accent
-                g2d.setColor(GOLD);
-
-                g2d.fillRoundRect(
-                        25,
-                        0,
-                        getWidth() - 50,
-                        4,
-                        4,
-                        4
-                );
-
-                g2d.dispose();
-            }
-        };
-
-        mainPanel.setOpaque(false);
-
-        mainPanel.setLayout(
-                new BorderLayout(0, 20)
-        );
-
-        mainPanel.setPreferredSize(
-                new Dimension(470, 310)
-        );
-
-        mainPanel.setBorder(
-                new EmptyBorder(
-                        25,
-                        30,
-                        25,
-                        30
-                )
-        );
-
-        // =====================================================
-        // Header
-        // =====================================================
-
-        JPanel headerPanel =
-                new JPanel();
-
-        headerPanel.setOpaque(false);
-
-        headerPanel.setLayout(
+        JPanel titlePanel = new JPanel();
+        titlePanel.setOpaque(false);
+        titlePanel.setLayout(
                 new BoxLayout(
-                        headerPanel,
+                        titlePanel,
                         BoxLayout.Y_AXIS
                 )
         );
 
-        JLabel iconLabel =
-                new JLabel("▣");
-
-        iconLabel.setAlignmentX(
-                Component.CENTER_ALIGNMENT
-        );
-
-        iconLabel.setFont(
+        JLabel sectionLabel = new JLabel("PARCEL MANAGEMENT");
+        sectionLabel.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        28
+                        11
                 )
         );
+        sectionLabel.setForeground(ORANGE);
 
-        iconLabel.setForeground(GOLD);
-
-        JLabel titleLabel =
-                new JLabel("Delete Parcel");
-
-        titleLabel.setAlignmentX(
-                Component.CENTER_ALIGNMENT
-        );
-
+        JLabel titleLabel = new JLabel("Delete Parcel");
         titleLabel.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        22
+                        26
+                )
+        );
+        titleLabel.setForeground(TEXT_DARK);
+
+        JLabel subtitleLabel = new JLabel(
+                "Remove an existing parcel from the system"
+        );
+        subtitleLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        13
+                )
+        );
+        subtitleLabel.setForeground(TEXT_MUTED);
+
+        titlePanel.add(sectionLabel);
+        titlePanel.add(Box.createVerticalStrut(3));
+        titlePanel.add(titleLabel);
+        titlePanel.add(Box.createVerticalStrut(3));
+        titlePanel.add(subtitleLabel);
+
+        header.add(titlePanel, BorderLayout.CENTER);
+
+        JLabel badge = new JLabel("ADMIN ACTION");
+        badge.setOpaque(true);
+        badge.setBackground(DANGER_BG);
+        badge.setForeground(DANGER);
+        badge.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        10
+                )
+        );
+        badge.setBorder(
+                new EmptyBorder(
+                        7,
+                        11,
+                        7,
+                        11
                 )
         );
 
-        titleLabel.setForeground(
-                TEXT_WHITE
+        header.add(badge, BorderLayout.EAST);
+
+        page.add(header, BorderLayout.NORTH);
+
+        JPanel mainCard = new RoundedPanel(WHITE, 22);
+        mainCard.setLayout(new BorderLayout(18, 0));
+        mainCard.setBorder(
+                new EmptyBorder(
+                        22,
+                        24,
+                        22,
+                        24
+                )
         );
 
-        JLabel subtitleLabel =
-                new JLabel(
-                        "Remove a parcel from the system"
-                );
-
-        subtitleLabel.setAlignmentX(
-                Component.CENTER_ALIGNMENT
+        JPanel formCard = new RoundedPanel(
+                new Color(251, 253, 254),
+                18
         );
 
-        subtitleLabel.setFont(
+        formCard.setLayout(
+                new GridBagLayout()
+        );
+
+        formCard.setBorder(
+                new EmptyBorder(
+                        24,
+                        24,
+                        24,
+                        24
+                )
+        );
+
+        GridBagConstraints gbc =
+                new GridBagConstraints();
+
+        gbc.gridx = 0;
+        gbc.weightx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        JLabel formTitle = new JLabel(
+                "Delete Parcel"
+        );
+
+        formTitle.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        18
+                )
+        );
+
+        formTitle.setForeground(TEXT_DARK);
+
+        JLabel formSubtitle = new JLabel(
+                "Enter the Parcel ID of the parcel you want to remove."
+        );
+
+        formSubtitle.setFont(
                 new Font(
                         "SansSerif",
                         Font.PLAIN,
@@ -316,55 +199,24 @@ public class DeleteParcelFrame extends JPanel {
                 )
         );
 
-        subtitleLabel.setForeground(
-                TEXT_MUTED
+        formSubtitle.setForeground(TEXT_MUTED);
+
+        gbc.gridy = 0;
+        gbc.insets = new Insets(0, 0, 4, 0);
+
+        formCard.add(
+                formTitle,
+                gbc
         );
 
-        headerPanel.add(iconLabel);
+        gbc.gridy = 1;
+        gbc.insets = new Insets(0, 0, 24, 0);
 
-        headerPanel.add(
-                Box.createVerticalStrut(4)
+        formCard.add(
+                formSubtitle,
+                gbc
         );
 
-        headerPanel.add(titleLabel);
-
-        headerPanel.add(
-                Box.createVerticalStrut(5)
-        );
-
-        headerPanel.add(subtitleLabel);
-
-        mainPanel.add(
-                headerPanel,
-                BorderLayout.NORTH
-        );
-
-        // =====================================================
-        // Form
-        // =====================================================
-
-        JPanel formPanel =
-                new JPanel(
-                        new GridBagLayout()
-                );
-
-        formPanel.setOpaque(false);
-
-        GridBagConstraints gbc =
-                new GridBagConstraints();
-
-        gbc.insets =
-                new Insets(
-                        8,
-                        5,
-                        8,
-                        5
-                );
-
-        gbc.fill =
-                GridBagConstraints.HORIZONTAL;
-
-        // Parcel ID label
         JLabel parcelIdLabel =
                 new JLabel("PARCEL ID");
 
@@ -372,111 +224,434 @@ public class DeleteParcelFrame extends JPanel {
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        12
+                        10
                 )
         );
 
-        parcelIdLabel.setForeground(
-                SKY_BLUE
-        );
+        parcelIdLabel.setForeground(BLUE);
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 0.25;
+        gbc.gridy = 2;
+        gbc.insets = new Insets(0, 0, 7, 0);
 
-        formPanel.add(
+        formCard.add(
                 parcelIdLabel,
                 gbc
         );
 
-        // Parcel ID input
-        parcelIdField = new JTextField() {
+        parcelIdField = new JTextField();
 
-            private boolean focused = false;
+        styleInputField(
+                parcelIdField
+        );
 
-            {
-                addFocusListener(
-                        new FocusAdapter() {
+        parcelIdField.setPreferredSize(
+                new Dimension(
+                        0,
+                        44
+                )
+        );
 
-                            @Override
-                            public void focusGained(
-                                    FocusEvent e
-                            ) {
-                                focused = true;
-                                repaint();
-                            }
+        gbc.gridy = 3;
+        gbc.insets = new Insets(0, 0, 22, 0);
 
-                            @Override
-                            public void focusLost(
-                                    FocusEvent e
-                            ) {
-                                focused = false;
-                                repaint();
-                            }
-                        }
-                );
-            }
+        formCard.add(
+                parcelIdField,
+                gbc
+        );
 
-            @Override
-            protected void paintComponent(
-                    Graphics g
-            ) {
-
-                Graphics2D g2d =
-                        (Graphics2D) g.create();
-
-                g2d.setRenderingHint(
-                        RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON
+        JPanel warningCard =
+                new RoundedPanel(
+                        DANGER_BG,
+                        14
                 );
 
-                // Input background
-                g2d.setColor(INPUT_BG);
+        warningCard.setLayout(
+                new BorderLayout(
+                        12,
+                        0
+                )
+        );
 
-                g2d.fill(
-                        new RoundRectangle2D.Float(
-                                0,
-                                0,
-                                getWidth(),
-                                getHeight(),
+        warningCard.setBorder(
+                new EmptyBorder(
+                        15,
+                        16,
+                        15,
+                        16
+                )
+        );
+
+        JPanel warningIcon =
+                new RoundedPanel(
+                        DANGER,
+                        10
+                );
+
+        warningIcon.setPreferredSize(
+                new Dimension(
+                        34,
+                        34
+                )
+        );
+
+        warningIcon.setLayout(
+                new GridBagLayout()
+        );
+
+        JLabel warningSymbol =
+                new JLabel("!");
+
+        warningSymbol.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        17
+                )
+        );
+
+        warningSymbol.setForeground(
+                Color.WHITE
+        );
+
+        warningIcon.add(
+                warningSymbol
+        );
+
+        warningCard.add(
+                warningIcon,
+                BorderLayout.WEST
+        );
+
+        JLabel warningText =
+                new JLabel(
+                        "<html><b>Permanent action</b><br>" +
+                                "<span style='color:#6f5d62'>" +
+                                "Deleting a parcel removes it from the system." +
+                                "</span></html>"
+                );
+
+        warningText.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        11
+                )
+        );
+
+        warningCard.add(
+                warningText,
+                BorderLayout.CENTER
+        );
+
+        gbc.gridy = 4;
+        gbc.insets = new Insets(0, 0, 0, 0);
+
+        formCard.add(
+                warningCard,
+                gbc
+        );
+
+        mainCard.add(
+                formCard,
+                BorderLayout.CENTER
+        );
+
+        JPanel guideCard =
+                new RoundedPanel(
+                        LIGHT_BLUE,
+                        18
+                );
+
+        guideCard.setLayout(
+                new BorderLayout(
+                        0,
+                        18
+                )
+        );
+
+        guideCard.setBorder(
+                new EmptyBorder(
+                        22,
+                        22,
+                        22,
+                        22
+                )
+        );
+
+        guideCard.setPreferredSize(
+                new Dimension(
+                        285,
+                        0
+                )
+        );
+
+        JPanel guideHeader =
+                new JPanel();
+
+        guideHeader.setOpaque(false);
+
+        guideHeader.setLayout(
+                new BoxLayout(
+                        guideHeader,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        JLabel guideTitle =
+                new JLabel(
+                        "Delete Process"
+                );
+
+        guideTitle.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        17
+                )
+        );
+
+        guideTitle.setForeground(
+                TEXT_DARK
+        );
+
+        JLabel guideSubtitle =
+                new JLabel(
+                        "Check the parcel before removing it"
+                );
+
+        guideSubtitle.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        12
+                )
+        );
+
+        guideSubtitle.setForeground(
+                TEXT_MUTED
+        );
+
+        guideHeader.add(
+                guideTitle
+        );
+
+        guideHeader.add(
+                Box.createVerticalStrut(3)
+        );
+
+        guideHeader.add(
+                guideSubtitle
+        );
+
+        guideCard.add(
+                guideHeader,
+                BorderLayout.NORTH
+        );
+
+        JPanel steps =
+                new JPanel();
+
+        steps.setOpaque(false);
+
+        steps.setLayout(
+                new BoxLayout(
+                        steps,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        steps.add(
+                createStep(
+                        "01",
+                        "Find Parcel",
+                        "Enter the correct Parcel ID."
+                )
+        );
+
+        steps.add(
+                Box.createVerticalStrut(20)
+        );
+
+        steps.add(
+                createStep(
+                        "02",
+                        "Verify ID",
+                        "Make sure the parcel ID is correct."
+                )
+        );
+
+        steps.add(
+                Box.createVerticalStrut(20)
+        );
+
+        steps.add(
+                createStep(
+                        "03",
+                        "Confirm",
+                        "Confirm the delete operation."
+                )
+        );
+
+        guideCard.add(
+                steps,
+                BorderLayout.CENTER
+        );
+
+        JPanel adminInfo =
+                new RoundedPanel(
+                        WHITE,
+                        14
+                );
+
+        adminInfo.setLayout(
+                new BorderLayout(
+                        10,
+                        0
+                )
+        );
+
+        adminInfo.setBorder(
+                new EmptyBorder(
+                        13,
+                        14,
+                        13,
+                        14
+                )
+        );
+
+        JPanel dot =
+                new RoundedPanel(
+                        ORANGE,
+                        10
+                );
+
+        dot.setPreferredSize(
+                new Dimension(
+                        10,
+                        10
+                )
+        );
+
+        adminInfo.add(
+                dot,
+                BorderLayout.WEST
+        );
+
+        JLabel adminLabel =
+                new JLabel(
+                        "<html><b>ADMIN ACCESS</b><br>" +
+                                "<span style='color:#687580'>" +
+                                "Only authorized administrators can delete parcels." +
+                                "</span></html>"
+                );
+
+        adminLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        11
+                )
+        );
+
+        adminInfo.add(
+                adminLabel,
+                BorderLayout.CENTER
+        );
+
+        guideCard.add(
+                adminInfo,
+                BorderLayout.SOUTH
+        );
+
+        mainCard.add(
+                guideCard,
+                BorderLayout.EAST
+        );
+
+        page.add(
+                mainCard,
+                BorderLayout.CENTER
+        );
+
+        JPanel bottomPanel =
+                new JPanel(
+                        new FlowLayout(
+                                FlowLayout.RIGHT,
                                 10,
-                                10
+                                0
                         )
                 );
 
-                // Input border
-                g2d.setColor(
-                        focused
-                                ? INPUT_FOCUS
-                                : INPUT_BORDER
+        bottomPanel.setOpaque(false);
+
+        JButton clearButton =
+                createOutlineButton(
+                        "Clear"
                 );
 
-                g2d.setStroke(
-                        new BasicStroke(
-                                focused
-                                        ? 1.8f
-                                        : 1f
-                        )
+        JButton deleteButton =
+                createDeleteButton(
+                        "Delete Parcel  →"
                 );
 
-                g2d.draw(
-                        new RoundRectangle2D.Float(
-                                0,
-                                0,
-                                getWidth() - 1,
-                                getHeight() - 1,
-                                10,
-                                10
-                        )
-                );
+        clearButton.setPreferredSize(
+                new Dimension(
+                        95,
+                        40
+                )
+        );
 
-                g2d.dispose();
+        deleteButton.setPreferredSize(
+                new Dimension(
+                        155,
+                        40
+                )
+        );
 
-                super.paintComponent(g);
-            }
-        };
+        bottomPanel.add(
+                clearButton
+        );
 
-        parcelIdField.setFont(
+        bottomPanel.add(
+                deleteButton
+        );
+
+        page.add(
+                bottomPanel,
+                BorderLayout.SOUTH
+        );
+
+        add(
+                page,
+                BorderLayout.CENTER
+        );
+
+        deleteButton.addActionListener(
+                e -> deleteParcel()
+        );
+
+        parcelIdField.addActionListener(
+                e -> deleteParcel()
+        );
+
+        clearButton.addActionListener(
+                e -> {
+                    parcelIdField.setText("");
+                    parcelIdField.requestFocus();
+                }
+        );
+    }
+
+    private void styleInputField(
+            JTextField field
+    ) {
+
+        field.setOpaque(true);
+        field.setBackground(WHITE);
+        field.setForeground(TEXT_DARK);
+        field.setCaretColor(ORANGE);
+
+        field.setFont(
                 new Font(
                         "SansSerif",
                         Font.PLAIN,
@@ -484,121 +659,207 @@ public class DeleteParcelFrame extends JPanel {
                 )
         );
 
-        parcelIdField.setForeground(
-                new Color(25, 45, 60)
-        );
-
-        parcelIdField.setCaretColor(
-                BLUE
-        );
-
-        parcelIdField.setOpaque(false);
-
-        parcelIdField.setBorder(
-                BorderFactory.createEmptyBorder(
-                        6,
-                        12,
-                        6,
-                        12
+        field.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(
+                                INPUT_BORDER,
+                                1,
+                                true
+                        ),
+                        BorderFactory.createEmptyBorder(
+                                9,
+                                13,
+                                9,
+                                13
+                        )
                 )
         );
 
-        parcelIdField.setPreferredSize(
-                new Dimension(
-                        250,
-                        40
-                )
+        field.addFocusListener(
+                new FocusAdapter() {
+
+                    @Override
+                    public void focusGained(
+                            FocusEvent e
+                    ) {
+
+                        field.setBorder(
+                                BorderFactory.createCompoundBorder(
+                                        BorderFactory.createLineBorder(
+                                                ORANGE,
+                                                2,
+                                                true
+                                        ),
+                                        BorderFactory.createEmptyBorder(
+                                                8,
+                                                12,
+                                                8,
+                                                12
+                                        )
+                                )
+                        );
+                    }
+
+                    @Override
+                    public void focusLost(
+                            FocusEvent e
+                    ) {
+
+                        field.setBorder(
+                                BorderFactory.createCompoundBorder(
+                                        BorderFactory.createLineBorder(
+                                                INPUT_BORDER,
+                                                1,
+                                                true
+                                        ),
+                                        BorderFactory.createEmptyBorder(
+                                                9,
+                                                13,
+                                                9,
+                                                13
+                                        )
+                                )
+                        );
+                    }
+                }
         );
+    }
 
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.weightx = 0.75;
+    private JPanel createStep(
+            String number,
+            String title,
+            String description
+    ) {
 
-        formPanel.add(
-                parcelIdField,
-                gbc
-        );
-
-        mainPanel.add(
-                formPanel,
-                BorderLayout.CENTER
-        );
-
-        // =====================================================
-        // Buttons
-        // =====================================================
-
-        JPanel buttonPanel =
+        JPanel panel =
                 new JPanel(
-                        new FlowLayout(
-                                FlowLayout.CENTER,
+                        new BorderLayout(
                                 12,
                                 0
                         )
                 );
 
-        buttonPanel.setOpaque(false);
+        panel.setOpaque(false);
 
-        JButton deleteButton =
-                createDangerButton(
-                        "Delete Parcel"
+        JPanel numberPanel =
+                new RoundedPanel(
+                        ORANGE,
+                        10
                 );
 
-        JButton clearButton =
-                createOutlineButton(
-                        "Clear"
-                );
-
-        deleteButton.setPreferredSize(
+        numberPanel.setPreferredSize(
                 new Dimension(
-                        140,
-                        40
+                        36,
+                        36
                 )
         );
 
-        clearButton.setPreferredSize(
-                new Dimension(
-                        90,
-                        40
+        numberPanel.setLayout(
+                new GridBagLayout()
+        );
+
+        JLabel numberLabel =
+                new JLabel(
+                        number
+                );
+
+        numberLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        10
                 )
         );
 
-        deleteButton.addActionListener(
-                e -> deleteParcel()
+        numberLabel.setForeground(
+                Color.WHITE
         );
 
-        clearButton.addActionListener(
-                e -> parcelIdField.setText("")
+        numberPanel.add(
+                numberLabel
         );
 
-        buttonPanel.add(deleteButton);
-        buttonPanel.add(clearButton);
+        JPanel textPanel =
+                new JPanel();
 
-        mainPanel.add(
-                buttonPanel,
-                BorderLayout.SOUTH
+        textPanel.setOpaque(false);
+
+        textPanel.setLayout(
+                new BoxLayout(
+                        textPanel,
+                        BoxLayout.Y_AXIS
+                )
         );
 
-        rootPanel.add(mainPanel);
+        JLabel titleLabel =
+                new JLabel(
+                        title
+                );
 
-        add(
-                rootPanel,
+        titleLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        13
+                )
+        );
+
+        titleLabel.setForeground(
+                TEXT_DARK
+        );
+
+        JLabel descriptionLabel =
+                new JLabel(
+                        "<html>"
+                                + description
+                                + "</html>"
+                );
+
+        descriptionLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        11
+                )
+        );
+
+        descriptionLabel.setForeground(
+                TEXT_MUTED
+        );
+
+        textPanel.add(
+                titleLabel
+        );
+
+        textPanel.add(
+                Box.createVerticalStrut(3)
+        );
+
+        textPanel.add(
+                descriptionLabel
+        );
+
+        panel.add(
+                numberPanel,
+                BorderLayout.WEST
+        );
+
+        panel.add(
+                textPanel,
                 BorderLayout.CENTER
         );
+
+        return panel;
     }
 
-    // =========================================================
-    // Delete Button
-    // =========================================================
-
-    private JButton createDangerButton(
+    private JButton createDeleteButton(
             String text
     ) {
 
         JButton button =
                 new JButton(text) {
 
-                    private boolean hovered = false;
+                    private boolean hovered;
 
                     {
                         addMouseListener(
@@ -628,37 +889,21 @@ public class DeleteParcelFrame extends JPanel {
                             Graphics g
                     ) {
 
-                        Graphics2D g2d =
+                        Graphics2D g2 =
                                 (Graphics2D) g.create();
 
-                        g2d.setRenderingHint(
+                        g2.setRenderingHint(
                                 RenderingHints.KEY_ANTIALIASING,
                                 RenderingHints.VALUE_ANTIALIAS_ON
                         );
 
-                        Color top =
+                        g2.setColor(
                                 hovered
-                                        ? DELETE_HOVER_TOP
-                                        : DELETE_TOP;
+                                        ? DANGER_HOVER
+                                        : DANGER
+                        );
 
-                        Color bottom =
-                                hovered
-                                        ? DELETE_HOVER_BOTTOM
-                                        : DELETE_BOTTOM;
-
-                        GradientPaint gradient =
-                                new GradientPaint(
-                                        0,
-                                        0,
-                                        top,
-                                        0,
-                                        getHeight(),
-                                        bottom
-                                );
-
-                        g2d.setPaint(gradient);
-
-                        g2d.fill(
+                        g2.fill(
                                 new RoundRectangle2D.Float(
                                         0,
                                         0,
@@ -669,7 +914,7 @@ public class DeleteParcelFrame extends JPanel {
                                 )
                         );
 
-                        g2d.dispose();
+                        g2.dispose();
 
                         super.paintComponent(g);
                     }
@@ -683,13 +928,11 @@ public class DeleteParcelFrame extends JPanel {
                 )
         );
 
-        button.setForeground(
-                Color.WHITE
-        );
-
+        button.setForeground(Color.WHITE);
         button.setContentAreaFilled(false);
-        button.setFocusPainted(false);
+        button.setOpaque(false);
         button.setBorderPainted(false);
+        button.setFocusPainted(false);
 
         button.setCursor(
                 new Cursor(
@@ -700,10 +943,6 @@ public class DeleteParcelFrame extends JPanel {
         return button;
     }
 
-    // =========================================================
-    // Outline Button
-    // =========================================================
-
     private JButton createOutlineButton(
             String text
     ) {
@@ -711,7 +950,7 @@ public class DeleteParcelFrame extends JPanel {
         JButton button =
                 new JButton(text) {
 
-                    private boolean hovered = false;
+                    private boolean hovered;
 
                     {
                         addMouseListener(
@@ -741,26 +980,21 @@ public class DeleteParcelFrame extends JPanel {
                             Graphics g
                     ) {
 
-                        Graphics2D g2d =
+                        Graphics2D g2 =
                                 (Graphics2D) g.create();
 
-                        g2d.setRenderingHint(
+                        g2.setRenderingHint(
                                 RenderingHints.KEY_ANTIALIASING,
                                 RenderingHints.VALUE_ANTIALIAS_ON
                         );
 
                         if (hovered) {
 
-                            g2d.setColor(
-                                    new Color(
-                                            SKY_BLUE.getRed(),
-                                            SKY_BLUE.getGreen(),
-                                            SKY_BLUE.getBlue(),
-                                            35
-                                    )
+                            g2.setColor(
+                                    LIGHT_BLUE
                             );
 
-                            g2d.fill(
+                            g2.fill(
                                     new RoundRectangle2D.Float(
                                             0,
                                             0,
@@ -772,31 +1006,26 @@ public class DeleteParcelFrame extends JPanel {
                             );
                         }
 
-                        g2d.setColor(
-                                new Color(
-                                        SKY_BLUE.getRed(),
-                                        SKY_BLUE.getGreen(),
-                                        SKY_BLUE.getBlue(),
-                                        170
+                        g2.setColor(BLUE);
+
+                        g2.setStroke(
+                                new BasicStroke(
+                                        1.2f
                                 )
                         );
 
-                        g2d.setStroke(
-                                new BasicStroke(1.2f)
-                        );
-
-                        g2d.draw(
+                        g2.draw(
                                 new RoundRectangle2D.Float(
-                                        0,
-                                        0,
-                                        getWidth() - 1,
-                                        getHeight() - 1,
+                                        1,
+                                        1,
+                                        getWidth() - 2,
+                                        getHeight() - 2,
                                         12,
                                         12
                                 )
                         );
 
-                        g2d.dispose();
+                        g2.dispose();
 
                         super.paintComponent(g);
                     }
@@ -805,18 +1034,16 @@ public class DeleteParcelFrame extends JPanel {
         button.setFont(
                 new Font(
                         "SansSerif",
-                        Font.PLAIN,
+                        Font.BOLD,
                         13
                 )
         );
 
-        button.setForeground(
-                SKY_BLUE
-        );
-
+        button.setForeground(BLUE);
         button.setContentAreaFilled(false);
-        button.setFocusPainted(false);
+        button.setOpaque(false);
         button.setBorderPainted(false);
+        button.setFocusPainted(false);
 
         button.setCursor(
                 new Cursor(
@@ -827,14 +1054,12 @@ public class DeleteParcelFrame extends JPanel {
         return button;
     }
 
-    // =========================================================
-    // Delete Parcel
-    // =========================================================
-
     private void deleteParcel() {
 
         String parcelID =
-                parcelIdField.getText().trim();
+                parcelIdField
+                        .getText()
+                        .trim();
 
         if (parcelID.isEmpty()) {
 
@@ -859,7 +1084,9 @@ public class DeleteParcelFrame extends JPanel {
                         JOptionPane.WARNING_MESSAGE
                 );
 
-        if (confirmation != JOptionPane.YES_OPTION) {
+        if (confirmation !=
+                JOptionPane.YES_OPTION) {
+
             return;
         }
 
@@ -868,8 +1095,9 @@ public class DeleteParcelFrame extends JPanel {
             Admin admin =
                     new Admin(user);
 
-            // Backend logic remains unchanged
-            admin.deleteParcel(parcelID);
+            admin.deleteParcel(
+                    parcelID
+            );
 
             JOptionPane.showMessageDialog(
                     this,
@@ -897,6 +1125,53 @@ public class DeleteParcelFrame extends JPanel {
                     "Error",
                     JOptionPane.ERROR_MESSAGE
             );
+        }
+    }
+
+    private static class RoundedPanel extends JPanel {
+
+        private final Color background;
+        private final int radius;
+
+        public RoundedPanel(
+                Color background,
+                int radius
+        ) {
+            this.background = background;
+            this.radius = radius;
+
+            setOpaque(false);
+        }
+
+        @Override
+        protected void paintComponent(
+                Graphics g
+        ) {
+
+            Graphics2D g2 =
+                    (Graphics2D) g.create();
+
+            g2.setRenderingHint(
+                    RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON
+            );
+
+            g2.setColor(
+                    background
+            );
+
+            g2.fillRoundRect(
+                    0,
+                    0,
+                    getWidth(),
+                    getHeight(),
+                    radius,
+                    radius
+            );
+
+            g2.dispose();
+
+            super.paintComponent(g);
         }
     }
 }

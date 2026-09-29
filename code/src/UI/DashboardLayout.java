@@ -7,6 +7,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.RoundRectangle2D;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,33 +25,53 @@ public class DashboardLayout extends JPanel {
     private final List<JButton> sidebarButtons = new ArrayList<>();
     private JButton currentSelectedBtn = null;
 
-    // =========================================================
-    // THEME
-    // =========================================================
-
-    private final Color BLUE = new Color(0, 97, 153);
-    private final Color BLUE_DARK = new Color(0, 61, 95);
-
-    private final Color SKY_BLUE = new Color(138, 207, 248);
-    private final Color SOFT_YELLOW = new Color(244, 235, 108);
-    private final Color GOLD = new Color(255, 212, 68);
-
-    private final Color BG_TOP = new Color(3, 39, 63);
-    private final Color BG_BOTTOM = new Color(0, 72, 110);
-
-    private final Color SIDEBAR_BG = new Color(2, 48, 73);
-    private final Color SIDEBAR_HOVER = new Color(0, 82, 120);
-    private final Color SIDEBAR_SELECTED = new Color(0, 97, 153);
-
-    private final Color HEADER_BG = new Color(3, 49, 74);
-
-    private final Color CARD_BG = new Color(255, 255, 255, 15);
-    private final Color CARD_BORDER = new Color(138, 207, 248, 40);
-
-    private final Color TEXT_WHITE = Color.WHITE;
-    private final Color TEXT_MUTED = new Color(185, 215, 230);
-
     private Timer clockTimer;
+
+    // =========================================================
+    // REFERENCE THEME
+    // =========================================================
+
+    private static final Color BACKGROUND =
+            new Color(241, 248, 253);
+
+    private static final Color WHITE =
+            Color.WHITE;
+
+    private static final Color BLACK =
+            new Color(15, 18, 20);
+
+    private static final Color TEXT_DARK =
+            new Color(31, 38, 43);
+
+    private static final Color TEXT_MUTED =
+            new Color(103, 117, 128);
+
+    private static final Color ORANGE =
+            new Color(248, 116, 35);
+
+    private static final Color ORANGE_HOVER =
+            new Color(235, 94, 20);
+
+    private static final Color LIGHT_BLUE =
+            new Color(224, 240, 249);
+
+    private static final Color SKY_BLUE =
+            new Color(189, 221, 240);
+
+    private static final Color BLUE =
+            new Color(0, 97, 153);
+
+    private static final Color BORDER =
+            new Color(218, 228, 235);
+
+    private static final Color SIDEBAR_BG =
+            new Color(249, 252, 254);
+
+    private static final Color SIDEBAR_HOVER =
+            new Color(236, 244, 249);
+
+    private static final Color SIDEBAR_SELECTED =
+            new Color(255, 241, 233);
 
     // =========================================================
     // CONSTRUCTOR
@@ -63,7 +85,11 @@ public class DashboardLayout extends JPanel {
         this.currentUser = user;
         this.logoutCallback = logoutCallback;
 
-        setLayout(new BorderLayout());
+        setLayout(
+                new BorderLayout()
+        );
+
+        setOpaque(false);
 
         // =====================================================
         // HEADER
@@ -79,76 +105,80 @@ public class DashboardLayout extends JPanel {
         // =====================================================
 
         JPanel bodyPanel =
-                new JPanel(new BorderLayout()) {
+                new JPanel(
+                        new BorderLayout()
+                ) {
 
                     @Override
-                    protected void paintComponent(Graphics g) {
+                    protected void paintComponent(
+                            Graphics g
+                    ) {
 
                         super.paintComponent(g);
 
-                        Graphics2D g2d =
+                        Graphics2D g2 =
                                 (Graphics2D) g.create();
 
-                        g2d.setRenderingHint(
+                        g2.setRenderingHint(
                                 RenderingHints.KEY_ANTIALIASING,
                                 RenderingHints.VALUE_ANTIALIAS_ON
                         );
 
-                        GradientPaint gradient =
-                                new GradientPaint(
-                                        0,
-                                        0,
-                                        BG_TOP,
-                                        getWidth(),
-                                        getHeight(),
-                                        BG_BOTTOM
-                                );
+                        // Background
+                        g2.setColor(
+                                BACKGROUND
+                        );
 
-                        g2d.setPaint(gradient);
-
-                        g2d.fillRect(
+                        g2.fillRect(
                                 0,
                                 0,
                                 getWidth(),
                                 getHeight()
                         );
 
-                        // Decorative glow
-                        g2d.setColor(
+                        // Soft top-left glow
+                        g2.setColor(
                                 new Color(
-                                        138,
-                                        207,
-                                        248,
-                                        12
+                                        202,
+                                        229,
+                                        243,
+                                        90
                                 )
                         );
 
-                        g2d.fillOval(
-                                getWidth() - 250,
-                                getHeight() - 250,
-                                400,
-                                400
-                        );
-
-                        g2d.setColor(
-                                new Color(
-                                        255,
-                                        212,
-                                        68,
-                                        8
+                        g2.fill(
+                                new Ellipse2D.Float(
+                                        -120,
+                                        -130,
+                                        350,
+                                        350
                                 )
                         );
 
-                        g2d.fillOval(
-                                -180,
-                                -180,
-                                350,
-                                350
+                        // Soft bottom-right glow
+                        g2.setColor(
+                                new Color(
+                                        177,
+                                        215,
+                                        237,
+                                        70
+                                )
                         );
 
-                        g2d.dispose();
+                        g2.fill(
+                                new Ellipse2D.Float(
+                                        getWidth() - 260,
+                                        getHeight() - 250,
+                                        430,
+                                        430
+                                )
+                        );
+
+                        g2.dispose();
                     }
                 };
+
+        bodyPanel.setOpaque(false);
 
         // =====================================================
         // SIDEBAR
@@ -160,31 +190,38 @@ public class DashboardLayout extends JPanel {
         );
 
         // =====================================================
-        // CONTENT CARDLAYOUT
+        // CONTENT CARD LAYOUT
         // =====================================================
 
         contentCardLayout =
                 new CardLayout();
 
         contentArea =
-                new JPanel(contentCardLayout);
+                new JPanel(
+                        contentCardLayout
+                );
 
         contentArea.setOpaque(false);
 
         setupRoleContentPanels();
 
-        // Content wrapper gives breathing room around panels
+        // =====================================================
+        // CONTENT WRAPPER
+        // =====================================================
+
         JPanel contentWrapper =
-                new JPanel(new BorderLayout());
+                new JPanel(
+                        new BorderLayout()
+                );
 
         contentWrapper.setOpaque(false);
 
         contentWrapper.setBorder(
                 new EmptyBorder(
-                        14,
-                        14,
-                        14,
-                        14
+                        16,
+                        16,
+                        16,
+                        16
                 )
         );
 
@@ -211,17 +248,21 @@ public class DashboardLayout extends JPanel {
     private void setupRoleContentPanels() {
 
         // -----------------------------------------------------
-        // COMMON
+        // COMMON OVERVIEW
         // -----------------------------------------------------
 
         registerContentPanel(
                 "OVERVIEW",
-                new DashboardOverviewPanel(currentUser)
+                new DashboardOverviewPanel(
+                        currentUser
+                )
         );
 
         String roleStr =
                 currentUser.getUser_role() != null
-                        ? currentUser.getUser_role().toUpperCase()
+                        ? currentUser
+                        .getUser_role()
+                        .toUpperCase()
                         : "";
 
         // =====================================================
@@ -229,22 +270,30 @@ public class DashboardLayout extends JPanel {
         // =====================================================
 
         if (roleStr.equals(
-                String.valueOf(User.UserRole.USER)
+                String.valueOf(
+                        User.UserRole.USER
+                )
         )) {
 
             registerContentPanel(
                     "SEND_PARCEL",
-                    new SendParcelPanel(currentUser)
+                    new SendParcelPanel(
+                            currentUser
+                    )
             );
 
             registerContentPanel(
                     "TRACK_PARCEL",
-                    new TrackParcelPanel(currentUser)
+                    new TrackParcelPanel(
+                            currentUser
+                    )
             );
 
             registerContentPanel(
                     "MY_PARCELS",
-                    new MyParcelsPanel(currentUser)
+                    new MyParcelsPanel(
+                            currentUser
+                    )
             );
         }
 
@@ -253,22 +302,30 @@ public class DashboardLayout extends JPanel {
         // =====================================================
 
         else if (roleStr.equals(
-                String.valueOf(User.UserRole.RIDER)
+                String.valueOf(
+                        User.UserRole.RIDER
+                )
         )) {
 
             registerContentPanel(
                     "RIDER_PENDING",
-                    new PendingParcelsFrame(currentUser)
+                    new PendingParcelsFrame(
+                            currentUser
+                    )
             );
 
             registerContentPanel(
                     "RIDER_ASSIGNED",
-                    new AssignedParcelsFrame(currentUser)
+                    new AssignedParcelsFrame(
+                            currentUser
+                    )
             );
 
             registerContentPanel(
                     "RIDER_UPDATE_STATUS",
-                    new UpdateParcelStatusFrame(currentUser)
+                    new UpdateParcelStatusFrame(
+                            currentUser
+                    )
             );
         }
 
@@ -277,22 +334,30 @@ public class DashboardLayout extends JPanel {
         // =====================================================
 
         else if (roleStr.equals(
-                String.valueOf(User.UserRole.ADMIN)
+                String.valueOf(
+                        User.UserRole.ADMIN
+                )
         )) {
 
             registerContentPanel(
                     "ADMIN_VIEW_USERS",
-                    new AdminUsersFrame(currentUser)
+                    new AdminUsersFrame(
+                            currentUser
+                    )
             );
 
             registerContentPanel(
                     "ADMIN_REGISTER_RIDER",
-                    new RegisterRiderFrame(currentUser)
+                    new RegisterRiderFrame(
+                            currentUser
+                    )
             );
 
             registerContentPanel(
                     "ADMIN_VIEW_PARCELS",
-                    new AdminParcelsFrame(currentUser)
+                    new AdminParcelsFrame(
+                            currentUser
+                    )
             );
 
             registerContentPanel(
@@ -302,27 +367,37 @@ public class DashboardLayout extends JPanel {
 
             registerContentPanel(
                     "ADMIN_SEARCH_USER",
-                    new SearchUserFrame(currentUser)
+                    new SearchUserFrame(
+                            currentUser
+                    )
             );
 
             registerContentPanel(
                     "ADMIN_SEARCH_PARCEL",
-                    new SearchParcelFrame(currentUser)
+                    new SearchParcelFrame(
+                            currentUser
+                    )
             );
 
             registerContentPanel(
                     "ADMIN_UPDATE_STATUS",
-                    new AdminUpdateParcelStatusFrame(currentUser)
+                    new AdminUpdateParcelStatusFrame(
+                            currentUser
+                    )
             );
 
             registerContentPanel(
                     "ADMIN_DELETE_USER",
-                    new DeleteUserFrame(currentUser)
+                    new DeleteUserFrame(
+                            currentUser
+                    )
             );
 
             registerContentPanel(
                     "ADMIN_DELETE_PARCEL",
-                    new DeleteParcelFrame(currentUser)
+                    new DeleteParcelFrame(
+                            currentUser
+                    )
             );
         }
 
@@ -339,7 +414,9 @@ public class DashboardLayout extends JPanel {
     private JPanel createHeaderPanel() {
 
         JPanel header =
-                new JPanel(new BorderLayout()) {
+                new JPanel(
+                        new BorderLayout()
+                ) {
 
                     @Override
                     protected void paintComponent(
@@ -348,51 +425,40 @@ public class DashboardLayout extends JPanel {
 
                         super.paintComponent(g);
 
-                        Graphics2D g2d =
-                                (Graphics2D) g.create();
+                        Graphics2D g2 =
+                                (Graphics2D)
+                                        g.create();
 
-                        g2d.setRenderingHint(
+                        g2.setRenderingHint(
                                 RenderingHints.KEY_ANTIALIASING,
                                 RenderingHints.VALUE_ANTIALIAS_ON
                         );
 
-                        GradientPaint gradient =
-                                new GradientPaint(
-                                        0,
-                                        0,
-                                        HEADER_BG,
-                                        getWidth(),
-                                        0,
-                                        BLUE_DARK
-                                );
+                        // Header background
+                        g2.setColor(
+                                WHITE
+                        );
 
-                        g2d.setPaint(gradient);
-
-                        g2d.fillRect(
+                        g2.fillRect(
                                 0,
                                 0,
                                 getWidth(),
                                 getHeight()
                         );
 
-                        // Bottom separator
-                        g2d.setColor(
-                                new Color(
-                                        138,
-                                        207,
-                                        248,
-                                        45
-                                )
+                        // Bottom line
+                        g2.setColor(
+                                BORDER
                         );
 
-                        g2d.fillRect(
+                        g2.fillRect(
                                 0,
                                 getHeight() - 1,
                                 getWidth(),
                                 1
                         );
 
-                        g2d.dispose();
+                        g2.dispose();
                     }
                 };
 
@@ -401,16 +467,16 @@ public class DashboardLayout extends JPanel {
         header.setPreferredSize(
                 new Dimension(
                         0,
-                        66
+                        72
                 )
         );
 
         header.setBorder(
                 new EmptyBorder(
                         0,
-                        20,
+                        24,
                         0,
-                        18
+                        22
                 )
         );
 
@@ -423,31 +489,51 @@ public class DashboardLayout extends JPanel {
                         new FlowLayout(
                                 FlowLayout.LEFT,
                                 10,
-                                9
+                                15
                         )
                 );
 
         leftHeader.setOpaque(false);
 
-        // Logo
+        // Logo circle
+        JPanel logoCircle =
+                new JPanel(
+                        new GridBagLayout()
+                );
+
+        logoCircle.setPreferredSize(
+                new Dimension(
+                        38,
+                        38
+                )
+        );
+
+        logoCircle.setBackground(
+                BLACK
+        );
+
         JLabel logo =
-                new JLabel("▣");
+                new JLabel(
+                        "L"
+                );
 
         logo.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        25
+                        19
                 )
         );
 
         logo.setForeground(
-                GOLD
+                WHITE
         );
 
-        leftHeader.add(logo);
+        logoCircle.add(
+                logo
+        );
 
-        // Brand section
+        // Brand area
         JPanel brandPanel =
                 new JPanel();
 
@@ -469,35 +555,105 @@ public class DashboardLayout extends JPanel {
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        12
+                        13
                 )
         );
 
         brand.setForeground(
-                SKY_BLUE
+                BLACK
         );
 
-        JLabel dashboardText =
+        JLabel subtitle =
                 new JLabel(
-                        "Courier Management Dashboard"
+                        "COURIER MANAGEMENT SYSTEM"
                 );
 
-        dashboardText.setFont(
+        subtitle.setFont(
                 new Font(
                         "SansSerif",
-                        Font.PLAIN,
-                        11
+                        Font.BOLD,
+                        8
                 )
         );
 
-        dashboardText.setForeground(
-                TEXT_MUTED
+        subtitle.setForeground(
+                ORANGE
         );
 
-        brandPanel.add(brand);
-        brandPanel.add(dashboardText);
+        brandPanel.add(
+                brand
+        );
 
-        leftHeader.add(brandPanel);
+        brandPanel.add(
+                Box.createVerticalStrut(
+                        3
+                )
+        );
+
+        brandPanel.add(
+                subtitle
+        );
+
+        leftHeader.add(
+                logoCircle
+        );
+
+        leftHeader.add(
+                brandPanel
+        );
+
+        header.add(
+                leftHeader,
+                BorderLayout.WEST
+        );
+
+        // =====================================================
+        // CENTER HEADER
+        // =====================================================
+
+        JPanel centerHeader =
+                new JPanel(
+                        new FlowLayout(
+                                FlowLayout.CENTER,
+                                5,
+                                20
+                        )
+                );
+
+        centerHeader.setOpaque(false);
+
+        centerHeader.add(
+                createHeaderPill(
+                        "TRACKING",
+                        false
+                )
+        );
+
+        centerHeader.add(
+                createHeaderPill(
+                        "SHIPPING",
+                        false
+                )
+        );
+
+        centerHeader.add(
+                createHeaderPill(
+                        "SUPPORT",
+                        false
+                )
+        );
+
+        centerHeader.add(
+                createHeaderPill(
+                        "ACCOUNT",
+                        true
+                )
+        );
+
+        header.add(
+                centerHeader,
+                BorderLayout.CENTER
+        );
 
         // =====================================================
         // RIGHT HEADER
@@ -507,66 +663,72 @@ public class DashboardLayout extends JPanel {
                 new JPanel(
                         new FlowLayout(
                                 FlowLayout.RIGHT,
-                                12,
-                                15
+                                9,
+                                14
                         )
                 );
 
         rightHeader.setOpaque(false);
 
-        // User name
+        String username =
+                currentUser.getUser_name() != null
+                        ? currentUser.getUser_name()
+                        : "User";
+
         JLabel userLabel =
                 new JLabel(
-                        currentUser.getUser_name()
+                        username
                 );
 
         userLabel.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        12
+                        11
                 )
         );
 
         userLabel.setForeground(
-                TEXT_WHITE
+                TEXT_DARK
         );
 
-        // Role
+        // Role badge
         String roleStr =
                 currentUser.getUser_role() != null
-                        ? currentUser.getUser_role().toUpperCase()
-                        : "";
+                        ? currentUser
+                        .getUser_role()
+                        .toUpperCase()
+                        : "USER";
 
         JLabel roleBadge =
                 new JLabel(
-                        "  " + roleStr + "  "
+                        " " + roleStr + " "
                 );
 
         roleBadge.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        10
+                        8
                 )
         );
 
         roleBadge.setForeground(
-                BLUE_DARK
+                WHITE
         );
 
         roleBadge.setOpaque(true);
 
         roleBadge.setBackground(
-                SOFT_YELLOW
+                ORANGE
         );
 
         roleBadge.setBorder(
-                BorderFactory.createEmptyBorder(
-                        5,
-                        7,
-                        5,
-                        7
+                new EmptyBorder(
+                        6,
+                        8,
+                        6,
+                        8
                 )
         );
 
@@ -578,7 +740,7 @@ public class DashboardLayout extends JPanel {
                 new Font(
                         "SansSerif",
                         Font.PLAIN,
-                        11
+                        9
                 )
         );
 
@@ -591,79 +753,162 @@ public class DashboardLayout extends JPanel {
                         1000,
                         e -> {
 
-                            String timeStr =
+                            String time =
                                     new SimpleDateFormat(
-                                            "EEE, dd MMM yyyy  |  hh:mm:ss a"
+                                            "dd MMM yyyy  |  hh:mm:ss a"
                                     ).format(
                                             new Date()
                                     );
 
                             clockLabel.setText(
-                                    timeStr
+                                    time
                             );
                         }
                 );
 
-        clockTimer.setInitialDelay(0);
+        clockTimer.setInitialDelay(
+                0
+        );
 
         clockTimer.start();
 
-        // =====================================================
-        // LOGOUT BUTTON
-        // =====================================================
+        // Logout button
+        JButton logoutButton =
+                createLogoutButton();
 
-        JButton logoutBtn =
-                new JButton("Logout");
+        rightHeader.add(
+                userLabel
+        );
 
-        logoutBtn.setFont(
+        rightHeader.add(
+                roleBadge
+        );
+
+        rightHeader.add(
+                clockLabel
+        );
+
+        rightHeader.add(
+                logoutButton
+        );
+
+        header.add(
+                rightHeader,
+                BorderLayout.EAST
+        );
+
+        return header;
+    }
+
+    // =========================================================
+    // HEADER PILL
+    // =========================================================
+
+    private JLabel createHeaderPill(
+            String text,
+            boolean active
+    ) {
+
+        JLabel pill =
+                new JLabel(
+                        text
+                );
+
+        pill.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
+                        8
+                )
+        );
+
+        pill.setForeground(
+                active
+                        ? TEXT_DARK
+                        : new Color(
+                        88,
+                        99,
+                        108
+                )
+        );
+
+        pill.setOpaque(true);
+
+        pill.setBackground(
+                active
+                        ? new Color(
+                        230,
+                        236,
+                        241
+                )
+                        : new Color(
+                        246,
+                        249,
+                        251
+                )
+        );
+
+        pill.setBorder(
+                new EmptyBorder(
+                        8,
+                        11,
+                        8,
                         11
                 )
         );
 
-        logoutBtn.setForeground(
-                TEXT_WHITE
-        );
+        return pill;
+    }
 
-        logoutBtn.setBackground(
-                new Color(
-                        0,
-                        82,
-                        120
+    // =========================================================
+    // LOGOUT BUTTON
+    // =========================================================
+
+    private JButton createLogoutButton() {
+
+        JButton button =
+                new JButton(
+                        "Logout"
+                );
+
+        button.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        9
                 )
         );
 
-        logoutBtn.setFocusPainted(false);
-
-        logoutBtn.setBorder(
-                BorderFactory.createLineBorder(
-                        new Color(
-                                138,
-                                207,
-                                248,
-                                80
-                        ),
-                        1,
-                        true
-                )
+        button.setForeground(
+                WHITE
         );
 
-        logoutBtn.setCursor(
+        button.setBackground(
+                ORANGE
+        );
+
+        button.setFocusPainted(
+                false
+        );
+
+        button.setBorderPainted(
+                false
+        );
+
+        button.setCursor(
                 new Cursor(
                         Cursor.HAND_CURSOR
                 )
         );
 
-        logoutBtn.setPreferredSize(
+        button.setPreferredSize(
                 new Dimension(
-                        82,
-                        32
+                        72,
+                        31
                 )
         );
 
-        logoutBtn.addMouseListener(
+        button.addMouseListener(
                 new MouseAdapter() {
 
                     @Override
@@ -671,12 +916,8 @@ public class DashboardLayout extends JPanel {
                             MouseEvent e
                     ) {
 
-                        logoutBtn.setBackground(
-                                new Color(
-                                        0,
-                                        110,
-                                        150
-                                )
+                        button.setBackground(
+                                ORANGE_HOVER
                         );
                     }
 
@@ -685,18 +926,14 @@ public class DashboardLayout extends JPanel {
                             MouseEvent e
                     ) {
 
-                        logoutBtn.setBackground(
-                                new Color(
-                                        0,
-                                        82,
-                                        120
-                                )
+                        button.setBackground(
+                                ORANGE
                         );
                     }
                 }
         );
 
-        logoutBtn.addActionListener(
+        button.addActionListener(
                 e -> {
 
                     int choice =
@@ -707,8 +944,10 @@ public class DashboardLayout extends JPanel {
                                     JOptionPane.YES_NO_OPTION
                             );
 
-                    if (choice ==
-                            JOptionPane.YES_OPTION) {
+                    if (
+                            choice
+                                    == JOptionPane.YES_OPTION
+                    ) {
 
                         if (clockTimer != null) {
                             clockTimer.stop();
@@ -721,22 +960,7 @@ public class DashboardLayout extends JPanel {
                 }
         );
 
-        rightHeader.add(userLabel);
-        rightHeader.add(roleBadge);
-        rightHeader.add(clockLabel);
-        rightHeader.add(logoutBtn);
-
-        header.add(
-                leftHeader,
-                BorderLayout.WEST
-        );
-
-        header.add(
-                rightHeader,
-                BorderLayout.EAST
-        );
-
-        return header;
+        return button;
     }
 
     // =========================================================
@@ -756,28 +980,38 @@ public class DashboardLayout extends JPanel {
 
         sidebar.setPreferredSize(
                 new Dimension(
-                        245,
+                        230,
                         0
                 )
         );
 
+        sidebar.setBorder(
+                BorderFactory.createMatteBorder(
+                        0,
+                        0,
+                        0,
+                        1,
+                        BORDER
+                )
+        );
+
         // =====================================================
-        // SIDEBAR TOP / BRAND
+        // SIDEBAR TOP
         // =====================================================
 
-        JPanel sidebarTop =
+        JPanel top =
                 new JPanel();
 
-        sidebarTop.setOpaque(false);
+        top.setOpaque(false);
 
-        sidebarTop.setLayout(
+        top.setLayout(
                 new BoxLayout(
-                        sidebarTop,
+                        top,
                         BoxLayout.Y_AXIS
                 )
         );
 
-        sidebarTop.setBorder(
+        top.setBorder(
                 new EmptyBorder(
                         18,
                         16,
@@ -786,286 +1020,317 @@ public class DashboardLayout extends JPanel {
                 )
         );
 
-        JLabel menuTitle =
+        JLabel menuLabel =
                 new JLabel(
-                        "MAIN MENU"
+                        "MENU"
                 );
 
-        menuTitle.setFont(
+        menuLabel.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
+                        9
+                )
+        );
+
+        menuLabel.setForeground(
+                TEXT_MUTED
+        );
+
+        menuLabel.setAlignmentX(
+                Component.LEFT_ALIGNMENT
+        );
+
+        top.add(
+                menuLabel
+        );
+
+        top.add(
+                Box.createVerticalStrut(
                         10
                 )
         );
 
-        menuTitle.setForeground(
-                new Color(
-                        138,
-                        207,
-                        248,
-                        150
-                )
-        );
-
-        menuTitle.setAlignmentX(
-                Component.LEFT_ALIGNMENT
-        );
-
-        sidebarTop.add(menuTitle);
-
-        sidebarTop.add(
-                Box.createVerticalStrut(10)
-        );
-
         // =====================================================
-        // NAVIGATION PANEL
+        // NAVIGATION
         // =====================================================
 
-        JPanel navigationPanel =
+        JPanel navigation =
                 new JPanel();
 
-        navigationPanel.setOpaque(false);
+        navigation.setOpaque(false);
 
-        navigationPanel.setLayout(
+        navigation.setLayout(
                 new BoxLayout(
-                        navigationPanel,
+                        navigation,
                         BoxLayout.Y_AXIS
                 )
         );
 
-        // Overview
-        JButton overviewBtn =
+        // =====================================================
+        // OVERVIEW
+        // =====================================================
+
+        JButton overviewButton =
                 createSidebarButton(
                         "⌂   Overview",
-                        () -> showContentPanel(
-                                "OVERVIEW"
-                        )
+                        "OVERVIEW"
                 );
 
-        navigationPanel.add(overviewBtn);
+        navigation.add(
+                overviewButton
+        );
 
-        navigationPanel.add(
-                Box.createVerticalStrut(7)
+        navigation.add(
+                Box.createVerticalStrut(
+                        6
+                )
         );
 
         setSelectedSidebarButton(
-                overviewBtn
+                overviewButton
         );
 
         String roleStr =
                 currentUser.getUser_role() != null
-                        ? currentUser.getUser_role().toUpperCase()
+                        ? currentUser
+                        .getUser_role()
+                        .toUpperCase()
                         : "";
 
         // =====================================================
-        // USER
+        // USER MENU
         // =====================================================
 
-        if (roleStr.equals(
-                String.valueOf(User.UserRole.USER)
-        )) {
+        if (
+                roleStr.equals(
+                        String.valueOf(
+                                User.UserRole.USER
+                        )
+                )
+        ) {
 
-            navigationPanel.add(
-                    createNavigationButton(
-                            "▣   Send Parcel",
-                            "SEND_PARCEL"
-                    )
+            addNavItem(
+                    navigation,
+                    "▣   Send Parcel",
+                    "SEND_PARCEL"
             );
 
-            navigationPanel.add(
-                    Box.createVerticalStrut(7)
+            addNavItem(
+                    navigation,
+                    "⌕   Track Parcel",
+                    "TRACK_PARCEL"
             );
 
-            navigationPanel.add(
-                    createNavigationButton(
-                            "⌕   Track Parcel",
-                            "TRACK_PARCEL"
-                    )
-            );
-
-            navigationPanel.add(
-                    Box.createVerticalStrut(7)
-            );
-
-            navigationPanel.add(
-                    createNavigationButton(
-                            "▤   My Parcels",
-                            "MY_PARCELS"
-                    )
+            addNavItem(
+                    navigation,
+                    "▤   My Parcels",
+                    "MY_PARCELS"
             );
         }
 
         // =====================================================
-        // RIDER
+        // RIDER MENU
         // =====================================================
 
-        else if (roleStr.equals(
-                String.valueOf(User.UserRole.RIDER)
-        )) {
+        else if (
+                roleStr.equals(
+                        String.valueOf(
+                                User.UserRole.RIDER
+                        )
+                )
+        ) {
 
-            navigationPanel.add(
-                    createNavigationButton(
-                            "▤   Pending Parcels",
-                            "RIDER_PENDING"
-                    )
+            addNavItem(
+                    navigation,
+                    "▤   Pending Parcels",
+                    "RIDER_PENDING"
             );
 
-            navigationPanel.add(
-                    Box.createVerticalStrut(7)
+            addNavItem(
+                    navigation,
+                    "➤   Assigned Parcels",
+                    "RIDER_ASSIGNED"
             );
 
-            navigationPanel.add(
-                    createNavigationButton(
-                            "➤   My Assigned Parcels",
-                            "RIDER_ASSIGNED"
-                    )
-            );
-
-            navigationPanel.add(
-                    Box.createVerticalStrut(7)
-            );
-
-            navigationPanel.add(
-                    createNavigationButton(
-                            "↻   Update Status",
-                            "RIDER_UPDATE_STATUS"
-                    )
+            addNavItem(
+                    navigation,
+                    "↻   Update Status",
+                    "RIDER_UPDATE_STATUS"
             );
         }
 
         // =====================================================
-        // ADMIN
+        // ADMIN MENU
         // =====================================================
 
-        else if (roleStr.equals(
-                String.valueOf(User.UserRole.ADMIN)
-        )) {
+        else if (
+                roleStr.equals(
+                        String.valueOf(
+                                User.UserRole.ADMIN
+                        )
+                )
+        ) {
 
-            navigationPanel.add(
-                    createNavigationButton(
-                            "♙   View All Users",
-                            "ADMIN_VIEW_USERS"
+            JLabel management =
+                    new JLabel(
+                            "MANAGEMENT"
+                    );
+
+            management.setFont(
+                    new Font(
+                            "SansSerif",
+                            Font.BOLD,
+                            8
                     )
             );
 
-            navigationPanel.add(
-                    Box.createVerticalStrut(7)
-            );
-
-            navigationPanel.add(
-                    createNavigationButton(
-                            "+   Register Rider",
-                            "ADMIN_REGISTER_RIDER"
+            management.setForeground(
+                    new Color(
+                            145,
+                            158,
+                            168
                     )
             );
 
-            navigationPanel.add(
-                    Box.createVerticalStrut(7)
-            );
-
-            navigationPanel.add(
-                    createNavigationButton(
-                            "▣   View All Parcels",
-                            "ADMIN_VIEW_PARCELS"
+            management.setBorder(
+                    new EmptyBorder(
+                            12,
+                            12,
+                            6,
+                            0
                     )
             );
 
-            navigationPanel.add(
-                    Box.createVerticalStrut(7)
+            management.setAlignmentX(
+                    Component.LEFT_ALIGNMENT
             );
 
-            navigationPanel.add(
-                    createNavigationButton(
-                            "▥   Statistics",
-                            "ADMIN_STATISTICS"
+            navigation.add(
+                    management
+            );
+
+            addNavItem(
+                    navigation,
+                    "♙   View All Users",
+                    "ADMIN_VIEW_USERS"
+            );
+
+            addNavItem(
+                    navigation,
+                    "+   Register Rider",
+                    "ADMIN_REGISTER_RIDER"
+            );
+
+            addNavItem(
+                    navigation,
+                    "▣   View All Parcels",
+                    "ADMIN_VIEW_PARCELS"
+            );
+
+            addNavItem(
+                    navigation,
+                    "▥   Statistics",
+                    "ADMIN_STATISTICS"
+            );
+
+            JLabel tools =
+                    new JLabel(
+                            "TOOLS"
+                    );
+
+            tools.setFont(
+                    new Font(
+                            "SansSerif",
+                            Font.BOLD,
+                            8
                     )
             );
 
-            navigationPanel.add(
-                    Box.createVerticalStrut(7)
-            );
-
-            navigationPanel.add(
-                    createNavigationButton(
-                            "⌕   Search User",
-                            "ADMIN_SEARCH_USER"
+            tools.setForeground(
+                    new Color(
+                            145,
+                            158,
+                            168
                     )
             );
 
-            navigationPanel.add(
-                    Box.createVerticalStrut(7)
-            );
-
-            navigationPanel.add(
-                    createNavigationButton(
-                            "⌕   Search Parcel",
-                            "ADMIN_SEARCH_PARCEL"
+            tools.setBorder(
+                    new EmptyBorder(
+                            12,
+                            12,
+                            6,
+                            0
                     )
             );
 
-            navigationPanel.add(
-                    Box.createVerticalStrut(7)
+            tools.setAlignmentX(
+                    Component.LEFT_ALIGNMENT
             );
 
-            navigationPanel.add(
-                    createNavigationButton(
-                            "↻   Update Status",
-                            "ADMIN_UPDATE_STATUS"
-                    )
+            navigation.add(
+                    tools
             );
 
-            navigationPanel.add(
-                    Box.createVerticalStrut(7)
+            addNavItem(
+                    navigation,
+                    "⌕   Search User",
+                    "ADMIN_SEARCH_USER"
             );
 
-            navigationPanel.add(
-                    createNavigationButton(
-                            "×   Delete User",
-                            "ADMIN_DELETE_USER"
-                    )
+            addNavItem(
+                    navigation,
+                    "⌕   Search Parcel",
+                    "ADMIN_SEARCH_PARCEL"
             );
 
-            navigationPanel.add(
-                    Box.createVerticalStrut(7)
+            addNavItem(
+                    navigation,
+                    "↻   Update Status",
+                    "ADMIN_UPDATE_STATUS"
             );
 
-            navigationPanel.add(
-                    createNavigationButton(
-                            "×   Delete Parcel",
-                            "ADMIN_DELETE_PARCEL"
-                    )
+            addNavItem(
+                    navigation,
+                    "×   Delete User",
+                    "ADMIN_DELETE_USER"
+            );
+
+            addNavItem(
+                    navigation,
+                    "×   Delete Parcel",
+                    "ADMIN_DELETE_PARCEL"
             );
         }
 
-        sidebarTop.add(
-                navigationPanel
+        top.add(
+                navigation
         );
 
         // =====================================================
-        // SCROLL SUPPORT
+        // SCROLL
         // =====================================================
 
         JScrollPane scrollPane =
                 new JScrollPane(
-                        sidebarTop
+                        top
                 );
-
-        scrollPane.setBorder(
-                BorderFactory.createEmptyBorder()
-        );
 
         scrollPane.setOpaque(false);
 
         scrollPane.getViewport()
                 .setOpaque(false);
 
+        scrollPane.setBorder(
+                BorderFactory.createEmptyBorder()
+        );
+
         scrollPane.setHorizontalScrollBarPolicy(
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
         );
 
         scrollPane.setVerticalScrollBarPolicy(
-                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
         );
 
         sidebar.add(
@@ -1091,19 +1356,19 @@ public class DashboardLayout extends JPanel {
 
         footer.setBorder(
                 new EmptyBorder(
-                        12,
+                        10,
                         16,
                         15,
                         16
                 )
         );
 
-        JLabel footerLine =
+        JLabel status =
                 new JLabel(
-                        "● SYSTEM ONLINE"
+                        "●  SYSTEM ONLINE"
                 );
 
-        footerLine.setFont(
+        status.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
@@ -1111,17 +1376,17 @@ public class DashboardLayout extends JPanel {
                 )
         );
 
-        footerLine.setForeground(
+        status.setForeground(
                 new Color(
-                        138,
-                        207,
-                        248
+                        63,
+                        143,
+                        179
                 )
         );
 
         JLabel footerText =
                 new JLabel(
-                        "Courier Management System"
+                        "Loge Achi Dot Com"
                 );
 
         footerText.setFont(
@@ -1133,20 +1398,22 @@ public class DashboardLayout extends JPanel {
         );
 
         footerText.setForeground(
-                new Color(
-                        160,
-                        195,
-                        210
+                TEXT_MUTED
+        );
+
+        footer.add(
+                status
+        );
+
+        footer.add(
+                Box.createVerticalStrut(
+                        4
                 )
         );
 
-        footer.add(footerLine);
-
         footer.add(
-                Box.createVerticalStrut(4)
+                footerText
         );
-
-        footer.add(footerText);
 
         sidebar.add(
                 footer,
@@ -1157,18 +1424,25 @@ public class DashboardLayout extends JPanel {
     }
 
     // =========================================================
-    // CREATE NAVIGATION BUTTON
+    // ADD NAV ITEM
     // =========================================================
 
-    private JButton createNavigationButton(
+    private void addNavItem(
+            JPanel parent,
             String text,
-            String contentKey
+            String key
     ) {
 
-        return createSidebarButton(
-                text,
-                () -> showContentPanel(
-                        contentKey
+        parent.add(
+                createSidebarButton(
+                        text,
+                        key
+                )
+        );
+
+        parent.add(
+                Box.createVerticalStrut(
+                        5
                 )
         );
     }
@@ -1179,10 +1453,10 @@ public class DashboardLayout extends JPanel {
 
     private JButton createSidebarButton(
             String text,
-            Runnable onClick
+            String contentKey
     ) {
 
-        JButton btn =
+        JButton button =
                 new JButton(text) {
 
                     @Override
@@ -1190,36 +1464,26 @@ public class DashboardLayout extends JPanel {
                             Graphics g
                     ) {
 
-                        Graphics2D g2d =
-                                (Graphics2D) g.create();
+                        Graphics2D g2 =
+                                (Graphics2D)
+                                        g.create();
 
-                        g2d.setRenderingHint(
+                        g2.setRenderingHint(
                                 RenderingHints.KEY_ANTIALIASING,
                                 RenderingHints.VALUE_ANTIALIAS_ON
                         );
 
-                        // Selected button
-                        if (this == currentSelectedBtn) {
+                        // Selected
+                        if (
+                                this
+                                        == currentSelectedBtn
+                        ) {
 
-                            GradientPaint gradient =
-                                    new GradientPaint(
-                                            0,
-                                            0,
-                                            new Color(
-                                                    0,
-                                                    110,
-                                                    160
-                                            ),
-                                            getWidth(),
-                                            0,
-                                            BLUE
-                                    );
-
-                            g2d.setPaint(
-                                    gradient
+                            g2.setColor(
+                                    SIDEBAR_SELECTED
                             );
 
-                            g2d.fillRoundRect(
+                            g2.fillRoundRect(
                                     0,
                                     0,
                                     getWidth(),
@@ -1228,12 +1492,12 @@ public class DashboardLayout extends JPanel {
                                     10
                             );
 
-                            // Gold active indicator
-                            g2d.setColor(
-                                    GOLD
+                            // Orange active line
+                            g2.setColor(
+                                    ORANGE
                             );
 
-                            g2d.fillRoundRect(
+                            g2.fillRoundRect(
                                     0,
                                     7,
                                     4,
@@ -1241,17 +1505,19 @@ public class DashboardLayout extends JPanel {
                                     4,
                                     4
                             );
-
                         }
 
-                        // Hover background
-                        else if (getModel().isRollover()) {
+                        // Hover
+                        else if (
+                                getModel()
+                                        .isRollover()
+                        ) {
 
-                            g2d.setColor(
+                            g2.setColor(
                                     SIDEBAR_HOVER
                             );
 
-                            g2d.fillRoundRect(
+                            g2.fillRoundRect(
                                     0,
                                     0,
                                     getWidth(),
@@ -1261,66 +1527,72 @@ public class DashboardLayout extends JPanel {
                             );
                         }
 
-                        g2d.dispose();
+                        g2.dispose();
 
-                        super.paintComponent(g);
+                        super.paintComponent(
+                                g
+                        );
                     }
                 };
 
-        btn.setFont(
+        button.setFont(
                 new Font(
                         "SansSerif",
                         Font.PLAIN,
-                        13
+                        12
                 )
         );
 
-        btn.setForeground(
-                TEXT_MUTED
+        button.setForeground(
+                new Color(
+                        83,
+                        95,
+                        104
+                )
         );
 
-        btn.setFocusPainted(false);
+        button.setHorizontalAlignment(
+                SwingConstants.LEFT
+        );
 
-        btn.setContentAreaFilled(false);
+        button.setFocusPainted(false);
 
-        btn.setBorder(
+        button.setContentAreaFilled(false);
+
+        button.setBorder(
                 new EmptyBorder(
                         10,
-                        15,
+                        14,
                         10,
                         10
                 )
         );
 
-        btn.setHorizontalAlignment(
-                SwingConstants.LEFT
-        );
-
-        btn.setMaximumSize(
-                new Dimension(
-                        Integer.MAX_VALUE,
-                        43
-                )
-        );
-
-        btn.setPreferredSize(
-                new Dimension(
-                        215,
-                        43
-                )
-        );
-
-        btn.setCursor(
+        button.setCursor(
                 new Cursor(
                         Cursor.HAND_CURSOR
                 )
         );
 
+        button.setPreferredSize(
+                new Dimension(
+                        205,
+                        40
+                )
+        );
+
+        button.setMaximumSize(
+                new Dimension(
+                        Integer.MAX_VALUE,
+                        40
+                )
+        );
+
         // =====================================================
-        // HOVER
+        // HOVER TEXT
         // =====================================================
 
-        btn.addMouseListener(
+        button.addMouseListener(
                 new MouseAdapter() {
 
                     @Override
@@ -1328,13 +1600,16 @@ public class DashboardLayout extends JPanel {
                             MouseEvent e
                     ) {
 
-                        if (btn != currentSelectedBtn) {
+                        if (
+                                button
+                                        != currentSelectedBtn
+                        ) {
 
-                            btn.setForeground(
-                                    TEXT_WHITE
+                            button.setForeground(
+                                    TEXT_DARK
                             );
 
-                            btn.repaint();
+                            button.repaint();
                         }
                     }
 
@@ -1343,13 +1618,20 @@ public class DashboardLayout extends JPanel {
                             MouseEvent e
                     ) {
 
-                        if (btn != currentSelectedBtn) {
+                        if (
+                                button
+                                        != currentSelectedBtn
+                        ) {
 
-                            btn.setForeground(
-                                    TEXT_MUTED
+                            button.setForeground(
+                                    new Color(
+                                            83,
+                                            95,
+                                            104
+                                    )
                             );
 
-                            btn.repaint();
+                            button.repaint();
                         }
                     }
                 }
@@ -1359,51 +1641,60 @@ public class DashboardLayout extends JPanel {
         // CLICK
         // =====================================================
 
-        btn.addActionListener(
+        button.addActionListener(
                 e -> {
 
                     setSelectedSidebarButton(
-                            btn
+                            button
                     );
 
-                    if (onClick != null) {
-
-                        onClick.run();
-                    }
+                    showContentPanel(
+                            contentKey
+                    );
                 }
         );
 
         sidebarButtons.add(
-                btn
+                button
         );
 
-        return btn;
+        return button;
     }
 
     // =========================================================
-    // SELECTED SIDEBAR BUTTON
+    // SELECT SIDEBAR BUTTON
     // =========================================================
 
     private void setSelectedSidebarButton(
-            JButton targetBtn
+            JButton button
     ) {
 
-        if (currentSelectedBtn != null) {
+        if (
+                currentSelectedBtn
+                        != null
+        ) {
 
             currentSelectedBtn.setForeground(
-                    TEXT_MUTED
+                    new Color(
+                            83,
+                            95,
+                            104
+                    )
             );
 
             currentSelectedBtn.repaint();
         }
 
         currentSelectedBtn =
-                targetBtn;
+                button;
 
-        if (currentSelectedBtn != null) {
+        if (
+                currentSelectedBtn
+                        != null
+        ) {
 
             currentSelectedBtn.setForeground(
-                    TEXT_WHITE
+                    ORANGE
             );
 
             currentSelectedBtn.repaint();
@@ -1411,7 +1702,7 @@ public class DashboardLayout extends JPanel {
     }
 
     // =========================================================
-    // CARD MANAGEMENT
+    // CONTENT MANAGEMENT
     // =========================================================
 
     public void registerContentPanel(
@@ -1419,8 +1710,10 @@ public class DashboardLayout extends JPanel {
             JPanel panel
     ) {
 
-        if (contentArea == null ||
-                panel == null) {
+        if (
+                contentArea == null
+                        || panel == null
+        ) {
 
             return;
         }
@@ -1435,8 +1728,10 @@ public class DashboardLayout extends JPanel {
             String key
     ) {
 
-        if (contentArea == null ||
-                contentCardLayout == null) {
+        if (
+                contentArea == null
+                        || contentCardLayout == null
+        ) {
 
             return;
         }
@@ -1458,7 +1753,9 @@ public class DashboardLayout extends JPanel {
     @Override
     public void removeNotify() {
 
-        if (clockTimer != null) {
+        if (
+                clockTimer != null
+        ) {
 
             clockTimer.stop();
         }

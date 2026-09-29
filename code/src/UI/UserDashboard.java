@@ -5,229 +5,210 @@ import model.User;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-public class UserDashboard extends JFrame {
+public class UserDashboard extends JPanel {
 
-    private final User user;
+    private final User currentUser;
+    private final Runnable logoutCallback;
 
-    private CardLayout cardLayout;
-    private JPanel contentPanel;
+    private JPanel contentArea;
+    private CardLayout contentCardLayout;
 
-    // =========================================================
-    // SUB-PANELS
-    // =========================================================
+    private final List<JButton> sidebarButtons = new ArrayList<>();
+    private JButton currentSelectedBtn;
 
-    private SendParcelPanel sendParcelPanel;
-    private TrackParcelPanel trackParcelPanel;
-    private MyParcelsPanel myParcelsPanel;
+    private JLabel clockLabel;
+    private JPanel centerHeader;
+    private JPanel rightHeader;
+    private Timer clockTimer;
 
-    // =========================================================
-    // ACTIVE SIDEBAR BUTTON
-    // =========================================================
+    private static final Color BACKGROUND = new Color(241, 248, 253);
+    private static final Color WHITE = Color.WHITE;
+    private static final Color BLACK = new Color(15, 18, 20);
+    private static final Color TEXT_DARK = new Color(31, 38, 43);
+    private static final Color TEXT_MUTED = new Color(103, 117, 128);
 
-    private JButton activeButton = null;
+    private static final Color ORANGE = new Color(248, 116, 35);
+    private static final Color ORANGE_HOVER = new Color(235, 94, 20);
 
-    // =========================================================
-    // THEME
-    // =========================================================
+    private static final Color LIGHT_BLUE = new Color(224, 240, 249);
+    private static final Color BLUE = new Color(0, 97, 153);
 
-    private final Color BLUE = new Color(0, 97, 153);
-    private final Color BLUE_DARK = new Color(0, 61, 95);
+    private static final Color SIDEBAR_BG = new Color(249, 252, 254);
+    private static final Color SIDEBAR_HOVER = new Color(236, 244, 249);
+    private static final Color SIDEBAR_SELECTED = new Color(255, 241, 233);
 
-    private final Color SKY_BLUE = new Color(138, 207, 248);
-    private final Color SOFT_YELLOW = new Color(244, 235, 108);
-    private final Color GOLD = new Color(255, 212, 68);
+    private static final Color BORDER = new Color(216, 227, 234);
 
-    private final Color BG_TOP = new Color(3, 39, 63);
-    private final Color BG_BOTTOM = new Color(0, 72, 110);
+    public UserDashboard(
+            User user,
+            Runnable logoutCallback
+    ) {
+        this.currentUser = user;
+        this.logoutCallback = logoutCallback;
 
-    private final Color SIDEBAR_BG = new Color(2, 48, 73);
-    private final Color SIDEBAR_HOVER_BG = new Color(0, 82, 120);
+        setLayout(new BorderLayout());
+        setOpaque(false);
 
-    private final Color BTN_IDLE_TEXT =
-            new Color(190, 215, 228);
+        add(createHeaderPanel(), BorderLayout.NORTH);
+        add(createBodyPanel(), BorderLayout.CENTER);
 
-    private final Color BTN_ACTIVE_BG =
-            new Color(0, 97, 153);
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                updateResponsiveHeader();
+            }
+        });
+    }
 
-    private final Color BTN_ACTIVE_TEXT =
-            Color.WHITE;
+    private JPanel createBodyPanel() {
 
-    private final Color TEXT_WHITE =
-            Color.WHITE;
+        JPanel bodyPanel = new JPanel(new BorderLayout()) {
 
-    private final Color TEXT_MUTED =
-            new Color(185, 215, 230);
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
 
-    // =========================================================
-    // CONSTRUCTOR
-    // =========================================================
+                Graphics2D g2 = (Graphics2D) g.create();
 
-    public UserDashboard(User user) {
+                g2.setRenderingHint(
+                        RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON
+                );
 
-        this.user = user;
+                g2.setColor(BACKGROUND);
+                g2.fillRect(
+                        0,
+                        0,
+                        getWidth(),
+                        getHeight()
+                );
 
-        setTitle(
-                "Loge Achi Dot Com - User Dashboard"
-        );
+                g2.setColor(
+                        new Color(197, 225, 241, 85)
+                );
 
-        setSize(
-                1200,
-                650
-        );
+                g2.fill(
+                        new Ellipse2D.Float(
+                                -120,
+                                -120,
+                                350,
+                                350
+                        )
+                );
 
-        setDefaultCloseOperation(
-                JFrame.EXIT_ON_CLOSE
-        );
+                g2.setColor(
+                        new Color(178, 216, 237, 65)
+                );
 
-        setLocationRelativeTo(null);
+                g2.fill(
+                        new Ellipse2D.Float(
+                                getWidth() - 270,
+                                getHeight() - 240,
+                                430,
+                                430
+                        )
+                );
 
-        setLayout(
-                new BorderLayout()
-        );
+                g2.dispose();
+            }
+        };
 
-        // =====================================================
-        // CONTENT PANEL
-        // =====================================================
+        bodyPanel.setOpaque(false);
 
-        cardLayout =
-                new CardLayout();
-
-        contentPanel =
-                new JPanel(cardLayout) {
-
-                    @Override
-                    protected void paintComponent(
-                            Graphics g
-                    ) {
-
-                        super.paintComponent(g);
-
-                        Graphics2D g2d =
-                                (Graphics2D) g.create();
-
-                        g2d.setRenderingHint(
-                                RenderingHints.KEY_ANTIALIASING,
-                                RenderingHints.VALUE_ANTIALIAS_ON
-                        );
-
-                        GradientPaint gradient =
-                                new GradientPaint(
-                                        0,
-                                        0,
-                                        BG_TOP,
-                                        getWidth(),
-                                        getHeight(),
-                                        BG_BOTTOM
-                                );
-
-                        g2d.setPaint(
-                                gradient
-                        );
-
-                        g2d.fillRect(
-                                0,
-                                0,
-                                getWidth(),
-                                getHeight()
-                        );
-
-                        // Decorative glow
-                        g2d.setColor(
-                                new Color(
-                                        138,
-                                        207,
-                                        248,
-                                        12
-                                )
-                        );
-
-                        g2d.fillOval(
-                                getWidth() - 300,
-                                getHeight() - 250,
-                                400,
-                                400
-                        );
-
-                        g2d.dispose();
-                    }
-                };
-
-        contentPanel.setOpaque(false);
-
-        // =====================================================
-        // CREATE SUB-PANELS
-        // =====================================================
-
-        try {
-
-            sendParcelPanel =
-                    new SendParcelPanel(user);
-
-            trackParcelPanel =
-                    new TrackParcelPanel(user);
-
-            myParcelsPanel =
-                    new MyParcelsPanel(user);
-
-            // =================================================
-            // CARD KEYS
-            // =================================================
-
-            contentPanel.add(
-                    sendParcelPanel,
-                    "SEND"
-            );
-
-            contentPanel.add(
-                    trackParcelPanel,
-                    "TRACK"
-            );
-
-            contentPanel.add(
-                    myParcelsPanel,
-                    "MY_PARCELS"
-            );
-
-        } catch (Exception e) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Error initializing dashboard panels: "
-                            + e.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
-
-            e.printStackTrace();
-        }
-
-        // =====================================================
-        // SIDEBAR
-        // =====================================================
-
-        JPanel sidebar =
-                createSidebar();
-
-        add(
-                sidebar,
+        bodyPanel.add(
+                createSidebarPanel(),
                 BorderLayout.WEST
         );
 
-        // =====================================================
-        // CONTENT WRAPPER
-        // =====================================================
+        contentCardLayout = new CardLayout();
 
-        JPanel contentWrapper =
-                new JPanel(
-                        new BorderLayout()
+        contentArea = new JPanel(
+                contentCardLayout
+        );
+
+        contentArea.setOpaque(false);
+
+        setupRoleContentPanels();
+
+        JPanel contentSurface = new JPanel(
+                new BorderLayout()
+        ) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+
+                Graphics2D g2 = (Graphics2D) g.create();
+
+                g2.setRenderingHint(
+                        RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON
                 );
 
-        contentWrapper.setOpaque(false);
+                g2.setColor(
+                        new Color(255, 255, 255, 120)
+                );
 
+                g2.fill(
+                        new RoundRectangle2D.Float(
+                                0,
+                                0,
+                                getWidth(),
+                                getHeight(),
+                                20,
+                                20
+                        )
+                );
+
+                g2.setColor(
+                        new Color(255, 255, 255, 170)
+                );
+
+                g2.draw(
+                        new RoundRectangle2D.Float(
+                                0.5f,
+                                0.5f,
+                                getWidth() - 1,
+                                getHeight() - 1,
+                                20,
+                                20
+                        )
+                );
+
+                g2.dispose();
+            }
+        };
+
+        contentSurface.setOpaque(false);
+        contentSurface.setBorder(
+                new EmptyBorder(
+                        1,
+                        1,
+                        1,
+                        1
+                )
+        );
+
+        contentSurface.add(
+                contentArea,
+                BorderLayout.CENTER
+        );
+
+        JPanel contentWrapper = new JPanel(
+                new BorderLayout()
+        );
+
+        contentWrapper.setOpaque(false);
         contentWrapper.setBorder(
                 new EmptyBorder(
                         14,
@@ -238,148 +219,234 @@ public class UserDashboard extends JFrame {
         );
 
         contentWrapper.add(
-                contentPanel,
+                contentSurface,
                 BorderLayout.CENTER
         );
 
-        add(
+        bodyPanel.add(
                 contentWrapper,
                 BorderLayout.CENTER
         );
 
-        // =====================================================
-        // DEFAULT SCREEN
-        // =====================================================
+        return bodyPanel;
+    }
 
-        cardLayout.show(
-                contentPanel,
-                "SEND"
+    private void setupRoleContentPanels() {
+
+        registerContentPanel(
+                "OVERVIEW",
+                new DashboardOverviewPanel(currentUser)
+        );
+
+        String roleStr =
+                currentUser.getUser_role() != null
+                        ? currentUser.getUser_role().toUpperCase()
+                        : "";
+
+        if (roleStr.equals(
+                String.valueOf(User.UserRole.USER)
+        )) {
+
+            registerContentPanel(
+                    "SEND_PARCEL",
+                    new SendParcelPanel(currentUser)
+            );
+
+            registerContentPanel(
+                    "TRACK_PARCEL",
+                    new TrackParcelPanel(currentUser)
+            );
+
+            registerContentPanel(
+                    "MY_PARCELS",
+                    new MyParcelsPanel(currentUser)
+            );
+        }
+
+        else if (roleStr.equals(
+                String.valueOf(User.UserRole.RIDER)
+        )) {
+
+            registerContentPanel(
+                    "RIDER_PENDING",
+                    new PendingParcelsFrame(currentUser)
+            );
+
+            registerContentPanel(
+                    "RIDER_ASSIGNED",
+                    new AssignedParcelsFrame(currentUser)
+            );
+
+            registerContentPanel(
+                    "RIDER_UPDATE_STATUS",
+                    new UpdateParcelStatusFrame(currentUser)
+            );
+        }
+
+        else if (roleStr.equals(
+                String.valueOf(User.UserRole.ADMIN)
+        )) {
+
+            registerContentPanel(
+                    "ADMIN_VIEW_USERS",
+                    new AdminUsersFrame(currentUser)
+            );
+
+            registerContentPanel(
+                    "ADMIN_REGISTER_RIDER",
+                    new RegisterRiderFrame(currentUser)
+            );
+
+            registerContentPanel(
+                    "ADMIN_VIEW_PARCELS",
+                    new AdminParcelsFrame(currentUser)
+            );
+
+            registerContentPanel(
+                    "ADMIN_STATISTICS",
+                    new AdminStatisticsFrame()
+            );
+
+            registerContentPanel(
+                    "ADMIN_SEARCH_USER",
+                    new SearchUserFrame(currentUser)
+            );
+
+            registerContentPanel(
+                    "ADMIN_SEARCH_PARCEL",
+                    new SearchParcelFrame(currentUser)
+            );
+
+            registerContentPanel(
+                    "ADMIN_UPDATE_STATUS",
+                    new AdminUpdateParcelStatusFrame(currentUser)
+            );
+
+            registerContentPanel(
+                    "ADMIN_DELETE_USER",
+                    new DeleteUserFrame(currentUser)
+            );
+
+            registerContentPanel(
+                    "ADMIN_DELETE_PARCEL",
+                    new DeleteParcelFrame(currentUser)
+            );
+        }
+
+        contentCardLayout.show(
+                contentArea,
+                "OVERVIEW"
         );
     }
 
-    // =========================================================
-    // SIDEBAR
-    // =========================================================
+    private JPanel createHeaderPanel() {
 
-    private JPanel createSidebar() {
+        JPanel header = new JPanel(
+                new BorderLayout()
+        ) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
 
-        JPanel sidebar =
-                new JPanel(
-                        new BorderLayout()
+                Graphics2D g2 = (Graphics2D) g.create();
+
+                g2.setRenderingHint(
+                        RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON
                 );
 
-        sidebar.setPreferredSize(
+                g2.setColor(WHITE);
+
+                g2.fillRect(
+                        0,
+                        0,
+                        getWidth(),
+                        getHeight()
+                );
+
+                g2.setColor(BORDER);
+
+                g2.fillRect(
+                        0,
+                        getHeight() - 1,
+                        getWidth(),
+                        1
+                );
+
+                g2.dispose();
+            }
+        };
+
+        header.setOpaque(false);
+        header.setPreferredSize(
                 new Dimension(
-                        250,
-                        0
+                        0,
+                        72
                 )
         );
 
-        sidebar.setBackground(
-                SIDEBAR_BG
-        );
-
-        sidebar.setBorder(
+        header.setBorder(
                 new EmptyBorder(
-                        18,
-                        14,
-                        18,
-                        14
+                        0,
+                        22,
+                        0,
+                        20
                 )
         );
 
-        // =====================================================
-        // TOP SECTION
-        // =====================================================
+        JPanel leftHeader = new JPanel(
+                new FlowLayout(
+                        FlowLayout.LEFT,
+                        10,
+                        15
+                )
+        );
 
-        JPanel headerPanel =
-                new JPanel();
+        leftHeader.setOpaque(false);
 
-        headerPanel.setOpaque(false);
+        JPanel logoCircle = new JPanel(
+                new GridBagLayout()
+        );
 
-        headerPanel.setLayout(
+        logoCircle.setPreferredSize(
+                new Dimension(
+                        38,
+                        38
+                )
+        );
+
+        logoCircle.setBackground(BLACK);
+
+        JLabel logo = new JLabel("L");
+
+        logo.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        19
+                )
+        );
+
+        logo.setForeground(WHITE);
+
+        logoCircle.add(logo);
+
+        JPanel brandPanel = new JPanel();
+
+        brandPanel.setOpaque(false);
+
+        brandPanel.setLayout(
                 new BoxLayout(
-                        headerPanel,
+                        brandPanel,
                         BoxLayout.Y_AXIS
                 )
         );
 
-        // Logo
-        JLabel logoLabel =
-                new JLabel("▣");
-
-        logoLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        30
-                )
+        JLabel brand = new JLabel(
+                "LOGE ACHI DOT COM"
         );
 
-        logoLabel.setForeground(
-                GOLD
-        );
-
-        logoLabel.setAlignmentX(
-                Component.CENTER_ALIGNMENT
-        );
-
-        // Brand
-        JLabel brandLabel =
-                new JLabel(
-                        "LOGE ACHI DOT COM"
-                );
-
-        brandLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        17
-                )
-        );
-
-        brandLabel.setForeground(
-                SKY_BLUE
-        );
-
-        brandLabel.setAlignmentX(
-                Component.CENTER_ALIGNMENT
-        );
-
-        // Subtitle
-        JLabel subtitleLabel =
-                new JLabel(
-                        "Courier Management"
-                );
-
-        subtitleLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.PLAIN,
-                        10
-                )
-        );
-
-        subtitleLabel.setForeground(
-                TEXT_MUTED
-        );
-
-        subtitleLabel.setAlignmentX(
-                Component.CENTER_ALIGNMENT
-        );
-
-        // User
-        JLabel userLabel =
-                new JLabel(
-                        "Welcome, "
-                                + (
-                                user != null
-                                        ? user.getUser_name()
-                                        : "User"
-                        )
-                );
-
-        userLabel.setFont(
+        brand.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
@@ -387,118 +454,263 @@ public class UserDashboard extends JFrame {
                 )
         );
 
-        userLabel.setForeground(
-                TEXT_WHITE
+        brand.setForeground(BLACK);
+
+        JLabel service = new JLabel(
+                "COURIER MANAGEMENT SYSTEM"
         );
 
-        userLabel.setAlignmentX(
-                Component.CENTER_ALIGNMENT
-        );
-
-        // Role
-        JLabel roleLabel =
-                new JLabel(
-                        "USER"
-                );
-
-        roleLabel.setFont(
+        service.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        9
+                        8
                 )
         );
 
-        roleLabel.setForeground(
-                BLUE_DARK
-        );
+        service.setForeground(ORANGE);
 
-        roleLabel.setOpaque(true);
-
-        roleLabel.setBackground(
-                SOFT_YELLOW
-        );
-
-        roleLabel.setBorder(
-                new EmptyBorder(
-                        4,
-                        10,
-                        4,
-                        10
-                )
-        );
-
-        roleLabel.setAlignmentX(
-                Component.CENTER_ALIGNMENT
-        );
-
-        headerPanel.add(
-                logoLabel
-        );
-
-        headerPanel.add(
-                Box.createVerticalStrut(2)
-        );
-
-        headerPanel.add(
-                brandLabel
-        );
-
-        headerPanel.add(
+        brandPanel.add(brand);
+        brandPanel.add(
                 Box.createVerticalStrut(3)
         );
+        brandPanel.add(service);
 
-        headerPanel.add(
-                subtitleLabel
+        leftHeader.add(logoCircle);
+        leftHeader.add(brandPanel);
+
+        header.add(
+                leftHeader,
+                BorderLayout.WEST
         );
 
-        headerPanel.add(
-                Box.createVerticalStrut(18)
-        );
-
-        headerPanel.add(
-                userLabel
-        );
-
-        headerPanel.add(
-                Box.createVerticalStrut(7)
-        );
-
-        headerPanel.add(
-                roleLabel
-        );
-
-        headerPanel.add(
-                Box.createVerticalStrut(22)
-        );
-
-        sidebar.add(
-                headerPanel,
-                BorderLayout.NORTH
-        );
-
-        // =====================================================
-        // MENU
-        // =====================================================
-
-        JPanel menuPanel =
-                new JPanel();
-
-        menuPanel.setOpaque(false);
-
-        menuPanel.setLayout(
-                new BoxLayout(
-                        menuPanel,
-                        BoxLayout.Y_AXIS
+        centerHeader = new JPanel(
+                new FlowLayout(
+                        FlowLayout.CENTER,
+                        5,
+                        20
                 )
         );
 
-        JLabel menuTitle =
-                new JLabel(
-                        "  NAVIGATION"
-                );
+        centerHeader.setOpaque(false);
 
-        menuTitle.setFont(
+        centerHeader.add(
+                createHeaderPill("TRACKING", false)
+        );
+
+        centerHeader.add(
+                createHeaderPill("SHIPPING", false)
+        );
+
+        centerHeader.add(
+                createHeaderPill("SUPPORT", false)
+        );
+
+        centerHeader.add(
+                createHeaderPill("ACCOUNT", true)
+        );
+
+        header.add(
+                centerHeader,
+                BorderLayout.CENTER
+        );
+
+        rightHeader = new JPanel(
+                new FlowLayout(
+                        FlowLayout.RIGHT,
+                        9,
+                        14
+                )
+        );
+
+        rightHeader.setOpaque(false);
+
+        String username =
+                currentUser.getUser_name() != null
+                        ? currentUser.getUser_name()
+                        : "User";
+
+        JLabel userLabel = new JLabel(
+                username
+        );
+
+        userLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        11
+                )
+        );
+
+        userLabel.setForeground(TEXT_DARK);
+
+        String role =
+                currentUser.getUser_role() != null
+                        ? currentUser.getUser_role().toUpperCase()
+                        : "USER";
+
+        JLabel roleBadge = new JLabel(
+                " " + role + " "
+        );
+
+        roleBadge.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        8
+                )
+        );
+
+        roleBadge.setForeground(WHITE);
+        roleBadge.setOpaque(true);
+        roleBadge.setBackground(ORANGE);
+
+        roleBadge.setBorder(
+                new EmptyBorder(
+                        6,
+                        8,
+                        6,
+                        8
+                )
+        );
+
+        clockLabel = new JLabel();
+
+        clockLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        9
+                )
+        );
+
+        clockLabel.setForeground(TEXT_MUTED);
+
+        clockTimer = new Timer(
+                1000,
+                e -> updateClock()
+        );
+
+        clockTimer.setInitialDelay(0);
+        clockTimer.start();
+
+        JButton logoutButton =
+                createLogoutButton();
+
+        rightHeader.add(userLabel);
+        rightHeader.add(roleBadge);
+        rightHeader.add(clockLabel);
+        rightHeader.add(logoutButton);
+
+        header.add(
+                rightHeader,
+                BorderLayout.EAST
+        );
+
+        updateResponsiveHeader();
+
+        return header;
+    }
+
+    private void updateClock() {
+
+        if (clockLabel == null) {
+            return;
+        }
+
+        clockLabel.setText(
+                new SimpleDateFormat(
+                        "dd MMM yyyy | hh:mm:ss a"
+                ).format(
+                        new Date()
+                )
+        );
+    }
+
+    private void updateResponsiveHeader() {
+
+        if (centerHeader == null ||
+                rightHeader == null) {
+            return;
+        }
+
+        int width = getWidth();
+
+        centerHeader.setVisible(
+                width >= 980
+        );
+
+        if (clockLabel != null) {
+            clockLabel.setVisible(
+                    width >= 850
+            );
+        }
+
+        rightHeader.revalidate();
+        rightHeader.repaint();
+
+        revalidate();
+        repaint();
+    }
+
+    private JLabel createHeaderPill(
+            String text,
+            boolean active
+    ) {
+
+        JLabel label = new JLabel(text);
+
+        label.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        8
+                )
+        );
+
+        label.setForeground(
+                active
+                        ? TEXT_DARK
+                        : new Color(
+                        88,
+                        99,
+                        108
+                )
+        );
+
+        label.setOpaque(true);
+
+        label.setBackground(
+                active
+                        ? new Color(
+                        230,
+                        236,
+                        241
+                )
+                        : new Color(
+                        246,
+                        249,
+                        251
+                )
+        );
+
+        label.setBorder(
+                new EmptyBorder(
+                        8,
+                        11,
+                        8,
+                        11
+                )
+        );
+
+        return label;
+    }
+
+    private JButton createLogoutButton() {
+
+        JButton button = new JButton("Logout");
+
+        button.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
@@ -506,213 +718,55 @@ public class UserDashboard extends JFrame {
                 )
         );
 
-        menuTitle.setForeground(
-                new Color(
-                        138,
-                        207,
-                        248,
-                        160
+        button.setForeground(WHITE);
+        button.setBackground(ORANGE);
+
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+
+        button.setCursor(
+                new Cursor(
+                        Cursor.HAND_CURSOR
                 )
         );
 
-        menuTitle.setAlignmentX(
-                Component.LEFT_ALIGNMENT
-        );
-
-        menuPanel.add(
-                menuTitle
-        );
-
-        menuPanel.add(
-                Box.createVerticalStrut(10)
-        );
-
-        // =====================================================
-        // BUTTONS
-        // =====================================================
-
-        JButton sendBtn =
-                createNavButton(
-                        "▣   Send Parcel"
-                );
-
-        JButton trackBtn =
-                createNavButton(
-                        "⌕   Track Parcel"
-                );
-
-        JButton myParcelsBtn =
-                createNavButton(
-                        "▤   My Parcels"
-                );
-
-        menuPanel.add(
-                sendBtn
-        );
-
-        menuPanel.add(
-                Box.createVerticalStrut(8)
-        );
-
-        menuPanel.add(
-                trackBtn
-        );
-
-        menuPanel.add(
-                Box.createVerticalStrut(8)
-        );
-
-        menuPanel.add(
-                myParcelsBtn
-        );
-
-        sidebar.add(
-                menuPanel,
-                BorderLayout.CENTER
-        );
-
-        // =====================================================
-        // FOOTER
-        // =====================================================
-
-        JButton logoutBtn =
-                createNavButton(
-                        "↪   Logout"
-                );
-
-        logoutBtn.setForeground(
-                new Color(
-                        255,
-                        170,
-                        170
+        button.setPreferredSize(
+                new Dimension(
+                        72,
+                        31
                 )
         );
 
-        JPanel footerPanel =
-                new JPanel(
-                        new BorderLayout()
-                );
+        button.addMouseListener(
+                new MouseAdapter() {
 
-        footerPanel.setOpaque(false);
-
-        JLabel statusLabel =
-                new JLabel(
-                        "●  SYSTEM ONLINE"
-                );
-
-        statusLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        9
-                )
-        );
-
-        statusLabel.setForeground(
-                SKY_BLUE
-        );
-
-        footerPanel.add(
-                statusLabel,
-                BorderLayout.NORTH
-        );
-
-        footerPanel.add(
-                Box.createVerticalStrut(7),
-                BorderLayout.CENTER
-        );
-
-        footerPanel.add(
-                logoutBtn,
-                BorderLayout.SOUTH
-        );
-
-        sidebar.add(
-                footerPanel,
-                BorderLayout.SOUTH
-        );
-
-        // =====================================================
-        // DEFAULT ACTIVE
-        // =====================================================
-
-        setActiveButton(
-                sendBtn
-        );
-
-        // =====================================================
-        // NAVIGATION ACTIONS
-        // =====================================================
-
-        sendBtn.addActionListener(
-                e -> {
-
-                    setActiveButton(
-                            sendBtn
-                    );
-
-                    cardLayout.show(
-                            contentPanel,
-                            "SEND"
-                    );
-                }
-        );
-
-        trackBtn.addActionListener(
-                e -> {
-
-                    setActiveButton(
-                            trackBtn
-                    );
-
-                    cardLayout.show(
-                            contentPanel,
-                            "TRACK"
-                    );
-                }
-        );
-
-        myParcelsBtn.addActionListener(
-                e -> {
-
-                    setActiveButton(
-                            myParcelsBtn
-                    );
-
-                    try {
-
-                        if (myParcelsPanel != null) {
-
-                            myParcelsPanel.loadUserParcels();
-                        }
-
-                    } catch (Exception ex) {
-
-                        JOptionPane.showMessageDialog(
-                                this,
-                                "Failed to load parcels: "
-                                        + ex.getMessage(),
-                                "Database Error",
-                                JOptionPane.ERROR_MESSAGE
+                    @Override
+                    public void mouseEntered(
+                            MouseEvent e
+                    ) {
+                        button.setBackground(
+                                ORANGE_HOVER
                         );
-
-                        ex.printStackTrace();
                     }
 
-                    cardLayout.show(
-                            contentPanel,
-                            "MY_PARCELS"
-                    );
+                    @Override
+                    public void mouseExited(
+                            MouseEvent e
+                    ) {
+                        button.setBackground(
+                                ORANGE
+                        );
+                    }
                 }
         );
 
-        logoutBtn.addActionListener(
+        button.addActionListener(
                 e -> {
 
                     int option =
                             JOptionPane.showConfirmDialog(
                                     this,
-                                    "Are you sure you want to log out?",
+                                    "Are you sure you want to logout?",
                                     "Logout Confirmation",
                                     JOptionPane.YES_NO_OPTION
                             );
@@ -722,179 +776,511 @@ public class UserDashboard extends JFrame {
                                     JOptionPane.YES_OPTION
                     ) {
 
-                        dispose();
+                        if (clockTimer != null) {
+                            clockTimer.stop();
+                        }
 
-                        // Existing behavior preserved.
-                        // LoginFrame can be opened here if needed.
-                        // new LoginFrame().setVisible(true);
+                        if (logoutCallback != null) {
+                            logoutCallback.run();
+                        }
                     }
                 }
+        );
+
+        return button;
+    }
+
+    private JPanel createSidebarPanel() {
+
+        JPanel sidebar = new JPanel(
+                new BorderLayout()
+        );
+
+        sidebar.setBackground(
+                SIDEBAR_BG
+        );
+
+        sidebar.setPreferredSize(
+                new Dimension(
+                        225,
+                        0
+                )
+        );
+
+        sidebar.setBorder(
+                BorderFactory.createMatteBorder(
+                        0,
+                        0,
+                        0,
+                        1,
+                        BORDER
+                )
+        );
+
+        JPanel sidebarContent = new JPanel();
+
+        sidebarContent.setOpaque(false);
+
+        sidebarContent.setLayout(
+                new BoxLayout(
+                        sidebarContent,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        sidebarContent.setBorder(
+                new EmptyBorder(
+                        18,
+                        14,
+                        15,
+                        14
+                )
+        );
+
+        JLabel menuLabel =
+                new JLabel(
+                        "MENU"
+                );
+
+        menuLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        9
+                )
+        );
+
+        menuLabel.setForeground(TEXT_MUTED);
+        menuLabel.setAlignmentX(
+                Component.LEFT_ALIGNMENT
+        );
+
+        sidebarContent.add(menuLabel);
+
+        sidebarContent.add(
+                Box.createVerticalStrut(
+                        10
+                )
+        );
+
+        JButton overviewButton =
+                createSidebarButton(
+                        "⌂   Overview",
+                        "OVERVIEW"
+                );
+
+        sidebarContent.add(
+                overviewButton
+        );
+
+        sidebarContent.add(
+                Box.createVerticalStrut(6)
+        );
+
+        setSelectedSidebarButton(
+                overviewButton
+        );
+
+        String roleStr =
+                currentUser.getUser_role() != null
+                        ? currentUser
+                        .getUser_role()
+                        .toUpperCase()
+                        : "";
+
+        if (
+                roleStr.equals(
+                        String.valueOf(
+                                User.UserRole.USER
+                        )
+                )
+        ) {
+
+            addNavItem(
+                    sidebarContent,
+                    "▣   Send Parcel",
+                    "SEND_PARCEL"
+            );
+
+            addNavItem(
+                    sidebarContent,
+                    "⌕   Track Parcel",
+                    "TRACK_PARCEL"
+            );
+
+            addNavItem(
+                    sidebarContent,
+                    "▤   My Parcels",
+                    "MY_PARCELS"
+            );
+        }
+
+        else if (
+                roleStr.equals(
+                        String.valueOf(
+                                User.UserRole.RIDER
+                        )
+                )
+        ) {
+
+            addNavItem(
+                    sidebarContent,
+                    "▤   Pending Parcels",
+                    "RIDER_PENDING"
+            );
+
+            addNavItem(
+                    sidebarContent,
+                    "➤   Assigned Parcels",
+                    "RIDER_ASSIGNED"
+            );
+
+            addNavItem(
+                    sidebarContent,
+                    "↻   Update Status",
+                    "RIDER_UPDATE_STATUS"
+            );
+        }
+
+        else if (
+                roleStr.equals(
+                        String.valueOf(
+                                User.UserRole.ADMIN
+                        )
+                )
+        ) {
+
+            addSectionLabel(
+                    sidebarContent,
+                    "MANAGEMENT"
+            );
+
+            addNavItem(
+                    sidebarContent,
+                    "♙   View All Users",
+                    "ADMIN_VIEW_USERS"
+            );
+
+            addNavItem(
+                    sidebarContent,
+                    "+   Register Rider",
+                    "ADMIN_REGISTER_RIDER"
+            );
+
+            addNavItem(
+                    sidebarContent,
+                    "▣   View All Parcels",
+                    "ADMIN_VIEW_PARCELS"
+            );
+
+            addNavItem(
+                    sidebarContent,
+                    "▥   Statistics",
+                    "ADMIN_STATISTICS"
+            );
+
+            addSectionLabel(
+                    sidebarContent,
+                    "TOOLS"
+            );
+
+            addNavItem(
+                    sidebarContent,
+                    "⌕   Search User",
+                    "ADMIN_SEARCH_USER"
+            );
+
+            addNavItem(
+                    sidebarContent,
+                    "⌕   Search Parcel",
+                    "ADMIN_SEARCH_PARCEL"
+            );
+
+            addNavItem(
+                    sidebarContent,
+                    "↻   Update Status",
+                    "ADMIN_UPDATE_STATUS"
+            );
+
+            addNavItem(
+                    sidebarContent,
+                    "×   Delete User",
+                    "ADMIN_DELETE_USER"
+            );
+
+            addNavItem(
+                    sidebarContent,
+                    "×   Delete Parcel",
+                    "ADMIN_DELETE_PARCEL"
+            );
+        }
+
+        JScrollPane scrollPane =
+                new JScrollPane(
+                        sidebarContent
+                );
+
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
+        scrollPane.setBorder(null);
+
+        scrollPane.setHorizontalScrollBarPolicy(
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+        );
+
+        scrollPane.setVerticalScrollBarPolicy(
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
+        );
+
+        sidebar.add(
+                scrollPane,
+                BorderLayout.CENTER
+        );
+
+        JPanel footer = new JPanel();
+
+        footer.setOpaque(false);
+
+        footer.setLayout(
+                new BoxLayout(
+                        footer,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        footer.setBorder(
+                new EmptyBorder(
+                        10,
+                        15,
+                        15,
+                        15
+                )
+        );
+
+        JLabel online =
+                new JLabel(
+                        "●  SYSTEM ONLINE"
+                );
+
+        online.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        9
+                )
+        );
+
+        online.setForeground(
+                new Color(
+                        63,
+                        143,
+                        179
+                )
+        );
+
+        JLabel footerText =
+                new JLabel(
+                        "Loge Achi Dot Com"
+                );
+
+        footerText.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        9
+                )
+        );
+
+        footerText.setForeground(
+                TEXT_MUTED
+        );
+
+        footer.add(online);
+
+        footer.add(
+                Box.createVerticalStrut(4)
+        );
+
+        footer.add(footerText);
+
+        sidebar.add(
+                footer,
+                BorderLayout.SOUTH
         );
 
         return sidebar;
     }
 
-    // =========================================================
-    // NAVIGATION BUTTON
-    // =========================================================
-
-    private JButton createNavButton(
+    private void addSectionLabel(
+            JPanel parent,
             String text
     ) {
 
-        JButton button =
-                new JButton(text) {
+        JLabel label =
+                new JLabel(text);
 
-                    private boolean isHovered =
-                            false;
+        label.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        8
+                )
+        );
 
-                    {
-                        addMouseListener(
-                                new MouseAdapter() {
+        label.setForeground(
+                new Color(
+                        145,
+                        158,
+                        168
+                )
+        );
 
-                                    @Override
-                                    public void mouseEntered(
-                                            MouseEvent e
-                                    ) {
+        label.setBorder(
+                new EmptyBorder(
+                        13,
+                        12,
+                        6,
+                        0
+                )
+        );
 
-                                        isHovered = true;
+        label.setAlignmentX(
+                Component.LEFT_ALIGNMENT
+        );
 
-                                        repaint();
-                                    }
+        parent.add(label);
+    }
 
-                                    @Override
-                                    public void mouseExited(
-                                            MouseEvent e
-                                    ) {
+    private void addNavItem(
+            JPanel parent,
+            String text,
+            String key
+    ) {
 
-                                        isHovered = false;
+        parent.add(
+                createSidebarButton(
+                        text,
+                        key
+                )
+        );
 
-                                        repaint();
-                                    }
-                                }
-                        );
-                    }
+        parent.add(
+                Box.createVerticalStrut(5)
+        );
+    }
 
-                    @Override
-                    protected void paintComponent(
-                            Graphics g
-                    ) {
+    private JButton createSidebarButton(
+            String text,
+            String contentKey
+    ) {
 
-                        Graphics2D g2d =
-                                (Graphics2D) g.create();
+        JButton button = new JButton(text) {
 
-                        g2d.setRenderingHint(
-                                RenderingHints.KEY_ANTIALIASING,
-                                RenderingHints.VALUE_ANTIALIAS_ON
-                        );
+            @Override
+            protected void paintComponent(
+                    Graphics g
+            ) {
 
-                        // =================================================
-                        // ACTIVE
-                        // =================================================
+                Graphics2D g2 =
+                        (Graphics2D) g.create();
 
-                        if (
-                                this ==
-                                        activeButton
-                        ) {
+                g2.setRenderingHint(
+                        RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON
+                );
 
-                            GradientPaint gradient =
-                                    new GradientPaint(
-                                            0,
-                                            0,
-                                            new Color(
-                                                    0,
-                                                    110,
-                                                    160
-                                            ),
-                                            getWidth(),
-                                            0,
-                                            BLUE
-                                    );
+                if (
+                        this ==
+                                currentSelectedBtn
+                ) {
 
-                            g2d.setPaint(
-                                    gradient
-                            );
+                    g2.setColor(
+                            SIDEBAR_SELECTED
+                    );
 
-                            g2d.fill(
-                                    new RoundRectangle2D.Float(
-                                            0,
-                                            0,
-                                            getWidth(),
-                                            getHeight(),
-                                            12,
-                                            12
-                                    )
-                            );
-
-                            // Gold active indicator
-                            g2d.setColor(
-                                    GOLD
-                            );
-
-                            g2d.fillRoundRect(
+                    g2.fill(
+                            new RoundRectangle2D.Float(
                                     0,
-                                    7,
-                                    4,
-                                    getHeight() - 14,
-                                    4,
-                                    4
-                            );
-                        }
+                                    0,
+                                    getWidth(),
+                                    getHeight(),
+                                    10,
+                                    10
+                            )
+                    );
 
-                        // =================================================
-                        // HOVER
-                        // =================================================
+                    g2.setColor(
+                            ORANGE
+                    );
 
-                        else if (isHovered) {
+                    g2.fillRoundRect(
+                            0,
+                            7,
+                            4,
+                            getHeight() - 14,
+                            4,
+                            4
+                    );
+                }
 
-                            g2d.setColor(
-                                    SIDEBAR_HOVER_BG
-                            );
+                else if (
+                        getModel().isRollover()
+                ) {
 
-                            g2d.fill(
-                                    new RoundRectangle2D.Float(
-                                            0,
-                                            0,
-                                            getWidth(),
-                                            getHeight(),
-                                            12,
-                                            12
-                                    )
-                            );
-                        }
+                    g2.setColor(
+                            SIDEBAR_HOVER
+                    );
 
-                        g2d.dispose();
+                    g2.fill(
+                            new RoundRectangle2D.Float(
+                                    0,
+                                    0,
+                                    getWidth(),
+                                    getHeight(),
+                                    10,
+                                    10
+                            )
+                    );
+                }
 
-                        super.paintComponent(g);
-                    }
-                };
+                g2.dispose();
+
+                super.paintComponent(g);
+            }
+        };
 
         button.setFont(
                 new Font(
                         "SansSerif",
                         Font.PLAIN,
-                        13
+                        12
                 )
         );
 
         button.setForeground(
-                BTN_IDLE_TEXT
+                new Color(
+                        83,
+                        95,
+                        104
+                )
         );
 
         button.setHorizontalAlignment(
                 SwingConstants.LEFT
         );
 
-        button.setContentAreaFilled(
-                false
-        );
+        button.setContentAreaFilled(false);
+        button.setOpaque(false);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
 
-        button.setFocusPainted(
-                false
-        );
-
-        button.setBorderPainted(
-                false
+        button.setBorder(
+                new EmptyBorder(
+                        10,
+                        14,
+                        10,
+                        10
+                )
         );
 
         button.setCursor(
@@ -905,15 +1291,15 @@ public class UserDashboard extends JFrame {
 
         button.setPreferredSize(
                 new Dimension(
-                        215,
-                        44
+                        195,
+                        41
                 )
         );
 
         button.setMaximumSize(
                 new Dimension(
-                        215,
-                        44
+                        Integer.MAX_VALUE,
+                        41
                 )
         );
 
@@ -921,56 +1307,151 @@ public class UserDashboard extends JFrame {
                 Component.CENTER_ALIGNMENT
         );
 
-        button.setBorder(
-                new EmptyBorder(
-                        8,
-                        15,
-                        8,
-                        15
-                )
+        button.addMouseListener(
+                new MouseAdapter() {
+
+                    @Override
+                    public void mouseEntered(
+                            MouseEvent e
+                    ) {
+
+                        if (
+                                button !=
+                                        currentSelectedBtn
+                        ) {
+
+                            button.setForeground(
+                                    TEXT_DARK
+                            );
+
+                            button.repaint();
+                        }
+                    }
+
+                    @Override
+                    public void mouseExited(
+                            MouseEvent e
+                    ) {
+
+                        if (
+                                button !=
+                                        currentSelectedBtn
+                        ) {
+
+                            button.setForeground(
+                                    new Color(
+                                            83,
+                                            95,
+                                            104
+                                    )
+                            );
+
+                            button.repaint();
+                        }
+                    }
+                }
+        );
+
+        button.addActionListener(
+                e -> {
+
+                    setSelectedSidebarButton(
+                            button
+                    );
+
+                    showContentPanel(
+                            contentKey
+                    );
+                }
+        );
+
+        sidebarButtons.add(
+                button
         );
 
         return button;
     }
 
-    // =========================================================
-    // ACTIVE BUTTON
-    // =========================================================
-
-    private void setActiveButton(
+    private void setSelectedSidebarButton(
             JButton button
     ) {
 
-        if (activeButton != null) {
+        if (
+                currentSelectedBtn != null
+        ) {
 
-            activeButton.setForeground(
-                    BTN_IDLE_TEXT
-            );
-
-            activeButton.setFont(
-                    new Font(
-                            "SansSerif",
-                            Font.PLAIN,
-                            13
+            currentSelectedBtn.setForeground(
+                    new Color(
+                            83,
+                            95,
+                            104
                     )
             );
+
+            currentSelectedBtn.repaint();
         }
 
-        activeButton =
-                button;
+        currentSelectedBtn = button;
 
-        activeButton.setForeground(
-                BTN_ACTIVE_TEXT
+        if (
+                currentSelectedBtn != null
+        ) {
+
+            currentSelectedBtn.setForeground(
+                    ORANGE
+            );
+
+            currentSelectedBtn.repaint();
+        }
+    }
+
+    public void registerContentPanel(
+            String key,
+            JPanel panel
+    ) {
+
+        if (
+                contentArea == null ||
+                        panel == null
+        ) {
+            return;
+        }
+
+        contentArea.add(
+                panel,
+                key
+        );
+    }
+
+    public void showContentPanel(
+            String key
+    ) {
+
+        if (
+                contentArea == null ||
+                        contentCardLayout == null
+        ) {
+            return;
+        }
+
+        contentCardLayout.show(
+                contentArea,
+                key
         );
 
-        activeButton.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        13
-                )
-        );
+        contentArea.revalidate();
+        contentArea.repaint();
+    }
 
-        repaint();
+    @Override
+    public void removeNotify() {
+
+        if (
+                clockTimer != null
+        ) {
+            clockTimer.stop();
+        }
+
+        super.removeNotify();
     }
 }

@@ -11,6 +11,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 
 public class SearchUserFrame extends JPanel {
@@ -20,405 +21,361 @@ public class SearchUserFrame extends JPanel {
     private JTextField userIdField;
     private JTextArea resultArea;
 
-    // =========================================================
-    // THEME COLORS
-    // =========================================================
+    private static final Color BG =
+            new Color(241, 248, 253);
 
-    private final Color BLUE =
-            new Color(0, 97, 153);
-
-    private final Color SKY_BLUE =
-            new Color(138, 207, 248);
-
-    private final Color SOFT_YELLOW =
-            new Color(244, 235, 108);
-
-    private final Color GOLD =
-            new Color(255, 212, 68);
-
-    private final Color BG_TOP =
-            new Color(3, 39, 63);
-
-    private final Color BG_BOTTOM =
-            new Color(0, 72, 110);
-
-    private final Color CARD_BG =
-            new Color(0, 55, 88, 235);
-
-    private final Color CARD_BORDER =
-            new Color(138, 207, 248, 90);
-
-    private final Color INPUT_BG =
-            new Color(248, 252, 255);
-
-    private final Color INPUT_TEXT =
-            new Color(30, 45, 55);
-
-    private final Color INPUT_BORDER =
-            new Color(138, 207, 248, 130);
-
-    private final Color TEXT_WHITE =
+    private static final Color WHITE =
             Color.WHITE;
 
-    private final Color TEXT_MUTED =
-            new Color(190, 220, 235);
+    private static final Color BLACK =
+            new Color(15, 18, 20);
 
-    // =========================================================
-    // CONSTRUCTOR
-    // =========================================================
+    private static final Color TEXT_DARK =
+            new Color(31, 38, 43);
+
+    private static final Color TEXT_MUTED =
+            new Color(103, 117, 128);
+
+    private static final Color ORANGE =
+            new Color(248, 116, 35);
+
+    private static final Color ORANGE_HOVER =
+            new Color(235, 94, 20);
+
+    private static final Color BLUE =
+            new Color(0, 97, 153);
+
+    private static final Color LIGHT_BLUE =
+            new Color(225, 240, 249);
+
+    private static final Color BORDER =
+            new Color(216, 227, 234);
+
+    private static final Color INPUT_BG =
+            new Color(249, 251, 252);
+
+    private static final Color INPUT_BORDER =
+            new Color(198, 211, 220);
+
+    private static final Color SUCCESS =
+            new Color(48, 148, 94);
+
+    private static final Color SUCCESS_BG =
+            new Color(233, 248, 240);
 
     public SearchUserFrame(User user) {
 
         this.user = user;
 
-        setLayout(new BorderLayout());
         setOpaque(false);
+        setLayout(new BorderLayout());
 
         buildUI();
     }
 
-    // =========================================================
-    // BUILD UI
-    // =========================================================
-
     private void buildUI() {
 
-        // =====================================================
-        // ROOT BACKGROUND
-        // =====================================================
-
-        JPanel rootPanel = new JPanel() {
-
-            @Override
-            protected void paintComponent(Graphics g) {
-
-                super.paintComponent(g);
-
-                Graphics2D g2d =
-                        (Graphics2D) g.create();
-
-                g2d.setRenderingHint(
-                        RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON
-                );
-
-                int width = getWidth();
-                int height = getHeight();
-
-                // Main background gradient
-                GradientPaint background =
-                        new GradientPaint(
+        JPanel mainCard =
+                new JPanel(
+                        new BorderLayout(
                                 0,
-                                0,
-                                BG_TOP,
-                                0,
-                                height,
-                                BG_BOTTOM
-                        );
-
-                g2d.setPaint(background);
-
-                g2d.fillRect(
-                        0,
-                        0,
-                        width,
-                        height
-                );
-
-                // Decorative glow - top right
-                g2d.setColor(
-                        new Color(
-                                138,
-                                207,
-                                248,
                                 18
                         )
-                );
+                ) {
 
-                g2d.fillOval(
-                        width - 180,
-                        -80,
-                        250,
-                        250
-                );
+                    @Override
+                    protected void paintComponent(
+                            Graphics g
+                    ) {
 
-                // Decorative glow - bottom left
-                g2d.setColor(
-                        new Color(
-                                255,
-                                212,
-                                68,
-                                12
-                        )
-                );
+                        super.paintComponent(g);
 
-                g2d.fillOval(
-                        -100,
-                        height - 160,
-                        230,
-                        230
-                );
+                        Graphics2D g2 =
+                                (Graphics2D) g.create();
 
-                // Small decorative dots
-                g2d.setColor(
-                        new Color(
-                                138,
-                                207,
-                                248,
-                                90
-                        )
-                );
+                        g2.setRenderingHint(
+                                RenderingHints.KEY_ANTIALIASING,
+                                RenderingHints.VALUE_ANTIALIAS_ON
+                        );
 
-                for (int i = 0; i < 6; i++) {
+                        g2.setColor(WHITE);
 
-                    int x = 35 + (i * 25);
-                    int y = 30 + ((i % 2) * 18);
+                        g2.fill(
+                                new RoundRectangle2D.Float(
+                                        0,
+                                        0,
+                                        getWidth(),
+                                        getHeight(),
+                                        22,
+                                        22
+                                )
+                        );
 
-                    g2d.fillOval(
-                            x,
-                            y,
-                            3,
-                            3
-                    );
-                }
+                        g2.setColor(BORDER);
 
-                g2d.dispose();
-            }
-        };
+                        g2.draw(
+                                new RoundRectangle2D.Float(
+                                        0.5f,
+                                        0.5f,
+                                        getWidth() - 1,
+                                        getHeight() - 1,
+                                        22,
+                                        22
+                                )
+                        );
 
-        rootPanel.setOpaque(false);
+                        g2.setColor(ORANGE);
 
-        rootPanel.setLayout(
-                new GridBagLayout()
-        );
-
-        // =====================================================
-        // MAIN CARD
-        // =====================================================
-
-        JPanel mainPanel = new JPanel() {
-
-            @Override
-            protected void paintComponent(Graphics g) {
-
-                Graphics2D g2d =
-                        (Graphics2D) g.create();
-
-                g2d.setRenderingHint(
-                        RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON
-                );
-
-                // Card background
-                g2d.setColor(CARD_BG);
-
-                g2d.fill(
-                        new RoundRectangle2D.Float(
+                        g2.fillRoundRect(
+                                28,
                                 0,
-                                0,
-                                getWidth(),
-                                getHeight(),
-                                22,
-                                22
-                        )
-                );
+                                110,
+                                4,
+                                4,
+                                4
+                        );
 
-                // Card border
-                g2d.setColor(CARD_BORDER);
+                        g2.dispose();
+                    }
+                };
 
-                g2d.setStroke(
-                        new BasicStroke(1.2f)
-                );
+        mainCard.setOpaque(false);
 
-                g2d.draw(
-                        new RoundRectangle2D.Float(
-                                1,
-                                1,
-                                getWidth() - 2,
-                                getHeight() - 2,
-                                22,
-                                22
-                        )
-                );
-
-                g2d.dispose();
-
-                super.paintComponent(g);
-            }
-        };
-
-        mainPanel.setOpaque(false);
-
-        mainPanel.setLayout(
-                new BorderLayout(0, 16)
-        );
-
-        mainPanel.setPreferredSize(
-                new Dimension(
-                        560,
-                        470
-                )
-        );
-
-        mainPanel.setBorder(
+        mainCard.setBorder(
                 new EmptyBorder(
                         24,
-                        30,
+                        28,
                         24,
-                        30
+                        28
                 )
         );
 
-        // =====================================================
-        // TITLE
-        // =====================================================
+        mainCard.add(
+                createHeader(),
+                BorderLayout.NORTH
+        );
 
-        JPanel titlePanel =
+        mainCard.add(
+                createMainContent(),
+                BorderLayout.CENTER
+        );
+
+        add(
+                mainCard,
+                BorderLayout.CENTER
+        );
+    }
+
+    @Override
+    protected void paintComponent(
+            Graphics g
+    ) {
+
+        super.paintComponent(g);
+
+        Graphics2D g2 =
+                (Graphics2D) g.create();
+
+        g2.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON
+        );
+
+        g2.setColor(BG);
+
+        g2.fillRect(
+                0,
+                0,
+                getWidth(),
+                getHeight()
+        );
+
+        g2.setColor(
+                new Color(
+                        196,
+                        226,
+                        243,
+                        90
+                )
+        );
+
+        g2.fill(
+                new Ellipse2D.Float(
+                        -120,
+                        -120,
+                        360,
+                        360
+                )
+        );
+
+        g2.setColor(
+                new Color(
+                        179,
+                        216,
+                        237,
+                        65
+                )
+        );
+
+        g2.fill(
+                new Ellipse2D.Float(
+                        getWidth() - 280,
+                        getHeight() - 260,
+                        450,
+                        450
+                )
+        );
+
+        g2.setColor(
+                new Color(
+                        ORANGE.getRed(),
+                        ORANGE.getGreen(),
+                        ORANGE.getBlue(),
+                        70
+                )
+        );
+
+        g2.fillOval(
+                55,
+                getHeight() - 80,
+                7,
+                7
+        );
+
+        g2.dispose();
+    }
+
+    private JPanel createHeader() {
+
+        JPanel header =
                 new JPanel(
                         new BorderLayout()
                 );
 
-        titlePanel.setOpaque(false);
+        header.setOpaque(false);
 
-        // Small icon
-        JLabel iconLabel =
-                new JLabel("⌕");
-
-        iconLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        27
-                )
-        );
-
-        iconLabel.setForeground(
-                GOLD
-        );
-
-        iconLabel.setHorizontalAlignment(
-                SwingConstants.CENTER
-        );
-
-        iconLabel.setPreferredSize(
-                new Dimension(
-                        40,
-                        40
-                )
-        );
-
-        titlePanel.add(
-                iconLabel,
-                BorderLayout.WEST
-        );
-
-        JPanel titleTextPanel =
+        JPanel titleGroup =
                 new JPanel();
 
-        titleTextPanel.setOpaque(false);
+        titleGroup.setOpaque(false);
 
-        titleTextPanel.setLayout(
+        titleGroup.setLayout(
                 new BoxLayout(
-                        titleTextPanel,
+                        titleGroup,
                         BoxLayout.Y_AXIS
                 )
         );
 
-        JLabel titleLabel =
+        JLabel section =
+                new JLabel(
+                        "ADMIN TOOLS"
+                );
+
+        section.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        9
+                )
+        );
+
+        section.setForeground(
+                ORANGE
+        );
+
+        JLabel title =
                 new JLabel(
                         "Search User"
                 );
 
-        titleLabel.setFont(
+        title.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        23
+                        28
                 )
         );
 
-        titleLabel.setForeground(
-                TEXT_WHITE
-        );
+        title.setForeground(BLACK);
 
-        titleLabel.setAlignmentX(
-                Component.LEFT_ALIGNMENT
-        );
-
-        JLabel subtitleLabel =
+        JLabel subtitle =
                 new JLabel(
-                        "Find user information using their User ID"
+                        "Find user information quickly using their User ID"
                 );
 
-        subtitleLabel.setFont(
+        subtitle.setFont(
                 new Font(
                         "SansSerif",
                         Font.PLAIN,
-                        12
+                        11
                 )
         );
 
-        subtitleLabel.setForeground(
+        subtitle.setForeground(
                 TEXT_MUTED
         );
 
-        subtitleLabel.setAlignmentX(
-                Component.LEFT_ALIGNMENT
+        titleGroup.add(section);
+
+        titleGroup.add(
+                Box.createVerticalStrut(
+                        5
+                )
         );
 
-        titleTextPanel.add(
-                titleLabel
+        titleGroup.add(title);
+
+        titleGroup.add(
+                Box.createVerticalStrut(
+                        5
+                )
         );
 
-        titleTextPanel.add(
-                Box.createVerticalStrut(3)
+        titleGroup.add(subtitle);
+
+        header.add(
+                titleGroup,
+                BorderLayout.WEST
         );
 
-        titleTextPanel.add(
-                subtitleLabel
-        );
-
-        titlePanel.add(
-                titleTextPanel,
-                BorderLayout.CENTER
-        );
-
-        mainPanel.add(
-                titlePanel,
-                BorderLayout.NORTH
-        );
-
-        // =====================================================
-        // CENTER PANEL
-        // =====================================================
-
-        JPanel centerPanel =
-                new JPanel(
-                        new BorderLayout(0, 14)
-                );
-
-        centerPanel.setOpaque(false);
-
-        // =====================================================
-        // SEARCH ROW
-        // =====================================================
-
-        JPanel searchContainer =
+        JPanel badge =
                 new JPanel(
                         new BorderLayout(
-                                0,
-                                6
+                                7,
+                                0
                         )
                 );
 
-        searchContainer.setOpaque(false);
+        badge.setOpaque(true);
 
-        JLabel label =
-                new JLabel(
-                        "USER ID"
-                );
+        badge.setBackground(
+                SUCCESS_BG
+        );
 
-        label.setFont(
+        badge.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(
+                                new Color(
+                                        188,
+                                        226,
+                                        204
+                                ),
+                                1,
+                                true
+                        ),
+                        new EmptyBorder(
+                                8,
+                                11,
+                                8,
+                                11
+                        )
+                )
+        );
+
+        JLabel dot =
+                new JLabel("●");
+
+        dot.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
@@ -426,24 +383,141 @@ public class SearchUserFrame extends JPanel {
                 )
         );
 
-        label.setForeground(
-                SKY_BLUE
+        dot.setForeground(
+                SUCCESS
         );
 
-        searchContainer.add(
-                label,
-                BorderLayout.NORTH
+        JLabel text =
+                new JLabel(
+                        "USER DIRECTORY"
+                );
+
+        text.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        8
+                )
         );
 
-        JPanel searchPanel =
+        text.setForeground(
+                new Color(
+                        48,
+                        114,
+                        76
+                )
+        );
+
+        badge.add(
+                dot,
+                BorderLayout.WEST
+        );
+
+        badge.add(
+                text,
+                BorderLayout.CENTER
+        );
+
+        header.add(
+                badge,
+                BorderLayout.EAST
+        );
+
+        return header;
+    }
+
+    private JPanel createMainContent() {
+
+        JPanel content =
                 new JPanel(
                         new BorderLayout(
-                                10,
-                                0
+                                0,
+                                16
                         )
                 );
 
-        searchPanel.setOpaque(false);
+        content.setOpaque(false);
+
+        content.add(
+                createSearchCard(),
+                BorderLayout.NORTH
+        );
+
+        content.add(
+                createResultCard(),
+                BorderLayout.CENTER
+        );
+
+        return content;
+    }
+
+    private JPanel createSearchCard() {
+
+        JPanel card =
+                createWhiteCard();
+
+        card.setLayout(
+                new BorderLayout(
+                        15,
+                        0
+                )
+        );
+
+        JPanel left =
+                new JPanel();
+
+        left.setOpaque(false);
+
+        left.setLayout(
+                new BoxLayout(
+                        left,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        JLabel section =
+                new JLabel(
+                        "USER ID"
+                );
+
+        section.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        9
+                )
+        );
+
+        section.setForeground(
+                ORANGE
+        );
+
+        JLabel title =
+                new JLabel(
+                        "User Identifier"
+                );
+
+        title.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        13
+                )
+        );
+
+        title.setForeground(
+                TEXT_DARK
+        );
+
+        left.add(section);
+
+        left.add(
+                Box.createVerticalStrut(
+                        4
+                )
+        );
+
+        left.add(title);
 
         userIdField =
                 new JTextField();
@@ -457,217 +531,31 @@ public class SearchUserFrame extends JPanel {
         );
 
         JButton searchButton =
-                createGoldenButton(
-                        "Search"
+                createPrimaryButton(
+                        "Search User  →"
                 );
 
         searchButton.setPreferredSize(
                 new Dimension(
-                        105,
-                        36
+                        140,
+                        42
                 )
         );
 
-        searchPanel.add(
+        card.add(
+                left,
+                BorderLayout.WEST
+        );
+
+        card.add(
                 userIdField,
                 BorderLayout.CENTER
         );
 
-        searchPanel.add(
+        card.add(
                 searchButton,
                 BorderLayout.EAST
         );
-
-        searchContainer.add(
-                searchPanel,
-                BorderLayout.CENTER
-        );
-
-        centerPanel.add(
-                searchContainer,
-                BorderLayout.NORTH
-        );
-
-        // =====================================================
-        // RESULT HEADER
-        // =====================================================
-
-        JLabel resultLabel =
-                new JLabel(
-                        "SEARCH RESULT"
-                );
-
-        resultLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        11
-                )
-        );
-
-        resultLabel.setForeground(
-                SKY_BLUE
-        );
-
-        // =====================================================
-        // RESULT AREA
-        // =====================================================
-
-        resultArea =
-                new JTextArea();
-
-        resultArea.setEditable(false);
-
-        resultArea.setFont(
-                new Font(
-                        "Monospaced",
-                        Font.PLAIN,
-                        13
-                )
-        );
-
-        resultArea.setForeground(
-                new Color(
-                        30,
-                        45,
-                        55
-                )
-        );
-
-        resultArea.setBackground(
-                INPUT_BG
-        );
-
-        resultArea.setLineWrap(true);
-
-        resultArea.setWrapStyleWord(true);
-
-        resultArea.setBorder(
-                new EmptyBorder(
-                        14,
-                        16,
-                        14,
-                        16
-                )
-        );
-
-        JScrollPane resultScrollPane =
-                new JScrollPane(
-                        resultArea
-                );
-
-        resultScrollPane.setOpaque(
-                false
-        );
-
-        resultScrollPane
-                .getViewport()
-                .setOpaque(true);
-
-        resultScrollPane
-                .getViewport()
-                .setBackground(
-                        INPUT_BG
-                );
-
-        resultScrollPane.setBorder(
-                BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(
-                                INPUT_BORDER,
-                                1,
-                                true
-                        ),
-                        BorderFactory.createEmptyBorder(
-                                1,
-                                1,
-                                1,
-                                1
-                        )
-                )
-        );
-
-        JPanel resultContainer =
-                new JPanel(
-                        new BorderLayout(
-                                0,
-                                6
-                        )
-                );
-
-        resultContainer.setOpaque(false);
-
-        resultContainer.add(
-                resultLabel,
-                BorderLayout.NORTH
-        );
-
-        resultContainer.add(
-                resultScrollPane,
-                BorderLayout.CENTER
-        );
-
-        centerPanel.add(
-                resultContainer,
-                BorderLayout.CENTER
-        );
-
-        mainPanel.add(
-                centerPanel,
-                BorderLayout.CENTER
-        );
-
-        // =====================================================
-        // BOTTOM BUTTON
-        // =====================================================
-
-        JPanel bottomPanel =
-                new JPanel(
-                        new FlowLayout(
-                                FlowLayout.RIGHT,
-                                0,
-                                0
-                        )
-                );
-
-        bottomPanel.setOpaque(false);
-
-        JButton clearButton =
-                createOutlineButton(
-                        "Clear"
-                );
-
-        clearButton.setPreferredSize(
-                new Dimension(
-                        90,
-                        35
-                )
-        );
-
-        bottomPanel.add(
-                clearButton
-        );
-
-        mainPanel.add(
-                bottomPanel,
-                BorderLayout.SOUTH
-        );
-
-        // =====================================================
-        // ADD TO ROOT
-        // =====================================================
-
-        rootPanel.add(
-                mainPanel
-        );
-
-        add(
-                rootPanel,
-                BorderLayout.CENTER
-        );
-
-        // =====================================================
-        // ACTION LISTENERS
-        // =====================================================
 
         searchButton.addActionListener(
                 e -> searchUser()
@@ -677,18 +565,375 @@ public class SearchUserFrame extends JPanel {
                 e -> searchUser()
         );
 
-        clearButton.addActionListener(
-                e -> {
-                    userIdField.setText("");
-                    resultArea.setText("");
-                    userIdField.requestFocus();
-                }
-        );
+        return card;
     }
 
-    // =========================================================
-    // INPUT FIELD STYLE
-    // =========================================================
+    private JPanel createResultCard() {
+
+        JPanel card =
+                new JPanel(
+                        new BorderLayout(
+                                0,
+                                14
+                        )
+                ) {
+
+                    @Override
+                    protected void paintComponent(
+                            Graphics g
+                    ) {
+
+                        super.paintComponent(g);
+
+                        Graphics2D g2 =
+                                (Graphics2D) g.create();
+
+                        g2.setRenderingHint(
+                                RenderingHints.KEY_ANTIALIASING,
+                                RenderingHints.VALUE_ANTIALIAS_ON
+                        );
+
+                        g2.setColor(
+                                WHITE
+                        );
+
+                        g2.fill(
+                                new RoundRectangle2D.Float(
+                                        0,
+                                        0,
+                                        getWidth(),
+                                        getHeight(),
+                                        18,
+                                        18
+                                )
+                        );
+
+                        g2.setColor(
+                                BORDER
+                        );
+
+                        g2.draw(
+                                new RoundRectangle2D.Float(
+                                        0.5f,
+                                        0.5f,
+                                        getWidth() - 1,
+                                        getHeight() - 1,
+                                        18,
+                                        18
+                                )
+                        );
+
+                        g2.setColor(
+                                BLUE
+                        );
+
+                        g2.fillRoundRect(
+                                22,
+                                0,
+                                95,
+                                4,
+                                4,
+                                4
+                        );
+
+                        g2.dispose();
+                    }
+                };
+
+        card.setOpaque(false);
+
+        card.setBorder(
+                new EmptyBorder(
+                        20,
+                        22,
+                        20,
+                        22
+                )
+        );
+
+        JPanel header =
+                new JPanel(
+                        new BorderLayout()
+                );
+
+        header.setOpaque(false);
+
+        JPanel titleGroup =
+                new JPanel();
+
+        titleGroup.setOpaque(false);
+
+        titleGroup.setLayout(
+                new BoxLayout(
+                        titleGroup,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        JLabel title =
+                new JLabel(
+                        "User Information"
+                );
+
+        title.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        18
+                )
+        );
+
+        title.setForeground(BLACK);
+
+        JLabel subtitle =
+                new JLabel(
+                        "Search results will appear in this area"
+                );
+
+        subtitle.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        10
+                )
+        );
+
+        subtitle.setForeground(
+                TEXT_MUTED
+        );
+
+        titleGroup.add(title);
+
+        titleGroup.add(
+                Box.createVerticalStrut(
+                        4
+                )
+        );
+
+        titleGroup.add(subtitle);
+
+        header.add(
+                titleGroup,
+                BorderLayout.WEST
+        );
+
+        JLabel ready =
+                new JLabel(
+                        "SEARCH READY"
+                );
+
+        ready.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        8
+                )
+        );
+
+        ready.setForeground(
+                ORANGE
+        );
+
+        ready.setOpaque(true);
+
+        ready.setBackground(
+                new Color(
+                        255,
+                        243,
+                        235
+                )
+        );
+
+        ready.setBorder(
+                new EmptyBorder(
+                        7,
+                        10,
+                        7,
+                        10
+                )
+        );
+
+        header.add(
+                ready,
+                BorderLayout.EAST
+        );
+
+        card.add(
+                header,
+                BorderLayout.NORTH
+        );
+
+        resultArea =
+                new JTextArea();
+
+        resultArea.setEditable(false);
+
+        resultArea.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        13
+                )
+        );
+
+        resultArea.setForeground(
+                TEXT_MUTED
+        );
+
+        resultArea.setBackground(
+                new Color(
+                        247,
+                        250,
+                        252
+                )
+        );
+
+        resultArea.setLineWrap(true);
+
+        resultArea.setWrapStyleWord(true);
+
+        resultArea.setCaretColor(
+                ORANGE
+        );
+
+        resultArea.setBorder(
+                new EmptyBorder(
+                        20,
+                        22,
+                        20,
+                        22
+                )
+        );
+
+        resultArea.setText(
+                "Enter a User ID above to view user information."
+        );
+
+        JScrollPane scrollPane =
+                new JScrollPane(
+                        resultArea
+                );
+
+        scrollPane.setOpaque(false);
+
+        scrollPane.getViewport()
+                .setOpaque(true);
+
+        scrollPane.getViewport()
+                .setBackground(
+                        new Color(
+                                247,
+                                250,
+                                252
+                        )
+                );
+
+        scrollPane.setBorder(
+                BorderFactory.createLineBorder(
+                        BORDER,
+                        1,
+                        true
+                )
+        );
+
+        scrollPane.getVerticalScrollBar()
+                .setUnitIncrement(
+                        14
+                );
+
+        card.add(
+                scrollPane,
+                BorderLayout.CENTER
+        );
+
+        JPanel footer =
+                new JPanel(
+                        new BorderLayout()
+                );
+
+        footer.setOpaque(false);
+
+        JLabel info =
+                new JLabel(
+                        "● Search by exact User ID"
+                );
+
+        info.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        9
+                )
+        );
+
+        info.setForeground(
+                TEXT_MUTED
+        );
+
+        JLabel admin =
+                new JLabel(
+                        "ADMIN SEARCH"
+                );
+
+        admin.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        9
+                )
+        );
+
+        admin.setForeground(
+                BLUE
+        );
+
+        footer.add(
+                info,
+                BorderLayout.WEST
+        );
+
+        footer.add(
+                admin,
+                BorderLayout.EAST
+        );
+
+        card.add(
+                footer,
+                BorderLayout.SOUTH
+        );
+
+        return card;
+    }
+
+    private JPanel createWhiteCard() {
+
+        JPanel card =
+                new JPanel();
+
+        card.setOpaque(true);
+
+        card.setBackground(
+                WHITE
+        );
+
+        card.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(
+                                BORDER,
+                                1,
+                                true
+                        ),
+                        new EmptyBorder(
+                                17,
+                                18,
+                                17,
+                                18
+                        )
+                )
+        );
+
+        return card;
+    }
 
     private void styleInputField(
             JTextField field
@@ -701,11 +946,11 @@ public class SearchUserFrame extends JPanel {
         );
 
         field.setForeground(
-                INPUT_TEXT
+                TEXT_DARK
         );
 
         field.setCaretColor(
-                BLUE
+                ORANGE
         );
 
         field.setFont(
@@ -724,11 +969,25 @@ public class SearchUserFrame extends JPanel {
                                 true
                         ),
                         BorderFactory.createEmptyBorder(
-                                7,
-                                11,
-                                7,
-                                11
+                                8,
+                                12,
+                                8,
+                                12
                         )
+                )
+        );
+
+        field.setPreferredSize(
+                new Dimension(
+                        0,
+                        42
+                )
+        );
+
+        field.setMaximumSize(
+                new Dimension(
+                        Integer.MAX_VALUE,
+                        42
                 )
         );
 
@@ -743,15 +1002,15 @@ public class SearchUserFrame extends JPanel {
                         field.setBorder(
                                 BorderFactory.createCompoundBorder(
                                         BorderFactory.createLineBorder(
-                                                SKY_BLUE,
-                                                2,
+                                                ORANGE,
+                                                1,
                                                 true
                                         ),
                                         BorderFactory.createEmptyBorder(
-                                                6,
-                                                10,
-                                                6,
-                                                10
+                                                8,
+                                                12,
+                                                8,
+                                                12
                                         )
                                 )
                         );
@@ -770,118 +1029,83 @@ public class SearchUserFrame extends JPanel {
                                                 true
                                         ),
                                         BorderFactory.createEmptyBorder(
-                                                7,
-                                                11,
-                                                7,
-                                                11
+                                                8,
+                                                12,
+                                                8,
+                                                12
                                         )
                                 )
                         );
                     }
                 }
         );
-
-        field.setMaximumSize(
-                new Dimension(
-                        Integer.MAX_VALUE,
-                        36
-                )
-        );
     }
 
-    // =========================================================
-    // GOLD BUTTON
-    // =========================================================
-
-    private JButton createGoldenButton(
+    private JButton createPrimaryButton(
             String text
     ) {
 
         JButton button =
                 new JButton(text) {
 
-                    private boolean isHovered = false;
-
-                    {
-                        addMouseListener(
-                                new MouseAdapter() {
-
-                                    @Override
-                                    public void mouseEntered(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered = true;
-                                        repaint();
-                                    }
-
-                                    @Override
-                                    public void mouseExited(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered = false;
-                                        repaint();
-                                    }
-                                }
-                        );
-                    }
-
                     @Override
                     protected void paintComponent(
                             Graphics g
                     ) {
 
-                        Graphics2D g2d =
+                        Graphics2D g2 =
                                 (Graphics2D) g.create();
 
-                        g2d.setRenderingHint(
+                        g2.setRenderingHint(
                                 RenderingHints.KEY_ANTIALIASING,
                                 RenderingHints.VALUE_ANTIALIAS_ON
                         );
 
                         Color top =
-                                isHovered
-                                        ? SOFT_YELLOW
-                                        : GOLD;
-
-                        Color bottom =
-                                isHovered
-                                        ? GOLD
+                                getModel().isRollover()
+                                        ? new Color(
+                                        255,
+                                        151,
+                                        68
+                                )
                                         : new Color(
-                                        240,
-                                        190,
-                                        35
+                                        255,
+                                        137,
+                                        48
                                 );
 
-                        GradientPaint gradient =
+                        Color bottom =
+                                getModel().isRollover()
+                                        ? ORANGE_HOVER
+                                        : ORANGE;
+
+                        g2.setPaint(
                                 new GradientPaint(
                                         0,
                                         0,
                                         top,
+                                        getWidth(),
                                         0,
-                                        getHeight(),
                                         bottom
-                                );
-
-                        g2d.setPaint(
-                                gradient
+                                )
                         );
 
-                        g2d.fill(
+                        g2.fill(
                                 new RoundRectangle2D.Float(
                                         0,
                                         0,
                                         getWidth(),
                                         getHeight(),
-                                        11,
-                                        11
+                                        12,
+                                        12
                                 )
                         );
 
-                        g2d.dispose();
+                        g2.dispose();
 
-                        super.paintComponent(g);
+                        super.paintComponent(
+                                g
+                        );
                     }
                 };
 
@@ -889,29 +1113,21 @@ public class SearchUserFrame extends JPanel {
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        13
+                        12
                 )
         );
 
         button.setForeground(
-                new Color(
-                        20,
-                        55,
-                        70
-                )
+                WHITE
         );
 
-        button.setContentAreaFilled(
-                false
-        );
+        button.setContentAreaFilled(false);
 
-        button.setFocusPainted(
-                false
-        );
+        button.setOpaque(false);
 
-        button.setBorderPainted(
-                false
-        );
+        button.setFocusPainted(false);
+
+        button.setBorderPainted(false);
 
         button.setCursor(
                 new Cursor(
@@ -921,149 +1137,6 @@ public class SearchUserFrame extends JPanel {
 
         return button;
     }
-
-    // =========================================================
-    // OUTLINE BUTTON
-    // =========================================================
-
-    private JButton createOutlineButton(
-            String text
-    ) {
-
-        JButton button =
-                new JButton(text) {
-
-                    private boolean isHovered = false;
-
-                    {
-                        addMouseListener(
-                                new MouseAdapter() {
-
-                                    @Override
-                                    public void mouseEntered(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered = true;
-                                        repaint();
-                                    }
-
-                                    @Override
-                                    public void mouseExited(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered = false;
-                                        repaint();
-                                    }
-                                }
-                        );
-                    }
-
-                    @Override
-                    protected void paintComponent(
-                            Graphics g
-                    ) {
-
-                        Graphics2D g2d =
-                                (Graphics2D) g.create();
-
-                        g2d.setRenderingHint(
-                                RenderingHints.KEY_ANTIALIASING,
-                                RenderingHints.VALUE_ANTIALIAS_ON
-                        );
-
-                        if (isHovered) {
-
-                            g2d.setColor(
-                                    new Color(
-                                            138,
-                                            207,
-                                            248,
-                                            25
-                                    )
-                            );
-
-                            g2d.fill(
-                                    new RoundRectangle2D.Float(
-                                            0,
-                                            0,
-                                            getWidth(),
-                                            getHeight(),
-                                            11,
-                                            11
-                                    )
-                            );
-                        }
-
-                        g2d.setColor(
-                                new Color(
-                                        138,
-                                        207,
-                                        248,
-                                        170
-                                )
-                        );
-
-                        g2d.setStroke(
-                                new BasicStroke(
-                                        1.2f
-                                )
-                        );
-
-                        g2d.draw(
-                                new RoundRectangle2D.Float(
-                                        1,
-                                        1,
-                                        getWidth() - 2,
-                                        getHeight() - 2,
-                                        11,
-                                        11
-                                )
-                        );
-
-                        g2d.dispose();
-
-                        super.paintComponent(g);
-                    }
-                };
-
-        button.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        13
-                )
-        );
-
-        button.setForeground(
-                TEXT_WHITE
-        );
-
-        button.setContentAreaFilled(
-                false
-        );
-
-        button.setFocusPainted(
-                false
-        );
-
-        button.setBorderPainted(
-                false
-        );
-
-        button.setCursor(
-                new Cursor(
-                        Cursor.HAND_CURSOR
-                )
-        );
-
-        return button;
-    }
-
-    // =========================================================
-    // SEARCH USER
-    // =========================================================
 
     private void searchUser() {
 
@@ -1081,48 +1154,99 @@ public class SearchUserFrame extends JPanel {
                     JOptionPane.WARNING_MESSAGE
             );
 
+            userIdField.requestFocus();
+
             return;
         }
 
         try {
 
             User foundUser =
-                    AdminFile.searchUser(userID);
+                    AdminFile.searchUser(
+                            userID
+                    );
 
             StringBuilder result =
                     new StringBuilder();
 
             result.append(
-                    "========== USER DETAILS ==========\n\n"
+                    "USER DETAILS\n"
             );
 
-            result.append("User ID  : ")
-                    .append(foundUser.getUser_id())
-                    .append("\n");
-
-            result.append("Name     : ")
-                    .append(foundUser.getUser_name())
-                    .append("\n");
-
-            result.append("Email    : ")
-                    .append(foundUser.getUser_email())
-                    .append("\n");
-
-            result.append("Role     : ")
-                    .append(foundUser.getUser_role())
-                    .append("\n\n");
+            result.append(
+                    "────────────────────────────────────────\n\n"
+            );
 
             result.append(
-                    "=================================="
+                    "User ID\n"
+            );
+
+            result.append(
+                    safeValue(
+                            foundUser.getUser_id()
+                    )
+            );
+
+            result.append(
+                    "\n\nName\n"
+            );
+
+            result.append(
+                    safeValue(
+                            foundUser.getUser_name()
+                    )
+            );
+
+            result.append(
+                    "\n\nEmail Address\n"
+            );
+
+            result.append(
+                    safeValue(
+                            foundUser.getUser_email()
+                    )
+            );
+
+            result.append(
+                    "\n\nRole\n"
+            );
+
+            result.append(
+                    safeValue(
+                            foundUser.getUser_role()
+                    )
+            );
+
+            result.append(
+                    "\n\n────────────────────────────────────────"
+            );
+
+            resultArea.setForeground(
+                    TEXT_DARK
             );
 
             resultArea.setText(
                     result.toString()
             );
 
+            resultArea.setCaretPosition(
+                    0
+            );
+
         } catch (NotFoundException e) {
 
-            resultArea.setText("");
+            resultArea.setForeground(
+                    new Color(
+                            175,
+                            75,
+                            65
+                    )
+            );
+
+            resultArea.setText(
+                    "User not found.\n\n"
+                            + e.getMessage()
+            );
 
             JOptionPane.showMessageDialog(
                     this,
@@ -1133,6 +1257,18 @@ public class SearchUserFrame extends JPanel {
 
         } catch (Exception e) {
 
+            resultArea.setForeground(
+                    new Color(
+                            175,
+                            75,
+                            65
+                    )
+            );
+
+            resultArea.setText(
+                    e.getMessage()
+            );
+
             JOptionPane.showMessageDialog(
                     this,
                     e.getMessage(),
@@ -1140,5 +1276,14 @@ public class SearchUserFrame extends JPanel {
                     JOptionPane.ERROR_MESSAGE
             );
         }
+    }
+
+    private String safeValue(
+            String value
+    ) {
+
+        return value == null
+                ? "N/A"
+                : value;
     }
 }

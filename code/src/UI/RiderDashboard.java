@@ -8,6 +8,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 
 public class RiderDashboard extends JPanel {
@@ -15,46 +16,44 @@ public class RiderDashboard extends JPanel {
     private final User user;
     private final MainFrame mainFrame;
 
-    // =========================================================
-    // THEME COLORS
-    // =========================================================
+    private static final Color BG =
+            new Color(241, 248, 253);
 
-    private final Color BLUE =
-            new Color(0, 97, 153);
-
-    private final Color SKY_BLUE =
-            new Color(138, 207, 248);
-
-    private final Color SOFT_YELLOW =
-            new Color(244, 235, 108);
-
-    private final Color GOLD =
-            new Color(255, 212, 68);
-
-    private final Color BG_TOP =
-            new Color(3, 39, 63);
-
-    private final Color BG_BOTTOM =
-            new Color(0, 72, 110);
-
-    private final Color CARD_BG =
-            new Color(0, 55, 88, 235);
-
-    private final Color CARD_BORDER =
-            new Color(138, 207, 248, 90);
-
-    private final Color BTN_TEXT =
-            new Color(20, 55, 70);
-
-    private final Color TEXT_WHITE =
+    private static final Color WHITE =
             Color.WHITE;
 
-    private final Color TEXT_SUBTITLE =
-            new Color(190, 220, 235);
+    private static final Color BLACK =
+            new Color(15, 18, 20);
 
-    // =========================================================
-    // CONSTRUCTOR
-    // =========================================================
+    private static final Color TEXT_DARK =
+            new Color(31, 38, 43);
+
+    private static final Color TEXT_MUTED =
+            new Color(103, 117, 128);
+
+    private static final Color ORANGE =
+            new Color(248, 116, 35);
+
+    private static final Color ORANGE_HOVER =
+            new Color(235, 94, 20);
+
+    private static final Color BLUE =
+            new Color(0, 97, 153);
+
+    private static final Color LIGHT_BLUE =
+            new Color(225, 240, 249);
+
+    private static final Color SKY_BLUE =
+            new Color(181, 219, 241);
+
+    private static final Color BORDER =
+            new Color(216, 227, 234);
+
+    private static final Color SUCCESS =
+            new Color(48, 148, 94);
+
+    private static final Color SUCCESS_BG =
+            new Color(233, 248, 240);
 
     public RiderDashboard(
             User user,
@@ -65,8 +64,10 @@ public class RiderDashboard extends JPanel {
         this.mainFrame = mainFrame;
 
         setLayout(
-                new GridBagLayout()
+                new BorderLayout()
         );
+
+        setOpaque(false);
 
         try {
 
@@ -91,17 +92,113 @@ public class RiderDashboard extends JPanel {
         buildUI();
     }
 
-    // =========================================================
-    // BACKWARD COMPATIBILITY CONSTRUCTOR
-    // =========================================================
-
     public RiderDashboard(User user) {
         this(user, null);
     }
 
-    // =========================================================
-    // BACKGROUND
-    // =========================================================
+    private void buildUI() {
+
+        JPanel mainCard =
+                new JPanel(
+                        new BorderLayout(
+                                0,
+                                20
+                        )
+                ) {
+
+                    @Override
+                    protected void paintComponent(
+                            Graphics g
+                    ) {
+
+                        super.paintComponent(g);
+
+                        Graphics2D g2 =
+                                (Graphics2D) g.create();
+
+                        g2.setRenderingHint(
+                                RenderingHints.KEY_ANTIALIASING,
+                                RenderingHints.VALUE_ANTIALIAS_ON
+                        );
+
+                        g2.setColor(
+                                WHITE
+                        );
+
+                        g2.fill(
+                                new RoundRectangle2D.Float(
+                                        0,
+                                        0,
+                                        getWidth(),
+                                        getHeight(),
+                                        24,
+                                        24
+                                )
+                        );
+
+                        g2.setColor(
+                                BORDER
+                        );
+
+                        g2.draw(
+                                new RoundRectangle2D.Float(
+                                        0.5f,
+                                        0.5f,
+                                        getWidth() - 1,
+                                        getHeight() - 1,
+                                        24,
+                                        24
+                                )
+                        );
+
+                        g2.setColor(
+                                ORANGE
+                        );
+
+                        g2.fillRoundRect(
+                                30,
+                                0,
+                                105,
+                                4,
+                                4,
+                                4
+                        );
+
+                        g2.dispose();
+                    }
+                };
+
+        mainCard.setOpaque(false);
+
+        mainCard.setBorder(
+                new EmptyBorder(
+                        24,
+                        28,
+                        24,
+                        28
+                )
+        );
+
+        mainCard.add(
+                createHeader(),
+                BorderLayout.NORTH
+        );
+
+        mainCard.add(
+                createMainArea(),
+                BorderLayout.CENTER
+        );
+
+        mainCard.add(
+                createFooter(),
+                BorderLayout.SOUTH
+        );
+
+        add(
+                mainCard,
+                BorderLayout.CENTER
+        );
+    }
 
     @Override
     protected void paintComponent(
@@ -110,810 +207,1175 @@ public class RiderDashboard extends JPanel {
 
         super.paintComponent(g);
 
-        Graphics2D g2d =
+        Graphics2D g2 =
                 (Graphics2D) g.create();
 
-        g2d.setRenderingHint(
+        g2.setRenderingHint(
                 RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON
         );
 
-        int width = getWidth();
-        int height = getHeight();
-
-        // Main blue gradient
-        GradientPaint background =
-                new GradientPaint(
-                        0,
-                        0,
-                        BG_TOP,
-                        0,
-                        height,
-                        BG_BOTTOM
-                );
-
-        g2d.setPaint(
-                background
+        g2.setColor(
+                BG
         );
 
-        g2d.fillRect(
+        g2.fillRect(
                 0,
                 0,
-                width,
-                height
+                getWidth(),
+                getHeight()
         );
 
-        // Top-right glow
-        g2d.setColor(
+        g2.setColor(
                 new Color(
-                        138,
-                        207,
-                        248,
-                        18
-                )
-        );
-
-        g2d.fillOval(
-                width - 220,
-                -100,
-                300,
-                300
-        );
-
-        // Bottom-left glow
-        g2d.setColor(
-                new Color(
-                        255,
-                        212,
-                        68,
-                        12
-                )
-        );
-
-        g2d.fillOval(
-                -120,
-                height - 190,
-                270,
-                270
-        );
-
-        // Decorative dots
-        g2d.setColor(
-                new Color(
-                        138,
-                        207,
-                        248,
+                        196,
+                        226,
+                        243,
                         90
                 )
         );
 
-        for (int i = 0; i < 7; i++) {
+        g2.fill(
+                new Ellipse2D.Float(
+                        -120,
+                        -120,
+                        360,
+                        360
+                )
+        );
 
-            int x =
-                    35 + (i * 25);
+        g2.setColor(
+                new Color(
+                        179,
+                        216,
+                        237,
+                        70
+                )
+        );
 
-            int y =
-                    30 + ((i % 2) * 18);
+        g2.fill(
+                new Ellipse2D.Float(
+                        getWidth() - 270,
+                        getHeight() - 250,
+                        430,
+                        430
+                )
+        );
 
-            g2d.fillOval(
-                    x,
-                    y,
-                    3,
-                    3
-            );
-        }
+        g2.setColor(
+                new Color(
+                        ORANGE.getRed(),
+                        ORANGE.getGreen(),
+                        ORANGE.getBlue(),
+                        70
+                )
+        );
 
-        g2d.dispose();
+        g2.fillOval(
+                55,
+                getHeight() - 80,
+                7,
+                7
+        );
+
+        g2.dispose();
     }
 
-    // =========================================================
-    // BUILD UI
-    // =========================================================
+    private JPanel createHeader() {
 
-    private void buildUI() {
+        JPanel header =
+                new JPanel(
+                        new BorderLayout(
+                                15,
+                                0
+                        )
+                );
 
-        // =====================================================
-        // MAIN CARD
-        // =====================================================
+        header.setOpaque(false);
 
-        JPanel mainPanel =
-                new JPanel() {
+        JPanel titleGroup =
+                new JPanel();
+
+        titleGroup.setOpaque(false);
+
+        titleGroup.setLayout(
+                new BoxLayout(
+                        titleGroup,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        JLabel section =
+                new JLabel(
+                        "RIDER OPERATIONS"
+                );
+
+        section.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        9
+                )
+        );
+
+        section.setForeground(
+                ORANGE
+        );
+
+        JLabel title =
+                new JLabel(
+                        "Rider Dashboard"
+                );
+
+        title.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        29
+                )
+        );
+
+        title.setForeground(
+                BLACK
+        );
+
+        JLabel welcome =
+                new JLabel(
+                        "Welcome back, "
+                                + safeValue(
+                                user.getUser_name()
+                        )
+                                + " • Manage your assigned deliveries"
+                );
+
+        welcome.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        11
+                )
+        );
+
+        welcome.setForeground(
+                TEXT_MUTED
+        );
+
+        titleGroup.add(
+                section
+        );
+
+        titleGroup.add(
+                Box.createVerticalStrut(
+                        5
+                )
+        );
+
+        titleGroup.add(
+                title
+        );
+
+        titleGroup.add(
+                Box.createVerticalStrut(
+                        5
+                )
+        );
+
+        titleGroup.add(
+                welcome
+        );
+
+        header.add(
+                titleGroup,
+                BorderLayout.WEST
+        );
+
+        JPanel right =
+                new JPanel(
+                        new FlowLayout(
+                                FlowLayout.RIGHT,
+                                10,
+                                0
+                        )
+                );
+
+        right.setOpaque(false);
+
+        JPanel online =
+                createStatusBadge();
+
+        right.add(
+                online
+        );
+
+        JLabel riderBadge =
+                new JLabel(
+                        " RIDER "
+                );
+
+        riderBadge.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        9
+                )
+        );
+
+        riderBadge.setForeground(
+                WHITE
+        );
+
+        riderBadge.setOpaque(true);
+
+        riderBadge.setBackground(
+                ORANGE
+        );
+
+        riderBadge.setBorder(
+                new EmptyBorder(
+                        8,
+                        10,
+                        8,
+                        10
+                )
+        );
+
+        right.add(
+                riderBadge
+        );
+
+        header.add(
+                right,
+                BorderLayout.EAST
+        );
+
+        return header;
+    }
+
+    private JPanel createStatusBadge() {
+
+        JPanel panel =
+                new JPanel(
+                        new BorderLayout(
+                                6,
+                                0
+                        )
+                );
+
+        panel.setOpaque(true);
+
+        panel.setBackground(
+                SUCCESS_BG
+        );
+
+        panel.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(
+                                new Color(
+                                        188,
+                                        226,
+                                        204
+                                ),
+                                1,
+                                true
+                        ),
+                        new EmptyBorder(
+                                7,
+                                9,
+                                7,
+                                9
+                        )
+                )
+        );
+
+        JLabel dot =
+                new JLabel(
+                        "●"
+                );
+
+        dot.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        11
+                )
+        );
+
+        dot.setForeground(
+                SUCCESS
+        );
+
+        JLabel text =
+                new JLabel(
+                        "ONLINE"
+                );
+
+        text.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        8
+                )
+        );
+
+        text.setForeground(
+                new Color(
+                        48,
+                        114,
+                        76
+                )
+        );
+
+        panel.add(
+                dot,
+                BorderLayout.WEST
+        );
+
+        panel.add(
+                text,
+                BorderLayout.CENTER
+        );
+
+        return panel;
+    }
+
+    private JPanel createMainArea() {
+
+        JPanel panel =
+                new JPanel(
+                        new GridBagLayout()
+                );
+
+        panel.setOpaque(false);
+
+        GridBagConstraints gbc =
+                new GridBagConstraints();
+
+        gbc.fill =
+                GridBagConstraints.BOTH;
+
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+
+        gbc.gridy = 0;
+
+        gbc.gridx = 0;
+        gbc.insets =
+                new Insets(
+                        0,
+                        0,
+                        0,
+                        8
+                );
+
+        panel.add(
+                createActionCard(
+                        "PENDING",
+                        "View Pending Parcels",
+                        "See parcels waiting for rider acceptance.",
+                        "▤",
+                        ORANGE,
+                        e -> openPendingParcels()
+                ),
+                gbc
+        );
+
+        gbc.gridx = 1;
+        gbc.insets =
+                new Insets(
+                        0,
+                        8,
+                        0,
+                        0
+                );
+
+        panel.add(
+                createActionCard(
+                        "ASSIGNED",
+                        "My Assigned Parcels",
+                        "Review parcels currently assigned to you.",
+                        "➤",
+                        BLUE,
+                        e -> openAssignedParcels()
+                ),
+                gbc
+        );
+
+        gbc.gridy = 1;
+
+        gbc.gridx = 0;
+        gbc.insets =
+                new Insets(
+                        16,
+                        0,
+                        0,
+                        8
+                );
+
+        panel.add(
+                createActionCard(
+                        "STATUS",
+                        "Update Parcel Status",
+                        "Update the delivery progress of your parcels.",
+                        "↻",
+                        new Color(
+                                64,
+                                151,
+                                194
+                        ),
+                        e -> openUpdateStatus()
+                ),
+                gbc
+        );
+
+        gbc.gridx = 1;
+        gbc.insets =
+                new Insets(
+                        16,
+                        8,
+                        0,
+                        0
+                );
+
+        panel.add(
+                createLogoutCard(),
+                gbc
+        );
+
+        return panel;
+    }
+
+    private JPanel createActionCard(
+            String category,
+            String title,
+            String description,
+            String icon,
+            Color accent,
+            java.awt.event.ActionListener action
+    ) {
+
+        JPanel card =
+                new JPanel(
+                        new BorderLayout(
+                                0,
+                                12
+                        )
+                ) {
+
+                    private boolean hovered;
+
+                    {
+                        addMouseListener(
+                                new MouseAdapter() {
+
+                                    @Override
+                                    public void mouseEntered(
+                                            MouseEvent e
+                                    ) {
+                                        hovered = true;
+                                        repaint();
+                                    }
+
+                                    @Override
+                                    public void mouseExited(
+                                            MouseEvent e
+                                    ) {
+                                        hovered = false;
+                                        repaint();
+                                    }
+                                }
+                        );
+                    }
 
                     @Override
                     protected void paintComponent(
                             Graphics g
                     ) {
 
-                        Graphics2D g2d =
-                                (Graphics2D) g.create();
+                        super.paintComponent(g);
 
-                        g2d.setRenderingHint(
+                        Graphics2D g2 =
+                                (Graphics2D)
+                                        g.create();
+
+                        g2.setRenderingHint(
                                 RenderingHints.KEY_ANTIALIASING,
                                 RenderingHints.VALUE_ANTIALIAS_ON
                         );
 
-                        // Glass card
-                        g2d.setColor(
-                                CARD_BG
+                        g2.setColor(
+                                hovered
+                                        ? new Color(
+                                        252,
+                                        253,
+                                        254
+                                )
+                                        : WHITE
                         );
 
-                        g2d.fill(
+                        g2.fill(
                                 new RoundRectangle2D.Float(
                                         0,
                                         0,
                                         getWidth(),
                                         getHeight(),
-                                        24,
-                                        24
+                                        17,
+                                        17
                                 )
                         );
 
-                        // Border
-                        g2d.setColor(
-                                CARD_BORDER
+                        g2.setColor(
+                                hovered
+                                        ? accent
+                                        : BORDER
                         );
 
-                        g2d.setStroke(
+                        g2.setStroke(
                                 new BasicStroke(
-                                        1.2f
+                                        hovered
+                                                ? 1.4f
+                                                : 1f
                                 )
                         );
 
-                        g2d.draw(
+                        g2.draw(
                                 new RoundRectangle2D.Float(
-                                        1,
-                                        1,
-                                        getWidth() - 2,
-                                        getHeight() - 2,
-                                        24,
-                                        24
+                                        0.5f,
+                                        0.5f,
+                                        getWidth() - 1,
+                                        getHeight() - 1,
+                                        17,
+                                        17
                                 )
                         );
 
-                        g2d.dispose();
+                        g2.setColor(
+                                accent
+                        );
 
-                        super.paintComponent(g);
+                        g2.fillRoundRect(
+                                18,
+                                0,
+                                70,
+                                4,
+                                4,
+                                4
+                        );
+
+                        g2.dispose();
                     }
                 };
 
-        mainPanel.setOpaque(false);
+        card.setOpaque(false);
 
-        mainPanel.setLayout(
-                new BorderLayout(
-                        0,
+        card.setBorder(
+                new EmptyBorder(
+                        22,
+                        22,
+                        20,
                         22
                 )
         );
 
-        mainPanel.setPreferredSize(
-                new Dimension(
-                        620,
-                        450
+        card.setCursor(
+                new Cursor(
+                        Cursor.HAND_CURSOR
                 )
         );
 
-        mainPanel.setBorder(
-                new EmptyBorder(
-                        28,
-                        32,
-                        26,
-                        32
-                )
-        );
-
-        // =====================================================
-        // HEADER
-        // =====================================================
-
-        JPanel headerPanel =
+        JPanel top =
                 new JPanel(
                         new BorderLayout()
                 );
 
-        headerPanel.setOpaque(false);
+        top.setOpaque(false);
 
-        // Rider icon
+        JPanel iconPanel =
+                new JPanel(
+                        new GridBagLayout()
+                );
+
+        iconPanel.setOpaque(true);
+
+        iconPanel.setBackground(
+                mixWithWhite(
+                        accent,
+                        0.86f
+                )
+        );
+
+        iconPanel.setPreferredSize(
+                new Dimension(
+                        58,
+                        58
+                )
+        );
+
+        iconPanel.setBorder(
+                BorderFactory.createLineBorder(
+                        mixWithWhite(
+                                accent,
+                                0.45f
+                        ),
+                        1,
+                        true
+                )
+        );
+
         JLabel iconLabel =
-                new JLabel("♙");
+                new JLabel(
+                        icon
+                );
 
         iconLabel.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        30
+                        22
                 )
         );
 
         iconLabel.setForeground(
-                GOLD
+                accent
         );
 
-        iconLabel.setHorizontalAlignment(
-                SwingConstants.CENTER
+        iconPanel.add(
+                iconLabel
         );
 
-        iconLabel.setPreferredSize(
-                new Dimension(
-                        50,
-                        50
-                )
-        );
-
-        headerPanel.add(
-                iconLabel,
+        top.add(
+                iconPanel,
                 BorderLayout.WEST
         );
 
-        JPanel titlePanel =
+        JLabel categoryLabel =
+                new JLabel(
+                        category
+                );
+
+        categoryLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        8
+                )
+        );
+
+        categoryLabel.setForeground(
+                accent
+        );
+
+        JPanel categoryPanel =
+                new JPanel(
+                        new FlowLayout(
+                                FlowLayout.RIGHT,
+                                0,
+                                0
+                        )
+                );
+
+        categoryPanel.setOpaque(false);
+
+        categoryPanel.add(
+                categoryLabel
+        );
+
+        top.add(
+                categoryPanel,
+                BorderLayout.EAST
+        );
+
+        card.add(
+                top,
+                BorderLayout.NORTH
+        );
+
+        JPanel text =
                 new JPanel();
 
-        titlePanel.setOpaque(false);
+        text.setOpaque(false);
 
-        titlePanel.setLayout(
+        text.setLayout(
                 new BoxLayout(
-                        titlePanel,
+                        text,
                         BoxLayout.Y_AXIS
                 )
         );
 
         JLabel titleLabel =
                 new JLabel(
-                        "Rider Dashboard"
+                        title
                 );
 
         titleLabel.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        27
+                        17
                 )
         );
 
         titleLabel.setForeground(
-                TEXT_WHITE
+                TEXT_DARK
         );
 
         titleLabel.setAlignmentX(
                 Component.LEFT_ALIGNMENT
         );
 
-        JLabel welcomeLabel =
+        JLabel descriptionLabel =
                 new JLabel(
-                        "Welcome back, "
-                                + user.getUser_name()
-                                + "!"
+                        "<html><div style='width:260px'>"
+                                + description
+                                + "</div></html>"
                 );
 
-        welcomeLabel.setFont(
+        descriptionLabel.setFont(
                 new Font(
                         "SansSerif",
                         Font.PLAIN,
-                        13
+                        10
                 )
         );
 
-        welcomeLabel.setForeground(
-                TEXT_SUBTITLE
+        descriptionLabel.setForeground(
+                TEXT_MUTED
         );
 
-        welcomeLabel.setAlignmentX(
+        descriptionLabel.setAlignmentX(
                 Component.LEFT_ALIGNMENT
         );
 
-        titlePanel.add(
+        text.add(
                 titleLabel
         );
 
-        titlePanel.add(
+        text.add(
                 Box.createVerticalStrut(
-                        4
+                        6
                 )
         );
 
-        titlePanel.add(
-                welcomeLabel
+        text.add(
+                descriptionLabel
         );
 
-        headerPanel.add(
-                titlePanel,
+        card.add(
+                text,
                 BorderLayout.CENTER
         );
 
-        // Role badge
-        JLabel roleBadge =
+        JLabel actionLabel =
                 new JLabel(
-                        "RIDER"
+                        "Open  →"
                 );
 
-        roleBadge.setFont(
+        actionLabel.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        11
+                        10
                 )
         );
 
-        roleBadge.setForeground(
-                BTN_TEXT
+        actionLabel.setForeground(
+                accent
         );
 
-        roleBadge.setHorizontalAlignment(
-                SwingConstants.CENTER
+        actionLabel.setHorizontalAlignment(
+                SwingConstants.RIGHT
         );
 
-        roleBadge.setOpaque(true);
-
-        roleBadge.setBackground(
-                GOLD
+        card.add(
+                actionLabel,
+                BorderLayout.SOUTH
         );
 
-        roleBadge.setBorder(
-                BorderFactory.createEmptyBorder(
-                        6,
-                        12,
-                        6,
-                        12
-                )
+        card.addMouseListener(
+                new MouseAdapter() {
+
+                    @Override
+                    public void mouseClicked(
+                            MouseEvent e
+                    ) {
+
+                        action.actionPerformed(
+                                new java.awt.event.ActionEvent(
+                                        card,
+                                        java.awt.event.ActionEvent.ACTION_PERFORMED,
+                                        title
+                                )
+                        );
+                    }
+                }
         );
 
-        headerPanel.add(
-                roleBadge,
-                BorderLayout.EAST
-        );
+        return card;
+    }
 
-        mainPanel.add(
-                headerPanel,
-                BorderLayout.NORTH
-        );
+    private JPanel createLogoutCard() {
 
-        // =====================================================
-        // BUTTONS
-        // =====================================================
-
-        JPanel buttonPanel =
+        JPanel card =
                 new JPanel(
-                        new GridLayout(
-                                2,
-                                2,
-                                16,
-                                16
+                        new BorderLayout(
+                                0,
+                                12
                         )
+                ) {
+
+                    private boolean hovered;
+
+                    {
+                        addMouseListener(
+                                new MouseAdapter() {
+
+                                    @Override
+                                    public void mouseEntered(
+                                            MouseEvent e
+                                    ) {
+                                        hovered = true;
+                                        repaint();
+                                    }
+
+                                    @Override
+                                    public void mouseExited(
+                                            MouseEvent e
+                                    ) {
+                                        hovered = false;
+                                        repaint();
+                                    }
+                                }
+                        );
+                    }
+
+                    @Override
+                    protected void paintComponent(
+                            Graphics g
+                    ) {
+
+                        super.paintComponent(g);
+
+                        Graphics2D g2 =
+                                (Graphics2D)
+                                        g.create();
+
+                        g2.setRenderingHint(
+                                RenderingHints.KEY_ANTIALIASING,
+                                RenderingHints.VALUE_ANTIALIAS_ON
+                        );
+
+                        g2.setColor(
+                                hovered
+                                        ? new Color(
+                                        255,
+                                        247,
+                                        243
+                                )
+                                        : WHITE
+                        );
+
+                        g2.fill(
+                                new RoundRectangle2D.Float(
+                                        0,
+                                        0,
+                                        getWidth(),
+                                        getHeight(),
+                                        17,
+                                        17
+                                )
+                        );
+
+                        g2.setColor(
+                                hovered
+                                        ? ORANGE
+                                        : BORDER
+                        );
+
+                        g2.draw(
+                                new RoundRectangle2D.Float(
+                                        0.5f,
+                                        0.5f,
+                                        getWidth() - 1,
+                                        getHeight() - 1,
+                                        17,
+                                        17
+                                )
+                        );
+
+                        g2.setColor(
+                                ORANGE
+                        );
+
+                        g2.fillRoundRect(
+                                18,
+                                0,
+                                70,
+                                4,
+                                4,
+                                4
+                        );
+
+                        g2.dispose();
+                    }
+                };
+
+        card.setOpaque(false);
+
+        card.setBorder(
+                new EmptyBorder(
+                        22,
+                        22,
+                        20,
+                        22
+                )
+        );
+
+        card.setCursor(
+                new Cursor(
+                        Cursor.HAND_CURSOR
+                )
+        );
+
+        JPanel iconPanel =
+                new JPanel(
+                        new GridBagLayout()
                 );
 
-        buttonPanel.setOpaque(false);
+        iconPanel.setOpaque(true);
 
-        JButton pendingButton =
-                createGoldenButton(
-                        "▣  View Pending Parcels"
+        iconPanel.setBackground(
+                new Color(
+                        255,
+                        243,
+                        237
+                )
+        );
+
+        iconPanel.setPreferredSize(
+                new Dimension(
+                        58,
+                        58
+                )
+        );
+
+        JLabel icon =
+                new JLabel(
+                        "↪"
                 );
 
-        JButton assignedButton =
-                createGoldenButton(
-                        "☷  My Assigned Parcels"
+        icon.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        24
+                )
+        );
+
+        icon.setForeground(
+                ORANGE
+        );
+
+        iconPanel.add(
+                icon
+        );
+
+        card.add(
+                iconPanel,
+                BorderLayout.WEST
+        );
+
+        JPanel text =
+                new JPanel();
+
+        text.setOpaque(false);
+
+        text.setLayout(
+                new BoxLayout(
+                        text,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        JLabel title =
+                new JLabel(
+                        "Logout"
                 );
 
-        JButton updateButton =
-                createGoldenButton(
-                        "↻  Update Parcel Status"
+        title.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        17
+                )
+        );
+
+        title.setForeground(
+                TEXT_DARK
+        );
+
+        JLabel description =
+                new JLabel(
+                        "<html><div style='width:250px'>"
+                                + "Sign out from your rider account."
+                                + "</div></html>"
                 );
 
-        JButton logoutButton =
-                createOutlineButton(
-                        "⇥  Logout"
-                );
-
-        pendingButton.addActionListener(
-                e -> openPendingParcels()
+        description.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        10
+                )
         );
 
-        assignedButton.addActionListener(
-                e -> openAssignedParcels()
+        description.setForeground(
+                TEXT_MUTED
         );
 
-        updateButton.addActionListener(
-                e -> openUpdateStatus()
+        text.add(title);
+
+        text.add(
+                Box.createVerticalStrut(
+                        6
+                )
         );
 
-        logoutButton.addActionListener(
-                e -> logout()
-        );
+        text.add(description);
 
-        buttonPanel.add(
-                pendingButton
-        );
-
-        buttonPanel.add(
-                assignedButton
-        );
-
-        buttonPanel.add(
-                updateButton
-        );
-
-        buttonPanel.add(
-                logoutButton
-        );
-
-        mainPanel.add(
-                buttonPanel,
+        card.add(
+                text,
                 BorderLayout.CENTER
         );
 
-        // =====================================================
-        // FOOTER
-        // =====================================================
+        JLabel action =
+                new JLabel(
+                        "Sign out  →"
+                );
 
-        JPanel footerPanel =
+        action.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        10
+                )
+        );
+
+        action.setForeground(
+                ORANGE
+        );
+
+        action.setHorizontalAlignment(
+                SwingConstants.RIGHT
+        );
+
+        card.add(
+                action,
+                BorderLayout.SOUTH
+        );
+
+        card.addMouseListener(
+                new MouseAdapter() {
+
+                    @Override
+                    public void mouseClicked(
+                            MouseEvent e
+                    ) {
+
+                        logout();
+                    }
+                }
+        );
+
+        return card;
+    }
+
+    private JPanel createFooter() {
+
+        JPanel footer =
                 new JPanel(
                         new BorderLayout()
                 );
 
-        footerPanel.setOpaque(false);
+        footer.setOpaque(false);
 
         JLabel riderInfo =
                 new JLabel(
                         "Rider ID: "
-                                + user.getUser_id()
+                                + safeValue(
+                                user.getUser_id()
+                        )
                 );
 
         riderInfo.setFont(
                 new Font(
                         "SansSerif",
                         Font.PLAIN,
-                        12
+                        9
                 )
         );
 
         riderInfo.setForeground(
-                TEXT_SUBTITLE
+                TEXT_MUTED
         );
 
-        footerPanel.add(
+        JLabel info =
+                new JLabel(
+                        "Parcel operations center"
+                );
+
+        info.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        9
+                )
+        );
+
+        info.setForeground(
+                TEXT_MUTED
+        );
+
+        footer.add(
                 riderInfo,
                 BorderLayout.WEST
         );
 
-        JLabel statusLabel =
-                new JLabel(
-                        "● ONLINE"
-                );
-
-        statusLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        11
-                )
-        );
-
-        statusLabel.setForeground(
-                SKY_BLUE
-        );
-
-        footerPanel.add(
-                statusLabel,
+        footer.add(
+                info,
                 BorderLayout.EAST
         );
 
-        mainPanel.add(
-                footerPanel,
-                BorderLayout.SOUTH
-        );
-
-        add(
-                mainPanel
-        );
+        return footer;
     }
-
-    // =========================================================
-    // GOLD BUTTON
-    // =========================================================
-
-    private JButton createGoldenButton(
-            String text
-    ) {
-
-        JButton button =
-                new JButton(text) {
-
-                    private boolean isHovered =
-                            false;
-
-                    {
-                        addMouseListener(
-                                new MouseAdapter() {
-
-                                    @Override
-                                    public void mouseEntered(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered = true;
-                                        repaint();
-                                    }
-
-                                    @Override
-                                    public void mouseExited(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered = false;
-                                        repaint();
-                                    }
-                                }
-                        );
-                    }
-
-                    @Override
-                    protected void paintComponent(
-                            Graphics g
-                    ) {
-
-                        Graphics2D g2d =
-                                (Graphics2D) g.create();
-
-                        g2d.setRenderingHint(
-                                RenderingHints.KEY_ANTIALIASING,
-                                RenderingHints.VALUE_ANTIALIAS_ON
-                        );
-
-                        Color top =
-                                isHovered
-                                        ? SOFT_YELLOW
-                                        : GOLD;
-
-                        Color bottom =
-                                isHovered
-                                        ? GOLD
-                                        : new Color(
-                                        240,
-                                        190,
-                                        35
-                                );
-
-                        GradientPaint gradient =
-                                new GradientPaint(
-                                        0,
-                                        0,
-                                        top,
-                                        0,
-                                        getHeight(),
-                                        bottom
-                                );
-
-                        g2d.setPaint(
-                                gradient
-                        );
-
-                        g2d.fill(
-                                new RoundRectangle2D.Float(
-                                        0,
-                                        0,
-                                        getWidth(),
-                                        getHeight(),
-                                        14,
-                                        14
-                                )
-                        );
-
-                        g2d.dispose();
-
-                        super.paintComponent(g);
-                    }
-                };
-
-        button.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        13
-                )
-        );
-
-        button.setForeground(
-                BTN_TEXT
-        );
-
-        button.setContentAreaFilled(
-                false
-        );
-
-        button.setFocusPainted(
-                false
-        );
-
-        button.setBorderPainted(
-                false
-        );
-
-        button.setCursor(
-                new Cursor(
-                        Cursor.HAND_CURSOR
-                )
-        );
-
-        return button;
-    }
-
-    // =========================================================
-    // OUTLINE BUTTON
-    // =========================================================
-
-    private JButton createOutlineButton(
-            String text
-    ) {
-
-        JButton button =
-                new JButton(text) {
-
-                    private boolean isHovered =
-                            false;
-
-                    {
-                        addMouseListener(
-                                new MouseAdapter() {
-
-                                    @Override
-                                    public void mouseEntered(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered = true;
-                                        repaint();
-                                    }
-
-                                    @Override
-                                    public void mouseExited(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered = false;
-                                        repaint();
-                                    }
-                                }
-                        );
-                    }
-
-                    @Override
-                    protected void paintComponent(
-                            Graphics g
-                    ) {
-
-                        Graphics2D g2d =
-                                (Graphics2D) g.create();
-
-                        g2d.setRenderingHint(
-                                RenderingHints.KEY_ANTIALIASING,
-                                RenderingHints.VALUE_ANTIALIAS_ON
-                        );
-
-                        if (isHovered) {
-
-                            g2d.setColor(
-                                    new Color(
-                                            138,
-                                            207,
-                                            248,
-                                            25
-                                    )
-                            );
-
-                            g2d.fill(
-                                    new RoundRectangle2D.Float(
-                                            0,
-                                            0,
-                                            getWidth(),
-                                            getHeight(),
-                                            14,
-                                            14
-                                    )
-                            );
-                        }
-
-                        g2d.setColor(
-                                new Color(
-                                        138,
-                                        207,
-                                        248,
-                                        170
-                                )
-                        );
-
-                        g2d.setStroke(
-                                new BasicStroke(
-                                        1.2f
-                                )
-                        );
-
-                        g2d.draw(
-                                new RoundRectangle2D.Float(
-                                        1,
-                                        1,
-                                        getWidth() - 2,
-                                        getHeight() - 2,
-                                        14,
-                                        14
-                                )
-                        );
-
-                        g2d.dispose();
-
-                        super.paintComponent(g);
-                    }
-                };
-
-        button.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        13
-                )
-        );
-
-        button.setForeground(
-                TEXT_WHITE
-        );
-
-        button.setContentAreaFilled(
-                false
-        );
-
-        button.setFocusPainted(
-                false
-        );
-
-        button.setBorderPainted(
-                false
-        );
-
-        button.setCursor(
-                new Cursor(
-                        Cursor.HAND_CURSOR
-                )
-        );
-
-        return button;
-    }
-
-    // =====================================================
-    // OPEN PENDING PARCELS
-    // =====================================================
 
     private void openPendingParcels() {
 
         UI.PendingParcelsFrame frame =
-                new UI.PendingParcelsFrame(user);
+                new UI.PendingParcelsFrame(
+                        user
+                );
 
         frame.setVisible(true);
     }
-
-    // =====================================================
-    // OPEN ASSIGNED PARCELS
-    // =====================================================
 
     private void openAssignedParcels() {
 
         UI.AssignedParcelsFrame frame =
-                new UI.AssignedParcelsFrame(user);
+                new UI.AssignedParcelsFrame(
+                        user
+                );
 
         frame.setVisible(true);
     }
-
-    // =====================================================
-    // OPEN UPDATE STATUS
-    // =====================================================
 
     private void openUpdateStatus() {
 
         UpdateParcelStatusFrame frame =
-                new UpdateParcelStatusFrame(user);
+                new UpdateParcelStatusFrame(
+                        user
+                );
 
         frame.setVisible(true);
     }
-
-    // =====================================================
-    // LOGOUT
-    // =====================================================
 
     private void logout() {
 
@@ -925,11 +1387,59 @@ public class RiderDashboard extends JPanel {
                         JOptionPane.YES_NO_OPTION
                 );
 
-        if (result == JOptionPane.YES_OPTION) {
+        if (
+                result ==
+                        JOptionPane.YES_OPTION
+        ) {
 
             if (mainFrame != null) {
                 mainFrame.showLoginFrame();
             }
         }
+    }
+
+    private String safeValue(
+            String value
+    ) {
+
+        return value == null
+                ? "N/A"
+                : value;
+    }
+
+    private Color mixWithWhite(
+            Color color,
+            float amount
+    ) {
+
+        int r =
+                (int) (
+                        color.getRed()
+                                +
+                                (255 - color.getRed())
+                                        * amount
+                );
+
+        int g =
+                (int) (
+                        color.getGreen()
+                                +
+                                (255 - color.getGreen())
+                                        * amount
+                );
+
+        int b =
+                (int) (
+                        color.getBlue()
+                                +
+                                (255 - color.getBlue())
+                                        * amount
+                );
+
+        return new Color(
+                r,
+                g,
+                b
+        );
     }
 }

@@ -16,42 +16,34 @@ public class AdminDashboard extends JPanel {
 
     private CardLayout cardLayout;
     private JPanel contentPanel;
-    private JButton activeButton = null;
+    private JButton activeButton;
 
-    // =========================
-    // THEME COLORS
-    // =========================
+    private final Color BG = new Color(241, 248, 253);
+    private final Color WHITE = Color.WHITE;
+
+    private final Color TEXT_DARK = new Color(31, 38, 43);
+    private final Color TEXT_MUTED = new Color(103, 117, 128);
+
+    private final Color ORANGE = new Color(248, 116, 35);
+    private final Color ORANGE_HOVER = new Color(235, 94, 20);
 
     private final Color BLUE = new Color(0, 97, 153);
-    private final Color SKY_BLUE = new Color(138, 207, 248);
-    private final Color SOFT_YELLOW = new Color(244, 235, 108);
-    private final Color GOLD = new Color(255, 212, 68);
+    private final Color LIGHT_BLUE = new Color(225, 240, 249);
 
-    private final Color SIDEBAR_TOP = new Color(3, 39, 63);
-    private final Color SIDEBAR_BOTTOM = new Color(0, 55, 88);
+    private final Color BORDER = new Color(216, 227, 234);
 
-    private final Color CONTENT_TOP = new Color(3, 39, 63);
-    private final Color CONTENT_BOTTOM = new Color(0, 72, 110);
+    private final Color SUCCESS = new Color(48, 148, 94);
+    private final Color SUCCESS_BG = new Color(233, 248, 240);
 
-    private final Color CARD_BG = new Color(0, 55, 88, 238);
-    private final Color CARD_BORDER = new Color(138, 207, 248, 80);
+    private final Color DANGER = new Color(205, 62, 73);
 
-    private final Color BTN_IDLE_TEXT = new Color(190, 220, 235);
-    private final Color BTN_ACTIVE_BG = new Color(255, 212, 68, 30);
-    private final Color BTN_ACTIVE_TEXT = GOLD;
+    public AdminDashboard(User user, MainFrame mainFrame) {
 
-    private final Color TEXT_WHITE = Color.WHITE;
-    private final Color TEXT_MUTED = new Color(190, 220, 235);
-
-    public AdminDashboard(
-            User user,
-            MainFrame mainFrame
-    ) {
         this.user = user;
         this.mainFrame = mainFrame;
 
         setLayout(new BorderLayout());
-        setOpaque(false);
+        setBackground(BG);
 
         buildUI();
     }
@@ -60,15 +52,7 @@ public class AdminDashboard extends JPanel {
         this(user, null);
     }
 
-    // =========================
-    // BUILD UI
-    // =========================
-
     private void buildUI() {
-
-        // =========================
-        // SIDEBAR
-        // =========================
 
         JPanel sidebar = createSidebar();
 
@@ -77,61 +61,18 @@ public class AdminDashboard extends JPanel {
                 BorderLayout.WEST
         );
 
-        // =========================
-        // CONTENT AREA
-        // =========================
-
         cardLayout = new CardLayout();
 
-        contentPanel = new JPanel(cardLayout) {
+        contentPanel = new JPanel(
+                cardLayout
+        );
 
-            @Override
-            protected void paintComponent(
-                    Graphics g
-            ) {
+        contentPanel.setBackground(BG);
 
-                Graphics2D g2d =
-                        (Graphics2D) g.create();
+        addAdminPanels();
 
-                g2d.setRenderingHint(
-                        RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON
-                );
-
-                GradientPaint gradient =
-                        new GradientPaint(
-                                0,
-                                0,
-                                CONTENT_TOP,
-                                0,
-                                getHeight(),
-                                CONTENT_BOTTOM
-                        );
-
-                g2d.setPaint(gradient);
-
-                g2d.fillRect(
-                        0,
-                        0,
-                        getWidth(),
-                        getHeight()
-                );
-
-                g2d.dispose();
-            }
-        };
-
-        contentPanel.setOpaque(false);
-
-        // =========================
-        // DEFAULT OVERVIEW
-        // =========================
-
-        JPanel overviewPanel =
-                createOverviewPanel();
-
-        contentPanel.add(
-                overviewPanel,
+        cardLayout.show(
+                contentPanel,
                 "OVERVIEW"
         );
 
@@ -139,101 +80,90 @@ public class AdminDashboard extends JPanel {
                 contentPanel,
                 BorderLayout.CENTER
         );
+    }
 
-        cardLayout.show(
-                contentPanel,
+    private void addAdminPanels() {
+
+        contentPanel.add(
+                createOverviewPanel(),
                 "OVERVIEW"
+        );
+
+        contentPanel.add(
+                new AdminUsersFrame(user),
+                "USERS"
+        );
+
+        contentPanel.add(
+                new RegisterRiderFrame(user),
+                "REGISTER_RIDER"
+        );
+
+        contentPanel.add(
+                new AdminParcelsFrame(user),
+                "PARCELS"
+        );
+
+        contentPanel.add(
+                new SearchParcelFrame(user),
+                "SEARCH_PARCEL"
+        );
+
+        contentPanel.add(
+                new SearchUserFrame(user),
+                "SEARCH_USER"
+        );
+
+        contentPanel.add(
+                new AdminUpdateParcelStatusFrame(user),
+                "UPDATE_STATUS"
+        );
+
+        contentPanel.add(
+                new DeleteUserFrame(user),
+                "DELETE_USER"
+        );
+
+        contentPanel.add(
+                new DeleteParcelFrame(user),
+                "DELETE_PARCEL"
+        );
+
+        contentPanel.add(
+                new AdminStatisticsFrame(),
+                "STATISTICS"
         );
     }
 
-    // =========================
-    // SIDEBAR
-    // =========================
-
     private JPanel createSidebar() {
 
-        JPanel sidebar =
-                new JPanel(
-                        new BorderLayout()
-                ) {
+        JPanel sidebar = new RoundedPanel(
+                WHITE,
+                0
+        );
 
-                    @Override
-                    protected void paintComponent(
-                            Graphics g
-                    ) {
-
-                        Graphics2D g2d =
-                                (Graphics2D) g.create();
-
-                        g2d.setRenderingHint(
-                                RenderingHints.KEY_ANTIALIASING,
-                                RenderingHints.VALUE_ANTIALIAS_ON
-                        );
-
-                        GradientPaint gradient =
-                                new GradientPaint(
-                                        0,
-                                        0,
-                                        SIDEBAR_TOP,
-                                        0,
-                                        getHeight(),
-                                        SIDEBAR_BOTTOM
-                                );
-
-                        g2d.setPaint(gradient);
-
-                        g2d.fillRect(
-                                0,
-                                0,
-                                getWidth(),
-                                getHeight()
-                        );
-
-                        // Right-side separator
-                        g2d.setColor(
-                                new Color(
-                                        138,
-                                        207,
-                                        248,
-                                        45
-                                )
-                        );
-
-                        g2d.fillRect(
-                                getWidth() - 1,
-                                0,
-                                1,
-                                getHeight()
-                        );
-
-                        g2d.dispose();
-                    }
-                };
+        sidebar.setLayout(
+                new BorderLayout()
+        );
 
         sidebar.setPreferredSize(
                 new Dimension(
-                        250,
+                        245,
                         0
                 )
         );
 
-        sidebar.setOpaque(false);
-
         sidebar.setBorder(
-                new EmptyBorder(
-                        22,
-                        16,
-                        18,
-                        16
+                BorderFactory.createMatteBorder(
+                        0,
+                        0,
+                        0,
+                        1,
+                        BORDER
                 )
         );
 
-        // =========================
-        // HEADER
-        // =========================
-
-        JPanel headerPanel =
-                new JPanel();
+        JPanel headerPanel = new JPanel();
 
         headerPanel.setOpaque(false);
 
@@ -244,57 +174,40 @@ public class AdminDashboard extends JPanel {
                 )
         );
 
-        // Brand
-        JLabel brandLabel =
-                new JLabel(
-                        "LOGE ACHI"
-                );
+        headerPanel.setBorder(
+                new EmptyBorder(
+                        24,
+                        20,
+                        18,
+                        20
+                )
+        );
+
+        JLabel brandLabel = new JLabel(
+                "LOGE ACHI"
+        );
 
         brandLabel.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        23
+                        22
                 )
         );
 
         brandLabel.setForeground(
-                Color.WHITE
+                TEXT_DARK
         );
 
         brandLabel.setAlignmentX(
                 Component.LEFT_ALIGNMENT
         );
 
-        // Brand second part
-        JLabel brandSubLabel =
-                new JLabel(
-                        "DOT COM"
-                );
+        JLabel brandSubLabel = new JLabel(
+                "DOT COM"
+        );
 
         brandSubLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        11
-                )
-        );
-
-        brandSubLabel.setForeground(
-                GOLD
-        );
-
-        brandSubLabel.setAlignmentX(
-                Component.LEFT_ALIGNMENT
-        );
-
-        // Role badge
-        JLabel roleBadge =
-                new JLabel(
-                        "  ADMIN DASHBOARD  "
-                );
-
-        roleBadge.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
@@ -302,26 +215,42 @@ public class AdminDashboard extends JPanel {
                 )
         );
 
-        roleBadge.setForeground(
-                new Color(
-                        0,
-                        55,
-                        88
-                )
+        brandSubLabel.setForeground(
+                ORANGE
+        );
+
+        brandSubLabel.setAlignmentX(
+                Component.LEFT_ALIGNMENT
+        );
+
+        JLabel roleBadge = new JLabel(
+                "ADMIN DASHBOARD"
         );
 
         roleBadge.setOpaque(true);
 
         roleBadge.setBackground(
-                GOLD
+                LIGHT_BLUE
+        );
+
+        roleBadge.setForeground(
+                BLUE
+        );
+
+        roleBadge.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        9
+                )
         );
 
         roleBadge.setBorder(
                 new EmptyBorder(
-                        5,
-                        8,
-                        5,
-                        8
+                        6,
+                        9,
+                        6,
+                        9
                 )
         );
 
@@ -330,23 +259,20 @@ public class AdminDashboard extends JPanel {
         );
 
         String username =
-                (
-                        user != null
-                                && user.getUser_name() != null
-                )
+                user != null &&
+                        user.getUser_name() != null
                         ? user.getUser_name()
                         : "Admin";
 
-        JLabel welcomeLabel =
-                new JLabel(
-                        "Welcome, " + username
-                );
+        JLabel welcomeLabel = new JLabel(
+                "Welcome, " + username
+        );
 
         welcomeLabel.setFont(
                 new Font(
                         "SansSerif",
                         Font.PLAIN,
-                        13
+                        12
                 )
         );
 
@@ -367,7 +293,9 @@ public class AdminDashboard extends JPanel {
         );
 
         headerPanel.add(
-                Box.createVerticalStrut(12)
+                Box.createVerticalStrut(
+                        14
+                )
         );
 
         headerPanel.add(
@@ -375,15 +303,13 @@ public class AdminDashboard extends JPanel {
         );
 
         headerPanel.add(
-                Box.createVerticalStrut(9)
+                Box.createVerticalStrut(
+                        10
+                )
         );
 
         headerPanel.add(
                 welcomeLabel
-        );
-
-        headerPanel.add(
-                Box.createVerticalStrut(22)
         );
 
         sidebar.add(
@@ -391,12 +317,7 @@ public class AdminDashboard extends JPanel {
                 BorderLayout.NORTH
         );
 
-        // =========================
-        // NAVIGATION
-        // =========================
-
-        JPanel menuPanel =
-                new JPanel();
+        JPanel menuPanel = new JPanel();
 
         menuPanel.setOpaque(false);
 
@@ -407,556 +328,380 @@ public class AdminDashboard extends JPanel {
                 )
         );
 
-        JButton overviewBtn =
+        menuPanel.setBorder(
+                new EmptyBorder(
+                        4,
+                        12,
+                        10,
+                        12
+                )
+        );
+
+        JButton overviewButton =
                 createNavButton(
                         "▦  Overview"
                 );
 
-        JButton viewUsersBtn =
+        JButton usersButton =
                 createNavButton(
                         "♙  View All Users"
                 );
 
-        JButton registerRiderBtn =
+        JButton riderButton =
                 createNavButton(
                         "◆  Register Rider"
                 );
 
-        JButton viewParcelsBtn =
+        JButton parcelsButton =
                 createNavButton(
                         "▣  View All Parcels"
                 );
 
-        JButton searchParcelBtn =
+        JButton searchParcelButton =
                 createNavButton(
                         "⌕  Search Parcel"
                 );
 
-        JButton searchUserBtn =
+        JButton searchUserButton =
                 createNavButton(
                         "⌕  Search User"
                 );
 
-        JButton updateStatusBtn =
+        JButton updateStatusButton =
                 createNavButton(
                         "↻  Update Status"
                 );
 
-        JButton deleteUserBtn =
+        JButton statisticsButton =
+                createNavButton(
+                        "▥  Statistics"
+                );
+
+        JButton deleteUserButton =
                 createNavButton(
                         "×  Delete User"
                 );
 
-        JButton deleteParcelBtn =
+        JButton deleteParcelButton =
                 createNavButton(
-                        "▣  Delete Parcel"
+                        "×  Delete Parcel"
                 );
 
-        menuPanel.add(
-                overviewBtn
+        addMenuItem(
+                menuPanel,
+                overviewButton
         );
 
-        menuPanel.add(
-                Box.createVerticalStrut(5)
+        addMenuItem(
+                menuPanel,
+                usersButton
         );
 
-        menuPanel.add(
-                viewUsersBtn
+        addMenuItem(
+                menuPanel,
+                riderButton
         );
 
-        menuPanel.add(
-                Box.createVerticalStrut(5)
+        addMenuItem(
+                menuPanel,
+                parcelsButton
         );
 
-        menuPanel.add(
-                registerRiderBtn
+        addMenuItem(
+                menuPanel,
+                searchParcelButton
         );
 
-        menuPanel.add(
-                Box.createVerticalStrut(5)
+        addMenuItem(
+                menuPanel,
+                searchUserButton
         );
 
-        menuPanel.add(
-                viewParcelsBtn
+        addMenuItem(
+                menuPanel,
+                updateStatusButton
         );
 
-        menuPanel.add(
-                Box.createVerticalStrut(5)
+        addMenuItem(
+                menuPanel,
+                statisticsButton
         );
 
-        menuPanel.add(
-                searchParcelBtn
+        addMenuItem(
+                menuPanel,
+                deleteUserButton
         );
 
-        menuPanel.add(
-                Box.createVerticalStrut(5)
+        addMenuItem(
+                menuPanel,
+                deleteParcelButton
         );
 
-        menuPanel.add(
-                searchUserBtn
+        JScrollPane menuScroll = new JScrollPane(
+                menuPanel
         );
 
-        menuPanel.add(
-                Box.createVerticalStrut(5)
-        );
+        menuScroll.setBorder(null);
 
-        menuPanel.add(
-                updateStatusBtn
-        );
+        menuScroll.setOpaque(false);
 
-        menuPanel.add(
-                Box.createVerticalStrut(5)
-        );
-
-        menuPanel.add(
-                deleteUserBtn
-        );
-
-        menuPanel.add(
-                Box.createVerticalStrut(5)
-        );
-
-        menuPanel.add(
-                deleteParcelBtn
-        );
-
-        // =========================
-        // SCROLL MENU
-        // =========================
-
-        JScrollPane scrollMenu =
-                new JScrollPane(
-                        menuPanel
-                );
-
-        scrollMenu.setOpaque(false);
-
-        scrollMenu.getViewport()
+        menuScroll.getViewport()
                 .setOpaque(false);
 
-        scrollMenu.setBorder(null);
-
-        scrollMenu.setHorizontalScrollBarPolicy(
+        menuScroll.setHorizontalScrollBarPolicy(
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
         );
 
-        scrollMenu.setVerticalScrollBarPolicy(
+        menuScroll.setVerticalScrollBarPolicy(
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
         );
 
         sidebar.add(
-                scrollMenu,
+                menuScroll,
                 BorderLayout.CENTER
         );
 
-        // =========================
-        // LOGOUT
-        // =========================
+        JPanel footer = new JPanel(
+                new BorderLayout()
+        );
 
-        JButton logoutBtn =
-                createNavButton(
+        footer.setOpaque(false);
+
+        footer.setBorder(
+                new EmptyBorder(
+                        10,
+                        12,
+                        16,
+                        12
+                )
+        );
+
+        JButton logoutButton =
+                createLogoutButton(
                         "↪  Logout"
                 );
 
-        logoutBtn.setForeground(
-                new Color(
-                        255,
-                        150,
-                        150
-                )
-        );
-
-        JPanel footerPanel =
-                new JPanel(
-                        new BorderLayout()
-                );
-
-        footerPanel.setOpaque(false);
-
-        footerPanel.setBorder(
-                new EmptyBorder(
-                        10,
-                        0,
-                        0,
-                        0
-                )
-        );
-
-        footerPanel.add(
-                logoutBtn,
-                BorderLayout.SOUTH
+        footer.add(
+                logoutButton,
+                BorderLayout.CENTER
         );
 
         sidebar.add(
-                footerPanel,
+                footer,
                 BorderLayout.SOUTH
         );
 
-        // =========================
-        // ACTION LISTENERS
-        // =========================
-
         setActiveButton(
-                overviewBtn
+                overviewButton
         );
 
-        overviewBtn.addActionListener(
-                e -> {
-
-                    setActiveButton(
-                            overviewBtn
-                    );
-
-                    cardLayout.show(
-                            contentPanel,
-                            "OVERVIEW"
-                    );
-                }
+        overviewButton.addActionListener(
+                e -> showPage(
+                        overviewButton,
+                        "OVERVIEW"
+                )
         );
 
-        viewUsersBtn.addActionListener(
-                e -> {
-
-                    setActiveButton(
-                            viewUsersBtn
-                    );
-
-                    new AdminUsersFrame(
-                            user
-                    ).setVisible(true);
-                }
+        usersButton.addActionListener(
+                e -> showPage(
+                        usersButton,
+                        "USERS"
+                )
         );
 
-        registerRiderBtn.addActionListener(
-                e -> {
-
-                    setActiveButton(
-                            registerRiderBtn
-                    );
-
-                    new RegisterRiderFrame(
-                            user
-                    ).setVisible(true);
-                }
+        riderButton.addActionListener(
+                e -> showPage(
+                        riderButton,
+                        "REGISTER_RIDER"
+                )
         );
 
-        viewParcelsBtn.addActionListener(
-                e -> {
-
-                    setActiveButton(
-                            viewParcelsBtn
-                    );
-
-                    new AdminParcelsFrame(
-                            user
-                    ).setVisible(true);
-                }
+        parcelsButton.addActionListener(
+                e -> showPage(
+                        parcelsButton,
+                        "PARCELS"
+                )
         );
 
-        searchParcelBtn.addActionListener(
-                e -> {
-
-                    setActiveButton(
-                            searchParcelBtn
-                    );
-
-                    new SearchParcelFrame(
-                            user
-                    ).setVisible(true);
-                }
+        searchParcelButton.addActionListener(
+                e -> showPage(
+                        searchParcelButton,
+                        "SEARCH_PARCEL"
+                )
         );
 
-        searchUserBtn.addActionListener(
-                e -> {
-
-                    setActiveButton(
-                            searchUserBtn
-                    );
-
-                    new SearchUserFrame(
-                            user
-                    ).setVisible(true);
-                }
+        searchUserButton.addActionListener(
+                e -> showPage(
+                        searchUserButton,
+                        "SEARCH_USER"
+                )
         );
 
-        updateStatusBtn.addActionListener(
-                e -> {
-
-                    setActiveButton(
-                            updateStatusBtn
-                    );
-
-                    new AdminUpdateParcelStatusFrame(
-                            user
-                    ).setVisible(true);
-                }
+        updateStatusButton.addActionListener(
+                e -> showPage(
+                        updateStatusButton,
+                        "UPDATE_STATUS"
+                )
         );
 
-        deleteUserBtn.addActionListener(
-                e -> {
-
-                    setActiveButton(
-                            deleteUserBtn
-                    );
-
-                    new DeleteUserFrame(
-                            user
-                    ).setVisible(true);
-                }
+        statisticsButton.addActionListener(
+                e -> showPage(
+                        statisticsButton,
+                        "STATISTICS"
+                )
         );
 
-        deleteParcelBtn.addActionListener(
-                e -> {
-
-                    setActiveButton(
-                            deleteParcelBtn
-                    );
-
-                    new DeleteParcelFrame(
-                            user
-                    ).setVisible(true);
-                }
+        deleteUserButton.addActionListener(
+                e -> showPage(
+                        deleteUserButton,
+                        "DELETE_USER"
+                )
         );
 
-        logoutBtn.addActionListener(
-                e -> {
+        deleteParcelButton.addActionListener(
+                e -> showPage(
+                        deleteParcelButton,
+                        "DELETE_PARCEL"
+                )
+        );
 
-                    int choice =
-                            JOptionPane.showConfirmDialog(
-                                    this,
-                                    "Are you sure you want to logout?",
-                                    "Confirm Logout",
-                                    JOptionPane.YES_NO_OPTION
-                            );
-
-                    if (
-                            choice
-                                    == JOptionPane.YES_OPTION
-                    ) {
-
-                        if (
-                                mainFrame != null
-                        ) {
-
-                            mainFrame.showLoginFrame();
-                        }
-                    }
-                }
+        logoutButton.addActionListener(
+                e -> handleLogout()
         );
 
         return sidebar;
     }
 
-    // =========================
-    // OVERVIEW PANEL
-    // =========================
+    private void addMenuItem(
+            JPanel panel,
+            JButton button
+    ) {
+
+        panel.add(
+                button
+        );
+
+        panel.add(
+                Box.createVerticalStrut(
+                        5
+                )
+        );
+    }
+
+    private void showPage(
+            JButton button,
+            String page
+    ) {
+
+        setActiveButton(
+                button
+        );
+
+        cardLayout.show(
+                contentPanel,
+                page
+        );
+    }
 
     private JPanel createOverviewPanel() {
 
-        JPanel panel =
-                new JPanel(
-                        new GridBagLayout()
-                );
-
-        panel.setOpaque(false);
-
-        // =========================
-        // MAIN CARD
-        // =========================
-
-        JPanel card =
-                new JPanel() {
-
-                    @Override
-                    protected void paintComponent(
-                            Graphics g
-                    ) {
-
-                        super.paintComponent(g);
-
-                        Graphics2D g2d =
-                                (Graphics2D) g.create();
-
-                        g2d.setRenderingHint(
-                                RenderingHints.KEY_ANTIALIASING,
-                                RenderingHints.VALUE_ANTIALIAS_ON
-                        );
-
-                        GradientPaint gradient =
-                                new GradientPaint(
-                                        0,
-                                        0,
-                                        new Color(
-                                                0,
-                                                62,
-                                                96,
-                                                245
-                                        ),
-                                        0,
-                                        getHeight(),
-                                        new Color(
-                                                0,
-                                                45,
-                                                73,
-                                                245
-                                        )
-                                );
-
-                        g2d.setPaint(
-                                gradient
-                        );
-
-                        g2d.fill(
-                                new RoundRectangle2D.Float(
-                                        0,
-                                        0,
-                                        getWidth(),
-                                        getHeight(),
-                                        20,
-                                        20
-                                )
-                        );
-
-                        // Border
-                        g2d.setColor(
-                                CARD_BORDER
-                        );
-
-                        g2d.draw(
-                                new RoundRectangle2D.Float(
-                                        0,
-                                        0,
-                                        getWidth() - 1,
-                                        getHeight() - 1,
-                                        20,
-                                        20
-                                )
-                        );
-
-                        // Gold top accent
-                        g2d.setColor(
-                                GOLD
-                        );
-
-                        g2d.fill(
-                                new RoundRectangle2D.Float(
-                                        0,
-                                        0,
-                                        getWidth(),
-                                        5,
-                                        20,
-                                        20
-                                )
-                        );
-
-                        g2d.dispose();
-                    }
-                };
-
-        card.setOpaque(false);
-
-        card.setLayout(
-                new BoxLayout(
-                        card,
-                        BoxLayout.Y_AXIS
-                )
+        JPanel page = new JPanel(
+                new BorderLayout()
         );
 
-        card.setPreferredSize(
-                new Dimension(
-                        560,
-                        350
-                )
+        page.setBackground(
+                BG
         );
 
-        card.setBorder(
+        page.setBorder(
                 new EmptyBorder(
-                        42,
-                        42,
-                        42,
-                        42
+                        26,
+                        30,
+                        26,
+                        30
                 )
         );
 
-        // =========================
-        // ICON
-        // =========================
-
-        JPanel iconPanel =
-                new JPanel(
-                        new GridBagLayout()
-                );
-
-        iconPanel.setOpaque(true);
-
-        iconPanel.setBackground(
-                new Color(
-                        138,
-                        207,
-                        248,
-                        20
+        JPanel header = new JPanel(
+                new BorderLayout(
+                        14,
+                        0
                 )
+        );
+
+        header.setOpaque(false);
+
+        JPanel iconPanel = new RoundedPanel(
+                BLUE,
+                16
         );
 
         iconPanel.setPreferredSize(
                 new Dimension(
-                        64,
-                        64
+                        52,
+                        52
                 )
         );
 
-        iconPanel.setMaximumSize(
-                new Dimension(
-                        64,
-                        64
-                )
+        iconPanel.setLayout(
+                new GridBagLayout()
         );
 
-        iconPanel.setBorder(
-                BorderFactory.createLineBorder(
-                        new Color(
-                                138,
-                                207,
-                                248,
-                                80
-                        ),
-                        1
-                )
+        JLabel icon = new JLabel(
+                "◆"
         );
-
-        JLabel icon =
-                new JLabel(
-                        "◆"
-                );
 
         icon.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        26
+                        24
                 )
         );
 
         icon.setForeground(
-                GOLD
+                Color.WHITE
         );
 
         iconPanel.add(
                 icon
         );
 
-        iconPanel.setAlignmentX(
-                Component.CENTER_ALIGNMENT
+        header.add(
+                iconPanel,
+                BorderLayout.WEST
         );
 
-        // =========================
-        // TITLE
-        // =========================
+        JPanel titlePanel = new JPanel();
 
-        JLabel title =
-                new JLabel(
-                        "Admin Control Center"
-                );
+        titlePanel.setOpaque(false);
+
+        titlePanel.setLayout(
+                new BoxLayout(
+                        titlePanel,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        JLabel section = new JLabel(
+                "ADMINISTRATION"
+        );
+
+        section.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        11
+                )
+        );
+
+        section.setForeground(
+                ORANGE
+        );
+
+        JLabel title = new JLabel(
+                "Admin Control Center"
+        );
 
         title.setFont(
                 new Font(
@@ -967,23 +712,14 @@ public class AdminDashboard extends JPanel {
         );
 
         title.setForeground(
-                TEXT_WHITE
+                TEXT_DARK
         );
 
-        title.setAlignmentX(
-                Component.CENTER_ALIGNMENT
+        JLabel subtitle = new JLabel(
+                "Manage users, parcels, riders and delivery operations"
         );
 
-        // =========================
-        // SUBTITLE
-        // =========================
-
-        JLabel sub =
-                new JLabel(
-                        "Select an option from the sidebar to manage system operations."
-                );
-
-        sub.setFont(
+        subtitle.setFont(
                 new Font(
                         "SansSerif",
                         Font.PLAIN,
@@ -991,24 +727,364 @@ public class AdminDashboard extends JPanel {
                 )
         );
 
-        sub.setForeground(
+        subtitle.setForeground(
                 TEXT_MUTED
         );
 
-        sub.setAlignmentX(
+        titlePanel.add(
+                section
+        );
+
+        titlePanel.add(
+                Box.createVerticalStrut(
+                        3
+                )
+        );
+
+        titlePanel.add(
+                title
+        );
+
+        titlePanel.add(
+                Box.createVerticalStrut(
+                        3
+                )
+        );
+
+        titlePanel.add(
+                subtitle
+        );
+
+        header.add(
+                titlePanel,
+                BorderLayout.CENTER
+        );
+
+        JLabel statusBadge = new JLabel(
+                "●  SYSTEM ONLINE"
+        );
+
+        statusBadge.setOpaque(true);
+
+        statusBadge.setBackground(
+                SUCCESS_BG
+        );
+
+        statusBadge.setForeground(
+                SUCCESS
+        );
+
+        statusBadge.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        10
+                )
+        );
+
+        statusBadge.setBorder(
+                new EmptyBorder(
+                        8,
+                        11,
+                        8,
+                        11
+                )
+        );
+
+        header.add(
+                statusBadge,
+                BorderLayout.EAST
+        );
+
+        page.add(
+                header,
+                BorderLayout.NORTH
+        );
+
+        JPanel center = new JPanel(
+                new GridBagLayout()
+        );
+
+        center.setOpaque(false);
+
+        JPanel card = new RoundedPanel(
+                WHITE,
+                22
+        );
+
+        card.setLayout(
+                new BorderLayout(
+                        0,
+                        22
+                )
+        );
+
+        card.setBorder(
+                new EmptyBorder(
+                        32,
+                        36,
+                        32,
+                        36
+                )
+        );
+
+        JLabel cardIcon = new JLabel(
+                "▥"
+        );
+
+        cardIcon.setHorizontalAlignment(
+                SwingConstants.CENTER
+        );
+
+        cardIcon.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        42
+                )
+        );
+
+        cardIcon.setForeground(
+                ORANGE
+        );
+
+        JPanel cardIconPanel = new JPanel(
+                new GridBagLayout()
+        );
+
+        cardIconPanel.setOpaque(false);
+
+        cardIconPanel.add(
+                cardIcon
+        );
+
+        card.add(
+                cardIconPanel,
+                BorderLayout.NORTH
+        );
+
+        JPanel cardContent = new JPanel();
+
+        cardContent.setOpaque(false);
+
+        cardContent.setLayout(
+                new BoxLayout(
+                        cardContent,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        JLabel welcomeTitle = new JLabel(
+                "Welcome to the Admin Dashboard"
+        );
+
+        welcomeTitle.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        24
+                )
+        );
+
+        welcomeTitle.setForeground(
+                TEXT_DARK
+        );
+
+        welcomeTitle.setAlignmentX(
                 Component.CENTER_ALIGNMENT
         );
 
-        // =========================
-        // STATUS
-        // =========================
+        JLabel welcomeText = new JLabel(
+                "<html><div style='text-align:center'>" +
+                        "Use the sidebar to manage the complete courier system.<br>" +
+                        "Every management section is available directly inside this dashboard." +
+                        "</div></html>"
+        );
 
-        JLabel status =
-                new JLabel(
-                        "●  SYSTEM ONLINE"
-                );
+        welcomeText.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        13
+                )
+        );
 
-        status.setFont(
+        welcomeText.setForeground(
+                TEXT_MUTED
+        );
+
+        welcomeText.setAlignmentX(
+                Component.CENTER_ALIGNMENT
+        );
+
+        JPanel tips = new JPanel(
+                new GridLayout(
+                        1,
+                        3,
+                        12,
+                        0
+                )
+        );
+
+        tips.setOpaque(false);
+
+        tips.add(
+                createFeatureCard(
+                        "USERS",
+                        "Manage system accounts",
+                        BLUE
+                )
+        );
+
+        tips.add(
+                createFeatureCard(
+                        "PARCELS",
+                        "Monitor delivery records",
+                        ORANGE
+                )
+        );
+
+        tips.add(
+                createFeatureCard(
+                        "RIDERS",
+                        "Manage delivery team",
+                        SUCCESS
+                )
+        );
+
+        cardContent.add(
+                welcomeTitle
+        );
+
+        cardContent.add(
+                Box.createVerticalStrut(
+                        10
+                )
+        );
+
+        cardContent.add(
+                welcomeText
+        );
+
+        cardContent.add(
+                Box.createVerticalStrut(
+                        28
+                )
+        );
+
+        cardContent.add(
+                tips
+        );
+
+        card.add(
+                cardContent,
+                BorderLayout.CENTER
+        );
+
+        JPanel bottomInfo = new JPanel(
+                new FlowLayout(
+                        FlowLayout.CENTER,
+                        8,
+                        0
+                )
+        );
+
+        bottomInfo.setOpaque(false);
+
+        JLabel info = new JLabel(
+                "Select a management section from the sidebar"
+        );
+
+        info.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        11
+                )
+        );
+
+        info.setForeground(
+                TEXT_MUTED
+        );
+
+        bottomInfo.add(
+                info
+        );
+
+        card.add(
+                bottomInfo,
+                BorderLayout.SOUTH
+        );
+
+        GridBagConstraints gbc =
+                new GridBagConstraints();
+
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+
+        center.add(
+                card,
+                gbc
+        );
+
+        page.add(
+                center,
+                BorderLayout.CENTER
+        );
+
+        return page;
+    }
+
+    private JPanel createFeatureCard(
+            String title,
+            String description,
+            Color accent
+    ) {
+
+        JPanel card = new RoundedPanel(
+                new Color(249, 251, 252),
+                14
+        );
+
+        card.setLayout(
+                new BorderLayout(
+                        0,
+                        8
+                )
+        );
+
+        card.setBorder(
+                new EmptyBorder(
+                        14,
+                        14,
+                        14,
+                        14
+                )
+        );
+
+        JPanel accentBar = new RoundedPanel(
+                accent,
+                5
+        );
+
+        accentBar.setPreferredSize(
+                new Dimension(
+                        0,
+                        4
+                )
+        );
+
+        card.add(
+                accentBar,
+                BorderLayout.NORTH
+        );
+
+        JLabel titleLabel = new JLabel(
+                title
+        );
+
+        titleLabel.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
@@ -1016,119 +1092,151 @@ public class AdminDashboard extends JPanel {
                 )
         );
 
-        status.setForeground(
-                SKY_BLUE
+        titleLabel.setForeground(
+                TEXT_DARK
         );
 
-        status.setAlignmentX(
-                Component.CENTER_ALIGNMENT
+        JLabel descriptionLabel = new JLabel(
+                "<html>" + description + "</html>"
         );
 
-        // =========================
-        // ADD COMPONENTS
-        // =========================
+        descriptionLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.PLAIN,
+                        10
+                )
+        );
+
+        descriptionLabel.setForeground(
+                TEXT_MUTED
+        );
+
+        JPanel textPanel = new JPanel();
+
+        textPanel.setOpaque(false);
+
+        textPanel.setLayout(
+                new BoxLayout(
+                        textPanel,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        textPanel.add(
+                titleLabel
+        );
+
+        textPanel.add(
+                Box.createVerticalStrut(
+                        3
+                )
+        );
+
+        textPanel.add(
+                descriptionLabel
+        );
 
         card.add(
-                iconPanel
+                textPanel,
+                BorderLayout.CENTER
         );
 
-        card.add(
-                Box.createVerticalStrut(22)
-        );
-
-        card.add(
-                title
-        );
-
-        card.add(
-                Box.createVerticalStrut(10)
-        );
-
-        card.add(
-                sub
-        );
-
-        card.add(
-                Box.createVerticalStrut(25)
-        );
-
-        card.add(
-                status
-        );
-
-        panel.add(
-                card
-        );
-
-        return panel;
+        return card;
     }
-
-    // =========================
-    // NAV BUTTON
-    // =========================
 
     private JButton createNavButton(
             String text
     ) {
 
-        JButton button =
-                new JButton(text) {
+        JButton button = new JButton(text) {
 
-                    @Override
-                    protected void paintComponent(
-                            Graphics g
-                    ) {
+            private boolean hovered;
 
-                        Graphics2D g2d =
-                                (Graphics2D) g.create();
+            {
+                addMouseListener(
+                        new MouseAdapter() {
 
-                        g2d.setRenderingHint(
-                                RenderingHints.KEY_ANTIALIASING,
-                                RenderingHints.VALUE_ANTIALIAS_ON
-                        );
+                            @Override
+                            public void mouseEntered(
+                                    MouseEvent e
+                            ) {
+                                hovered = true;
+                                repaint();
+                            }
 
-                        if (
-                                this
-                                        == activeButton
-                        ) {
-
-                            g2d.setColor(
-                                    BTN_ACTIVE_BG
-                            );
-
-                            g2d.fill(
-                                    new RoundRectangle2D.Float(
-                                            0,
-                                            0,
-                                            getWidth(),
-                                            getHeight(),
-                                            10,
-                                            10
-                                    )
-                            );
-
-                            // Active left indicator
-                            g2d.setColor(
-                                    GOLD
-                            );
-
-                            g2d.fill(
-                                    new RoundRectangle2D.Float(
-                                            0,
-                                            5,
-                                            4,
-                                            getHeight() - 10,
-                                            4,
-                                            4
-                                    )
-                            );
+                            @Override
+                            public void mouseExited(
+                                    MouseEvent e
+                            ) {
+                                hovered = false;
+                                repaint();
+                            }
                         }
+                );
+            }
 
-                        g2d.dispose();
+            @Override
+            protected void paintComponent(
+                    Graphics g
+            ) {
 
-                        super.paintComponent(g);
-                    }
-                };
+                Graphics2D g2 =
+                        (Graphics2D) g.create();
+
+                g2.setRenderingHint(
+                        RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON
+                );
+
+                if (
+                        this == activeButton
+                                || hovered
+                ) {
+
+                    g2.setColor(
+                            this == activeButton
+                                    ? LIGHT_BLUE
+                                    : new Color(
+                                    245,
+                                    249,
+                                    252
+                            )
+                    );
+
+                    g2.fillRoundRect(
+                            0,
+                            0,
+                            getWidth(),
+                            getHeight(),
+                            11,
+                            11
+                    );
+                }
+
+                if (
+                        this == activeButton
+                ) {
+
+                    g2.setColor(
+                            ORANGE
+                    );
+
+                    g2.fillRoundRect(
+                            0,
+                            6,
+                            4,
+                            getHeight() - 12,
+                            4,
+                            4
+                    );
+                }
+
+                g2.dispose();
+
+                super.paintComponent(g);
+            }
+        };
 
         button.setFont(
                 new Font(
@@ -1139,7 +1247,7 @@ public class AdminDashboard extends JPanel {
         );
 
         button.setForeground(
-                BTN_IDLE_TEXT
+                TEXT_MUTED
         );
 
         button.setHorizontalAlignment(
@@ -1152,12 +1260,35 @@ public class AdminDashboard extends JPanel {
 
         button.setOpaque(false);
 
+        button.setBorderPainted(
+                false
+        );
+
         button.setFocusPainted(
                 false
         );
 
-        button.setBorderPainted(
-                false
+        button.setBorder(
+                new EmptyBorder(
+                        10,
+                        14,
+                        10,
+                        12
+                )
+        );
+
+        button.setPreferredSize(
+                new Dimension(
+                        215,
+                        42
+                )
+        );
+
+        button.setMaximumSize(
+                new Dimension(
+                        Integer.MAX_VALUE,
+                        42
+                )
         );
 
         button.setCursor(
@@ -1166,93 +1297,231 @@ public class AdminDashboard extends JPanel {
                 )
         );
 
-        button.setMaximumSize(
-                new Dimension(
-                        220,
-                        40
+        return button;
+    }
+
+    private JButton createLogoutButton(
+            String text
+    ) {
+
+        JButton button = new JButton(text) {
+
+            private boolean hovered;
+
+            {
+                addMouseListener(
+                        new MouseAdapter() {
+
+                            @Override
+                            public void mouseEntered(
+                                    MouseEvent e
+                            ) {
+                                hovered = true;
+                                repaint();
+                            }
+
+                            @Override
+                            public void mouseExited(
+                                    MouseEvent e
+                            ) {
+                                hovered = false;
+                                repaint();
+                            }
+                        }
+                );
+            }
+
+            @Override
+            protected void paintComponent(
+                    Graphics g
+            ) {
+
+                Graphics2D g2 =
+                        (Graphics2D) g.create();
+
+                g2.setRenderingHint(
+                        RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON
+                );
+
+                if (hovered) {
+
+                    g2.setColor(
+                            new Color(
+                                    252,
+                                    237,
+                                    239
+                            )
+                    );
+
+                    g2.fillRoundRect(
+                            0,
+                            0,
+                            getWidth(),
+                            getHeight(),
+                            11,
+                            11
+                    );
+                }
+
+                g2.dispose();
+
+                super.paintComponent(g);
+            }
+        };
+
+        button.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        13
                 )
         );
 
-        button.setPreferredSize(
-                new Dimension(
-                        220,
-                        40
-                )
+        button.setForeground(
+                DANGER
+        );
+
+        button.setHorizontalAlignment(
+                SwingConstants.LEFT
+        );
+
+        button.setContentAreaFilled(
+                false
+        );
+
+        button.setOpaque(false);
+
+        button.setBorderPainted(
+                false
+        );
+
+        button.setFocusPainted(
+                false
         );
 
         button.setBorder(
                 new EmptyBorder(
-                        7,
+                        10,
                         14,
-                        7,
+                        10,
                         12
                 )
         );
 
-        button.addMouseListener(
-                new MouseAdapter() {
-
-                    @Override
-                    public void mouseEntered(
-                            MouseEvent e
-                    ) {
-
-                        if (
-                                button
-                                        != activeButton
-                        ) {
-
-                            button.setForeground(
-                                    TEXT_WHITE
-                            );
-                        }
-                    }
-
-                    @Override
-                    public void mouseExited(
-                            MouseEvent e
-                    ) {
-
-                        if (
-                                button
-                                        != activeButton
-                        ) {
-
-                            button.setForeground(
-                                    BTN_IDLE_TEXT
-                            );
-                        }
-                    }
-                }
+        button.setCursor(
+                new Cursor(
+                        Cursor.HAND_CURSOR
+                )
         );
 
         return button;
     }
-
-    // =========================
-    // ACTIVE BUTTON
-    // =========================
 
     private void setActiveButton(
             JButton button
     ) {
 
         if (
-                activeButton
-                        != null
+                activeButton != null
         ) {
 
             activeButton.setForeground(
-                    BTN_IDLE_TEXT
+                    TEXT_MUTED
             );
         }
 
         activeButton = button;
 
         activeButton.setForeground(
-                BTN_ACTIVE_TEXT
+                BLUE
         );
 
-        repaint();
+        activeButton.repaint();
+    }
+
+    private void handleLogout() {
+
+        int choice =
+                JOptionPane.showConfirmDialog(
+                        this,
+                        "Are you sure you want to logout?",
+                        "Confirm Logout",
+                        JOptionPane.YES_NO_OPTION
+                );
+
+        if (
+                choice ==
+                        JOptionPane.YES_OPTION
+        ) {
+
+            if (
+                    mainFrame != null
+            ) {
+
+                mainFrame.showLoginFrame();
+            }
+        }
+    }
+
+    private static class RoundedPanel
+            extends JPanel {
+
+        private final Color background;
+        private final int radius;
+
+        public RoundedPanel(
+                Color background,
+                int radius
+        ) {
+
+            this.background = background;
+            this.radius = radius;
+
+            setOpaque(false);
+        }
+
+        @Override
+        protected void paintComponent(
+                Graphics g
+        ) {
+
+            Graphics2D g2 =
+                    (Graphics2D) g.create();
+
+            g2.setRenderingHint(
+                    RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON
+            );
+
+            g2.setColor(
+                    background
+            );
+
+            if (radius > 0) {
+
+                g2.fillRoundRect(
+                        0,
+                        0,
+                        getWidth(),
+                        getHeight(),
+                        radius,
+                        radius
+                );
+
+            } else {
+
+                g2.fillRect(
+                        0,
+                        0,
+                        getWidth(),
+                        getHeight()
+                );
+            }
+
+            g2.dispose();
+
+            super.paintComponent(g);
+        }
     }
 }

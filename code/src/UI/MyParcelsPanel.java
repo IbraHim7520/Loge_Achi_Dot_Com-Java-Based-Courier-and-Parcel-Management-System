@@ -1,4 +1,4 @@
- package UI;
+package UI;
 
 import custom_exception.NotFoundException;
 import custom_exception.UnauthorizedAccessException;
@@ -13,6 +13,7 @@ import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 
@@ -22,323 +23,226 @@ public class MyParcelsPanel extends JPanel {
 
     private JTable parcelTable;
     private DefaultTableModel tableModel;
+    private JLabel countLabel;
 
-    // =========================================================
-    // THEME COLORS
-    // =========================================================
+    private static final Color BG = new Color(241, 248, 253);
+    private static final Color WHITE = Color.WHITE;
+    private static final Color BLACK = new Color(15, 18, 20);
+    private static final Color TEXT_DARK = new Color(31, 38, 43);
+    private static final Color TEXT_MUTED = new Color(103, 117, 128);
 
-    private final Color BLUE = new Color(0, 97, 153);
-    private final Color SKY_BLUE = new Color(138, 207, 248);
-    private final Color SOFT_YELLOW = new Color(244, 235, 108);
-    private final Color GOLD = new Color(255, 212, 68);
+    private static final Color ORANGE = new Color(248, 116, 35);
+    private static final Color ORANGE_HOVER = new Color(235, 94, 20);
 
-    private final Color BG_TOP = new Color(3, 39, 63);
-    private final Color BG_BOTTOM = new Color(0, 72, 110);
+    private static final Color BLUE = new Color(0, 97, 153);
+    private static final Color LIGHT_BLUE = new Color(225, 240, 249);
+    private static final Color SKY_BLUE = new Color(181, 219, 241);
 
-    private final Color CARD_BG = new Color(0, 55, 88, 238);
-    private final Color CARD_BORDER = new Color(138, 207, 248, 85);
-
-    private final Color BTN_TEXT = new Color(20, 55, 70);
-
-    private final Color TEXT_WHITE = Color.WHITE;
-    private final Color TEXT_MUTED = new Color(190, 220, 235);
+    private static final Color BORDER = new Color(216, 227, 234);
 
     public MyParcelsPanel(User user) {
-
         this.user = user;
 
         setLayout(new BorderLayout());
         setOpaque(false);
 
         buildUI();
-
-        // Initial Data Load
         loadUserParcels();
     }
 
-    // =========================================================
-    // BUILD UI
-    // =========================================================
-
     private void buildUI() {
 
-        JPanel rootPanel = new JPanel() {
-
+        JPanel mainCard = new JPanel(new BorderLayout(0, 16)) {
             @Override
             protected void paintComponent(Graphics g) {
-
                 super.paintComponent(g);
 
-                Graphics2D g2d =
-                        (Graphics2D) g.create();
+                Graphics2D g2 = (Graphics2D) g.create();
 
-                g2d.setRenderingHint(
+                g2.setRenderingHint(
                         RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON
                 );
 
-                int width = getWidth();
-                int height = getHeight();
+                g2.setColor(WHITE);
 
-                // Main background
-                GradientPaint gradient =
-                        new GradientPaint(
-                                0,
-                                0,
-                                BG_TOP,
-                                0,
-                                height,
-                                BG_BOTTOM
-                        );
-
-                g2d.setPaint(gradient);
-
-                g2d.fillRect(
-                        0,
-                        0,
-                        width,
-                        height
-                );
-
-                // Top-right glow
-                g2d.setColor(
-                        new Color(
-                                SKY_BLUE.getRed(),
-                                SKY_BLUE.getGreen(),
-                                SKY_BLUE.getBlue(),
-                                22
-                        )
-                );
-
-                g2d.fillOval(
-                        width - 200,
-                        -110,
-                        310,
-                        310
-                );
-
-                // Bottom-left glow
-                g2d.setColor(
-                        new Color(
-                                GOLD.getRed(),
-                                GOLD.getGreen(),
-                                GOLD.getBlue(),
-                                14
-                        )
-                );
-
-                g2d.fillOval(
-                        -120,
-                        height - 170,
-                        280,
-                        280
-                );
-
-                // Decorative dots
-                g2d.setColor(
-                        new Color(
-                                255,
-                                255,
-                                255,
-                                35
-                        )
-                );
-
-                for (int i = 0; i < 9; i++) {
-
-                    int x = 25 + (i * 90);
-                    int y = 25 + ((i % 3) * 35);
-
-                    g2d.fillOval(
-                            x,
-                            y,
-                            4,
-                            4
-                    );
-                }
-
-                g2d.dispose();
-            }
-        };
-
-        rootPanel.setLayout(
-                new GridBagLayout()
-        );
-
-        // =====================================================
-        // MAIN CARD
-        // =====================================================
-
-        JPanel mainPanel = new JPanel() {
-
-            @Override
-            protected void paintComponent(Graphics g) {
-
-                Graphics2D g2d =
-                        (Graphics2D) g.create();
-
-                g2d.setRenderingHint(
-                        RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON
-                );
-
-                // Card
-                g2d.setColor(CARD_BG);
-
-                g2d.fill(
+                g2.fill(
                         new RoundRectangle2D.Float(
                                 0,
                                 0,
                                 getWidth(),
                                 getHeight(),
-                                24,
-                                24
+                                22,
+                                22
                         )
                 );
 
-                // Top accent
-                GradientPaint accent =
-                        new GradientPaint(
-                                0,
-                                0,
-                                GOLD,
-                                getWidth(),
-                                0,
-                                SOFT_YELLOW
-                        );
+                g2.setColor(BORDER);
 
-                g2d.setPaint(accent);
-
-                g2d.fillRoundRect(
-                        0,
-                        0,
-                        getWidth(),
-                        5,
-                        24,
-                        24
-                );
-
-                // Border
-                g2d.setColor(CARD_BORDER);
-
-                g2d.setStroke(
-                        new BasicStroke(1.2f)
-                );
-
-                g2d.draw(
+                g2.draw(
                         new RoundRectangle2D.Float(
-                                1,
-                                1,
-                                getWidth() - 2,
-                                getHeight() - 2,
-                                24,
-                                24
+                                0.5f,
+                                0.5f,
+                                getWidth() - 1,
+                                getHeight() - 1,
+                                22,
+                                22
                         )
                 );
 
-                g2d.dispose();
+                g2.setColor(ORANGE);
 
-                super.paintComponent(g);
+                g2.fillRoundRect(
+                        28,
+                        0,
+                        105,
+                        4,
+                        4,
+                        4
+                );
+
+                g2.dispose();
             }
         };
 
-        mainPanel.setOpaque(false);
-
-        mainPanel.setLayout(
-                new BorderLayout(
-                        0,
-                        15
-                )
-        );
-
-        mainPanel.setBorder(
+        mainCard.setOpaque(false);
+        mainCard.setBorder(
                 new EmptyBorder(
-                        24,
-                        26,
                         22,
-                        26
+                        24,
+                        20,
+                        24
                 )
         );
 
-        // =====================================================
-        // HEADER
-        // =====================================================
+        mainCard.add(
+                createHeader(),
+                BorderLayout.NORTH
+        );
 
-        JPanel headerPanel =
+        mainCard.add(
+                createTableSection(),
+                BorderLayout.CENTER
+        );
+
+        add(
+                mainCard,
+                BorderLayout.CENTER
+        );
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+
+        super.paintComponent(g);
+
+        Graphics2D g2 = (Graphics2D) g.create();
+
+        g2.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON
+        );
+
+        g2.setColor(BG);
+
+        g2.fillRect(
+                0,
+                0,
+                getWidth(),
+                getHeight()
+        );
+
+        g2.setColor(
+                new Color(
+                        196,
+                        226,
+                        243,
+                        90
+                )
+        );
+
+        g2.fill(
+                new Ellipse2D.Float(
+                        -120,
+                        -120,
+                        360,
+                        360
+                )
+        );
+
+        g2.setColor(
+                new Color(
+                        179,
+                        216,
+                        237,
+                        65
+                )
+        );
+
+        g2.fill(
+                new Ellipse2D.Float(
+                        getWidth() - 280,
+                        getHeight() - 260,
+                        450,
+                        450
+                )
+        );
+
+        g2.setColor(
+                new Color(
+                        ORANGE.getRed(),
+                        ORANGE.getGreen(),
+                        ORANGE.getBlue(),
+                        70
+                )
+        );
+
+        g2.fillOval(
+                55,
+                getHeight() - 80,
+                7,
+                7
+        );
+
+        g2.dispose();
+    }
+
+    private JPanel createHeader() {
+
+        JPanel header =
                 new JPanel(
                         new BorderLayout()
                 );
 
-        headerPanel.setOpaque(false);
+        header.setOpaque(false);
 
-        JLabel iconLabel =
-                new JLabel("▣");
-
-        iconLabel.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        28
-                )
-        );
-
-        iconLabel.setForeground(
-                GOLD
-        );
-
-        iconLabel.setHorizontalAlignment(
-                SwingConstants.CENTER
-        );
-
-        iconLabel.setPreferredSize(
-                new Dimension(
-                        50,
-                        50
-                )
-        );
-
-        JPanel iconPanel =
-                new JPanel(
-                        new GridBagLayout()
-                );
-
-        iconPanel.setOpaque(false);
-
-        iconPanel.add(iconLabel);
-
-        headerPanel.add(
-                iconPanel,
-                BorderLayout.WEST
-        );
-
-        // Header text
-        JPanel headerText =
+        JPanel titleGroup =
                 new JPanel();
 
-        headerText.setOpaque(false);
+        titleGroup.setOpaque(false);
 
-        headerText.setLayout(
+        titleGroup.setLayout(
                 new BoxLayout(
-                        headerText,
+                        titleGroup,
                         BoxLayout.Y_AXIS
                 )
         );
 
-        JLabel brandLabel =
+        JLabel section =
                 new JLabel(
                         "PARCEL MANAGEMENT"
                 );
 
-        brandLabel.setFont(
+        section.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        10
+                        9
                 )
         );
 
-        brandLabel.setForeground(
-                SKY_BLUE
+        section.setForeground(
+                ORANGE
         );
 
         JLabel title =
@@ -350,58 +254,161 @@ public class MyParcelsPanel extends JPanel {
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        23
+                        28
                 )
         );
 
         title.setForeground(
-                TEXT_WHITE
+                BLACK
         );
 
-        JLabel subtitleLabel =
+        JLabel subtitle =
                 new JLabel(
-                        "View and track all parcels sent from your account"
+                        "View and manage all parcels sent from your account"
                 );
 
-        subtitleLabel.setFont(
+        subtitle.setFont(
                 new Font(
                         "SansSerif",
                         Font.PLAIN,
-                        12
+                        11
                 )
         );
 
-        subtitleLabel.setForeground(
+        subtitle.setForeground(
                 TEXT_MUTED
         );
 
-        headerText.add(brandLabel);
+        titleGroup.add(section);
 
-        headerText.add(
-                Box.createVerticalStrut(2)
+        titleGroup.add(
+                Box.createVerticalStrut(5)
         );
 
-        headerText.add(title);
+        titleGroup.add(title);
 
-        headerText.add(
-                Box.createVerticalStrut(3)
+        titleGroup.add(
+                Box.createVerticalStrut(5)
         );
 
-        headerText.add(subtitleLabel);
+        titleGroup.add(subtitle);
 
-        headerPanel.add(
-                headerText,
-                BorderLayout.CENTER
+        header.add(
+                titleGroup,
+                BorderLayout.WEST
         );
 
-        mainPanel.add(
-                headerPanel,
-                BorderLayout.NORTH
+        JPanel right =
+                new JPanel(
+                        new FlowLayout(
+                                FlowLayout.RIGHT,
+                                9,
+                                0
+                        )
+                );
+
+        right.setOpaque(false);
+
+        countLabel =
+                new JLabel(
+                        "0 PARCELS"
+                );
+
+        countLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        9
+                )
         );
 
-        // =====================================================
-        // TABLE SETUP
-        // =====================================================
+        countLabel.setForeground(
+                BLUE
+        );
+
+        countLabel.setOpaque(true);
+
+        countLabel.setBackground(
+                LIGHT_BLUE
+        );
+
+        countLabel.setBorder(
+                new EmptyBorder(
+                        8,
+                        10,
+                        8,
+                        10
+                )
+        );
+
+        right.add(
+                countLabel
+        );
+
+        JButton refreshButton =
+                createPrimaryButton(
+                        "↻  Refresh"
+                );
+
+        refreshButton.setPreferredSize(
+                new Dimension(
+                        120,
+                        38
+                )
+        );
+
+        refreshButton.addActionListener(
+                e -> loadUserParcels()
+        );
+
+        right.add(
+                refreshButton
+        );
+
+        header.add(
+                right,
+                BorderLayout.EAST
+        );
+
+        return header;
+    }
+
+    private JPanel createTableSection() {
+
+        JPanel section =
+                new JPanel(
+                        new BorderLayout(
+                                0,
+                                12
+                        )
+                );
+
+        section.setOpaque(false);
+
+        JPanel tableCard =
+                new JPanel(
+                        new BorderLayout()
+                );
+
+        tableCard.setOpaque(true);
+
+        tableCard.setBackground(WHITE);
+
+        tableCard.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(
+                                BORDER,
+                                1,
+                                true
+                        ),
+                        new EmptyBorder(
+                                8,
+                                8,
+                                8,
+                                8
+                        )
+                )
+        );
 
         String[] columns = {
                 "Parcel ID",
@@ -419,7 +426,6 @@ public class MyParcelsPanel extends JPanel {
                         columns,
                         0
                 ) {
-
                     @Override
                     public boolean isCellEditable(
                             int row,
@@ -430,9 +436,58 @@ public class MyParcelsPanel extends JPanel {
                 };
 
         parcelTable =
-                new JTable(tableModel);
+                new JTable(
+                        tableModel
+                ) {
+                    @Override
+                    public Component prepareRenderer(
+                            javax.swing.table.TableCellRenderer renderer,
+                            int row,
+                            int column
+                    ) {
 
-        parcelTable.setRowHeight(35);
+                        Component component =
+                                super.prepareRenderer(
+                                        renderer,
+                                        row,
+                                        column
+                                );
+
+                        if (!isRowSelected(row)) {
+
+                            component.setBackground(
+                                    row % 2 == 0
+                                            ? WHITE
+                                            : new Color(
+                                            244,
+                                            249,
+                                            252
+                                    )
+                            );
+
+                            component.setForeground(
+                                    TEXT_DARK
+                            );
+                        } else {
+
+                            component.setBackground(
+                                    new Color(
+                                            255,
+                                            239,
+                                            229
+                                    )
+                            );
+
+                            component.setForeground(
+                                    TEXT_DARK
+                            );
+                        }
+
+                        return component;
+                    }
+                };
+
+        parcelTable.setRowHeight(42);
 
         parcelTable.setFont(
                 new Font(
@@ -442,48 +497,16 @@ public class MyParcelsPanel extends JPanel {
                 )
         );
 
-        parcelTable.setForeground(
-                new Color(
-                        25,
-                        45,
-                        58
-                )
-        );
+        parcelTable.setForeground(TEXT_DARK);
 
-        parcelTable.setBackground(
-                Color.WHITE
-        );
+        parcelTable.setBackground(WHITE);
 
-        parcelTable.setSelectionBackground(
-                new Color(
-                        138,
-                        207,
-                        248
-                )
-        );
-
-        parcelTable.setSelectionForeground(
-                new Color(
-                        20,
-                        55,
-                        70
-                )
-        );
-
-        parcelTable.setGridColor(
-                new Color(
-                        215,
-                        230,
-                        238
-                )
-        );
-
-        parcelTable.setShowGrid(true);
+        parcelTable.setShowGrid(false);
 
         parcelTable.setIntercellSpacing(
                 new Dimension(
-                        1,
-                        1
+                        0,
+                        0
                 )
         );
 
@@ -491,9 +514,13 @@ public class MyParcelsPanel extends JPanel {
                 ListSelectionModel.SINGLE_SELECTION
         );
 
-        // =====================================================
-        // HEADER STYLING
-        // =====================================================
+        parcelTable.setFillsViewportHeight(true);
+
+        parcelTable.setAutoResizeMode(
+                JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS
+        );
+
+        parcelTable.setRowMargin(0);
 
         JTableHeader header =
                 parcelTable.getTableHeader();
@@ -502,26 +529,26 @@ public class MyParcelsPanel extends JPanel {
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        12
+                        11
                 )
         );
 
-        header.setBackground(
-                BLUE
-        );
-
         header.setForeground(
-                Color.WHITE
+                WHITE
         );
 
-        header.setReorderingAllowed(false);
+        header.setBackground(BLUE);
+
+        header.setOpaque(true);
 
         header.setPreferredSize(
                 new Dimension(
                         header.getPreferredSize().width,
-                        38
+                        42
                 )
         );
+
+        header.setReorderingAllowed(false);
 
         DefaultTableCellRenderer headerRenderer =
                 new DefaultTableCellRenderer();
@@ -530,19 +557,30 @@ public class MyParcelsPanel extends JPanel {
                 SwingConstants.CENTER
         );
 
-        headerRenderer.setForeground(
-                Color.WHITE
+        headerRenderer.setVerticalAlignment(
+                SwingConstants.CENTER
         );
 
-        headerRenderer.setBackground(
-                BLUE
+        headerRenderer.setForeground(
+                WHITE
         );
+
+        headerRenderer.setBackground(BLUE);
 
         headerRenderer.setFont(
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        12
+                        11
+                )
+        );
+
+        headerRenderer.setBorder(
+                new EmptyBorder(
+                        0,
+                        5,
+                        0,
+                        5
                 )
         );
 
@@ -550,16 +588,11 @@ public class MyParcelsPanel extends JPanel {
                 headerRenderer
         );
 
-        // =====================================================
-        // TABLE CELL RENDERERS
-        // =====================================================
-
         DefaultTableCellRenderer centerRenderer =
                 new DefaultTableCellRenderer() {
 
                     @Override
-                    public Component
-                    getTableCellRendererComponent(
+                    public Component getTableCellRendererComponent(
                             JTable table,
                             Object value,
                             boolean isSelected,
@@ -582,29 +615,12 @@ public class MyParcelsPanel extends JPanel {
                                 SwingConstants.CENTER
                         );
 
-                        if (!isSelected) {
-
-                            component.setBackground(
-                                    row % 2 == 0
-                                            ? Color.WHITE
-                                            : new Color(
-                                            242,
-                                            248,
-                                            252
-                                    )
-                            );
-
-                            component.setForeground(
-                                    new Color(
-                                            30,
-                                            55,
-                                            70
-                                    )
-                            );
-                        }
+                        setVerticalAlignment(
+                                SwingConstants.CENTER
+                        );
 
                         setBorder(
-                                BorderFactory.createEmptyBorder(
+                                new EmptyBorder(
                                         0,
                                         8,
                                         0,
@@ -612,17 +628,35 @@ public class MyParcelsPanel extends JPanel {
                                 )
                         );
 
+                        if (!isSelected) {
+
+                            component.setBackground(
+                                    row % 2 == 0
+                                            ? WHITE
+                                            : new Color(
+                                            244,
+                                            249,
+                                            252
+                                    )
+                            );
+
+                            component.setForeground(
+                                    TEXT_DARK
+                            );
+                        }
+
                         return component;
                     }
                 };
 
-        for (int i = 0;
-             i < parcelTable.getColumnCount();
-             i++) {
+        for (
+                int i = 0;
+                i < parcelTable.getColumnCount();
+                i++
+        ) {
 
             if (i == 6) {
 
-                // Status column
                 parcelTable
                         .getColumnModel()
                         .getColumn(i)
@@ -641,24 +675,22 @@ public class MyParcelsPanel extends JPanel {
             }
         }
 
-        // =====================================================
-        // COLUMN WIDTHS
-        // =====================================================
-
         int[] widths = {
-                90,
-                120,
-                190,
+                95,
+                135,
+                230,
+                115,
                 100,
-                90,
-                100,
-                120,
-                110
+                110,
+                125,
+                115
         };
 
-        for (int i = 0;
-             i < widths.length;
-             i++) {
+        for (
+                int i = 0;
+                i < widths.length;
+                i++
+        ) {
 
             parcelTable
                     .getColumnModel()
@@ -667,10 +699,6 @@ public class MyParcelsPanel extends JPanel {
                             widths[i]
                     );
         }
-
-        // =====================================================
-        // SCROLL PANE
-        // =====================================================
 
         JScrollPane scrollPane =
                 new JScrollPane(
@@ -683,142 +711,71 @@ public class MyParcelsPanel extends JPanel {
                 .setOpaque(true);
 
         scrollPane.getViewport()
-                .setBackground(
-                        Color.WHITE
-                );
+                .setBackground(WHITE);
 
-        scrollPane.setBorder(
-                BorderFactory.createLineBorder(
-                        new Color(
-                                138,
-                                207,
-                                248,
-                                130
-                        ),
-                        1,
-                        true
-                )
+        scrollPane.setBorder(null);
+
+        scrollPane.setVerticalScrollBarPolicy(
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
         );
 
-        mainPanel.add(
+        scrollPane.setHorizontalScrollBarPolicy(
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
+        );
+
+        scrollPane.getVerticalScrollBar()
+                .setUnitIncrement(16);
+
+        scrollPane.getHorizontalScrollBar()
+                .setUnitIncrement(16);
+
+        tableCard.add(
                 scrollPane,
                 BorderLayout.CENTER
         );
 
-        // =====================================================
-        // BOTTOM PANEL
-        // =====================================================
+        section.add(
+                tableCard,
+                BorderLayout.CENTER
+        );
 
-        JPanel bottomPanel =
-                new JPanel(
-                        new BorderLayout()
-                );
-
-        bottomPanel.setOpaque(false);
-
-        JLabel infoLabel =
+        JLabel footer =
                 new JLabel(
-                        "Your parcel history is shown here."
+                        "● Parcel history is loaded from your account records"
                 );
 
-        infoLabel.setFont(
+        footer.setFont(
                 new Font(
                         "SansSerif",
                         Font.PLAIN,
-                        11
+                        9
                 )
         );
 
-        infoLabel.setForeground(
-                TEXT_MUTED
-        );
+        footer.setForeground(TEXT_MUTED);
 
-        bottomPanel.add(
-                infoLabel,
-                BorderLayout.WEST
-        );
-
-        JButton refreshBtn =
-                createGoldenButton(
-                        "↻  Refresh List"
-                );
-
-        refreshBtn.setPreferredSize(
-                new Dimension(
-                        145,
-                        40
+        footer.setBorder(
+                new EmptyBorder(
+                        0,
+                        4,
+                        0,
+                        4
                 )
         );
 
-        refreshBtn.addActionListener(
-                e -> loadUserParcels()
-        );
-
-        JPanel buttonPanel =
-                new JPanel(
-                        new FlowLayout(
-                                FlowLayout.RIGHT,
-                                0,
-                                0
-                        )
-                );
-
-        buttonPanel.setOpaque(false);
-
-        buttonPanel.add(
-                refreshBtn
-        );
-
-        bottomPanel.add(
-                buttonPanel,
-                BorderLayout.EAST
-        );
-
-        mainPanel.add(
-                bottomPanel,
+        section.add(
+                footer,
                 BorderLayout.SOUTH
         );
 
-        // =====================================================
-        // ADD CARD
-        // =====================================================
-
-        GridBagConstraints gbc =
-                new GridBagConstraints();
-
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-
-        gbc.fill =
-                GridBagConstraints.BOTH;
-
-        gbc.insets =
-                new Insets(
-                        18,
-                        22,
-                        18,
-                        22
-                );
-
-        rootPanel.add(
-                mainPanel,
-                gbc
-        );
-
-        add(
-                rootPanel,
-                BorderLayout.CENTER
-        );
+        return section;
     }
 
-    // =========================================================
-    // LOAD USER PARCELS
-    // =========================================================
-
     public void loadUserParcels() {
+
+        if (tableModel == null) {
+            return;
+        }
 
         tableModel.setRowCount(0);
 
@@ -847,11 +804,9 @@ public class MyParcelsPanel extends JPanel {
                         continue;
                     }
 
-                    // Backend stores parcel data using "|"
                     String cleanData =
                             parcelData.trim();
 
-                    // Remove record ending "#"
                     if (
                             cleanData.endsWith("#")
                     ) {
@@ -863,26 +818,15 @@ public class MyParcelsPanel extends JPanel {
                                 );
                     }
 
-                    // Split using backend separator
                     String[] data =
                             cleanData.split(
                                     "\\|",
                                     -1
                             );
 
-                    // Expected:
-                    // 0 = Parcel Name
-                    // 1 = Receiver Address
-                    // 2 = Receiver Phone
-                    // 3 = Parcel ID
-                    // 4 = Weight
-                    // 5 = Sender Email
-                    // 6 = Sender ID
-                    // 7 = Status
-                    // 8 = Delivery Charge
-                    // 9 = Rider ID
-
-                    if (data.length >= 10) {
+                    if (
+                            data.length >= 10
+                    ) {
 
                         String parcelName =
                                 data[0].trim();
@@ -908,7 +852,6 @@ public class MyParcelsPanel extends JPanel {
                         String riderId =
                                 data[9].trim();
 
-                        // Show "Not Assigned" instead of "null"
                         if (
                                 riderId.equalsIgnoreCase(
                                         "null"
@@ -932,21 +875,18 @@ public class MyParcelsPanel extends JPanel {
                                         riderId
                                 }
                         );
-
-                    } else {
-
-                        System.out.println(
-                                "Invalid parcel data: "
-                                        + parcelData
-                        );
                     }
                 }
             }
+
+            updateCount();
 
         } catch (
                 UnauthorizedAccessException
                 | NotFoundException e
         ) {
+
+            updateCount();
 
             JOptionPane.showMessageDialog(
                     this,
@@ -956,6 +896,8 @@ public class MyParcelsPanel extends JPanel {
             );
 
         } catch (Exception e) {
+
+            updateCount();
 
             JOptionPane.showMessageDialog(
                     this,
@@ -968,98 +910,87 @@ public class MyParcelsPanel extends JPanel {
         }
     }
 
-    // =========================================================
-    // GOLDEN BUTTON
-    // =========================================================
+    private void updateCount() {
 
-    private JButton createGoldenButton(
+        if (countLabel == null) {
+            return;
+        }
+
+        int count =
+                tableModel.getRowCount();
+
+        countLabel.setText(
+                count
+                        + (
+                        count == 1
+                                ? " PARCEL"
+                                : " PARCELS"
+                )
+        );
+    }
+
+    private JButton createPrimaryButton(
             String text
     ) {
 
         JButton button =
                 new JButton(text) {
 
-                    private boolean isHovered =
-                            false;
-
-                    {
-                        addMouseListener(
-                                new MouseAdapter() {
-
-                                    @Override
-                                    public void mouseEntered(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered = true;
-                                        repaint();
-                                    }
-
-                                    @Override
-                                    public void mouseExited(
-                                            MouseEvent e
-                                    ) {
-
-                                        isHovered = false;
-                                        repaint();
-                                    }
-                                }
-                        );
-                    }
-
                     @Override
                     protected void paintComponent(
                             Graphics g
                     ) {
 
-                        Graphics2D g2d =
-                                (Graphics2D) g.create();
+                        Graphics2D g2 =
+                                (Graphics2D)
+                                        g.create();
 
-                        g2d.setRenderingHint(
+                        g2.setRenderingHint(
                                 RenderingHints.KEY_ANTIALIASING,
                                 RenderingHints.VALUE_ANTIALIAS_ON
                         );
 
                         Color top =
-                                isHovered
-                                        ? SOFT_YELLOW
-                                        : GOLD;
-
-                        Color bottom =
-                                isHovered
-                                        ? GOLD
+                                getModel().isRollover()
+                                        ? new Color(
+                                        255,
+                                        151,
+                                        68
+                                )
                                         : new Color(
                                         255,
-                                        190,
-                                        35
+                                        137,
+                                        48
                                 );
 
-                        GradientPaint gradient =
+                        Color bottom =
+                                getModel().isRollover()
+                                        ? ORANGE_HOVER
+                                        : ORANGE;
+
+                        g2.setPaint(
                                 new GradientPaint(
                                         0,
                                         0,
                                         top,
+                                        getWidth(),
                                         0,
-                                        getHeight(),
                                         bottom
-                                );
-
-                        g2d.setPaint(
-                                gradient
+                                )
                         );
 
-                        g2d.fill(
+                        g2.fill(
                                 new RoundRectangle2D.Float(
                                         0,
                                         0,
                                         getWidth(),
                                         getHeight(),
-                                        12,
-                                        12
+                                        11,
+                                        11
                                 )
                         );
 
-                        g2d.dispose();
+                        g2.dispose();
 
                         super.paintComponent(g);
                     }
@@ -1069,25 +1000,19 @@ public class MyParcelsPanel extends JPanel {
                 new Font(
                         "SansSerif",
                         Font.BOLD,
-                        13
+                        11
                 )
         );
 
-        button.setForeground(
-                BTN_TEXT
-        );
+        button.setForeground(WHITE);
 
-        button.setContentAreaFilled(
-                false
-        );
+        button.setContentAreaFilled(false);
 
-        button.setFocusPainted(
-                false
-        );
+        button.setOpaque(false);
 
-        button.setBorderPainted(
-                false
-        );
+        button.setFocusPainted(false);
+
+        button.setBorderPainted(false);
 
         button.setCursor(
                 new Cursor(
@@ -1098,23 +1023,11 @@ public class MyParcelsPanel extends JPanel {
         return button;
     }
 
-    // =========================================================
-    // STATUS CELL RENDERER
-    // =========================================================
-
     private class StatusCellRenderer
             extends DefaultTableCellRenderer {
 
-        public StatusCellRenderer() {
-
-            setHorizontalAlignment(
-                    SwingConstants.CENTER
-            );
-        }
-
         @Override
-        public Component
-        getTableCellRendererComponent(
+        public Component getTableCellRendererComponent(
                 JTable table,
                 Object value,
                 boolean isSelected,
@@ -1137,8 +1050,12 @@ public class MyParcelsPanel extends JPanel {
                     SwingConstants.CENTER
             );
 
+            setVerticalAlignment(
+                    SwingConstants.CENTER
+            );
+
             setBorder(
-                    BorderFactory.createEmptyBorder(
+                    new EmptyBorder(
                             0,
                             8,
                             0,
@@ -1150,10 +1067,10 @@ public class MyParcelsPanel extends JPanel {
 
                 component.setBackground(
                         row % 2 == 0
-                                ? Color.WHITE
+                                ? WHITE
                                 : new Color(
-                                242,
-                                248,
+                                244,
+                                249,
                                 252
                         )
                 );
@@ -1193,8 +1110,8 @@ public class MyParcelsPanel extends JPanel {
 
                     component.setForeground(
                             new Color(
-                                    175,
-                                    115,
+                                    170,
+                                    112,
                                     0
                             )
                     );
@@ -1228,16 +1145,12 @@ public class MyParcelsPanel extends JPanel {
                 } else {
 
                     component.setForeground(
-                            new Color(
-                                    30,
-                                    55,
-                                    70
-                            )
+                            BLUE
                     );
 
                     setFont(
                             getFont().deriveFont(
-                                    Font.PLAIN
+                                    Font.BOLD
                             )
                     );
                 }
