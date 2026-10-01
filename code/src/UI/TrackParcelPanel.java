@@ -725,9 +725,9 @@ public class TrackParcelPanel extends JPanel {
 
         resultArea.setFont(
                 new Font(
-                        "SansSerif",
+                        "Monospaced",
                         Font.PLAIN,
-                        13
+                        12
                 )
         );
 
@@ -1148,116 +1148,59 @@ public class TrackParcelPanel extends JPanel {
                             parcelId
                     );
 
-            StringBuilder result =
-                    new StringBuilder();
+            String status = safeValue(tracked.getParcelStatus()).toUpperCase();
+            String riderId = tracked.getRiderId();
+            boolean hasRider = riderId != null && !riderId.trim().isEmpty();
 
-            result.append(
-                    "PARCEL DETAILS\n"
-            );
+            // Progress Timeline visualization
+            String step1 = "[✔] Pending";
+            String step2 = "[ ] Assigned";
+            String step3 = "[ ] In Transit";
+            String step4 = "[ ] Delivered";
 
-            result.append(
-                    "────────────────────────────────────────\n\n"
-            );
+            if (status.contains("ASSIGNED")) {
+                step2 = "[✔] Assigned";
+            } else if (status.contains("TRANSIT") || status.contains("OUT FOR DELIVERY")) {
+                step2 = "[✔] Assigned";
+                step3 = "[✔] In Transit";
+            } else if (status.contains("DELIVERED")) {
+                step2 = "[✔] Assigned";
+                step3 = "[✔] In Transit";
+                step4 = "[✔] Delivered";
+            }
 
-            result.append(
-                    "Parcel ID\n"
-            );
+            StringBuilder result = new StringBuilder();
 
-            result.append(
-                    safeValue(
-                            tracked.getParcelID()
-                    )
-            );
+            result.append("====================================================\n");
+            result.append("            PARCEL TRACKING DETAILS                 \n");
+            result.append("====================================================\n\n");
 
-            result.append(
-                    "\n\nParcel Name\n"
-            );
+            result.append("  STATUS PROGRESSION:\n");
+            result.append(String.format("  %s ──> %s ──> %s ──> %s\n\n", step1, step2, step3, step4));
 
-            result.append(
-                    safeValue(
-                            tracked.getParcelName()
-                    )
-            );
+            result.append("────────────────────────────────────────────────────\n");
+            result.append("  BASIC INFORMATION\n");
+            result.append("────────────────────────────────────────────────────\n");
+            result.append(String.format("  %-18s : %s\n", "Parcel ID", safeValue(tracked.getParcelID())));
+            result.append(String.format("  %-18s : %s\n", "Parcel Name", safeValue(tracked.getParcelName())));
+            result.append(String.format("  %-18s : %s\n", "Current Status", status));
 
-            result.append(
-                    "\n\nReceiver Address\n"
-            );
+            result.append("\n────────────────────────────────────────────────────\n");
+            result.append("  DESTINATION & RIDER DETAILS\n");
+            result.append("────────────────────────────────────────────────────\n");
+            result.append(String.format("  %-18s : %s\n", "Receiver Address", safeValue(tracked.getReciverAddress())));
+            result.append(String.format("  %-18s : %s\n", "Receiver Phone", safeValue(tracked.getReciverPhone())));
+            result.append(String.format("  %-18s : %s\n", "Assigned Rider ID", hasRider ? riderId : "Not Assigned Yet"));
 
-            result.append(
-                    safeValue(
-                            tracked.getReciverAddress()
-                    )
-            );
+            result.append("\n────────────────────────────────────────────────────\n");
+            result.append("  BILLING & SPECIFICATIONS\n");
+            result.append("────────────────────────────────────────────────────\n");
+            result.append(String.format("  %-18s : %s kg\n", "Weight", safeValue(String.valueOf(tracked.getWeight()))));
+            result.append(String.format("  %-18s : ৳ %s\n", "Delivery Charge", safeValue(String.valueOf(tracked.getDeliveryCharge()))));
+            result.append("====================================================\n");
 
-            result.append(
-                    "\n\nReceiver Phone\n"
-            );
-
-            result.append(
-                    safeValue(
-                            tracked.getReciverPhone()
-                    )
-            );
-
-            result.append(
-                    "\n\nWeight\n"
-            );
-
-            result.append(
-                    safeValue(
-                            String.valueOf(
-                                    tracked.getWeight()
-                            )
-                    )
-            );
-
-            result.append(
-                    " kg"
-            );
-
-            result.append(
-                    "\n\nDelivery Charge\n"
-            );
-
-            result.append(
-                    safeValue(
-                            String.valueOf(
-                                    tracked.getDeliveryCharge()
-                            )
-                    )
-            );
-
-            result.append(
-                    "\n\nStatus\n"
-            );
-
-            result.append(
-                    safeValue(
-                            tracked.getParcelStatus()
-                    )
-            );
-
-            result.append(
-                    "\n\nRider ID\n"
-            );
-
-            String riderId =
-                    tracked.getRiderId();
-
-            result.append(
-                    riderId == null
-                            || riderId.trim().isEmpty()
-                            ? "Not Assigned"
-                            : riderId
-            );
-
-            result.append(
-                    "\n\n────────────────────────────────────────"
-            );
-
-            resultArea.setForeground(
-                    TEXT_DARK
-            );
+            resultArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+            resultArea.setForeground(TEXT_DARK);
 
             resultArea.setText(
                     result.toString()

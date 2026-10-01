@@ -257,10 +257,6 @@ public class AdminFile {
             return false;
         }
 
-        /*
-         * IMPORTANT:
-         * User.validatePassword() needs an argument.
-         */
         if (!tempUser.validatePassword(password)) {
             return false;
         }

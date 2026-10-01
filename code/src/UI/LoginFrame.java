@@ -941,36 +941,12 @@ public class LoginFrame extends JPanel {
                 Component.LEFT_ALIGNMENT
         );
 
-        // =====================================================
-        // EMAIL LABEL
-        // =====================================================
-
-        JLabel emailLabel =
-                createFieldLabel(
-                        "USERNAME / EMAIL"
-                );
-
-        // =====================================================
-        // EMAIL FIELD
-        // =====================================================
-
         emailField =
                 createTextField(
                         "👤  username / email"
                 );
 
-        // =====================================================
-        // PASSWORD LABEL
-        // =====================================================
 
-        JLabel passwordLabel =
-                createFieldLabel(
-                        "PASSWORD"
-                );
-
-        // =====================================================
-        // PASSWORD FIELD
-        // =====================================================
 
         passwordField =
                 createPasswordField(
@@ -1082,9 +1058,7 @@ public class LoginFrame extends JPanel {
                 Box.createVerticalStrut(30)
         );
 
-        form.add(
-                emailLabel
-        );
+
 
         form.add(
                 Box.createVerticalStrut(7)
@@ -1098,9 +1072,7 @@ public class LoginFrame extends JPanel {
                 Box.createVerticalStrut(17)
         );
 
-        form.add(
-                passwordLabel
-        );
+
 
         form.add(
                 Box.createVerticalStrut(7)

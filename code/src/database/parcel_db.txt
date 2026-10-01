@@ -1,11 +1,45 @@
-Laptop|Dhaka|01711111111|P001|2.0|user1@test.com|Uda9bcf7e137146509e3af1a828d5e1a6|ON_TRANSIT|100.0|Rbbe92de22b0c4caaaaa4a7f7bfe78c26#
-Books|Mohakhali|01711111112|P002|1.5|user1@test.com|Uda9bcf7e137146509e3af1a828d5e1a6|PENDING|80.0|null#
-Documents|Gulshan|01711111113|P003|0.5|user1@test.com|Uda9bcf7e137146509e3af1a828d5e1a6|CANCELED|50.0|null#
-Clothes|Banani|01711111114|P004|3.0|user1@test.com|Uda9bcf7e137146509e3af1a828d5e1a6|PENDING|120.0|null#
-Shoes|Mirpur|01711111115|P005|2.5|user1@test.com|Uda9bcf7e137146509e3af1a828d5e1a6|PENDING|100.0|null#
-Mobile|Dhanmondi|01722222221|P006|0.8|user2@test.com|Ue6aa70451c704c09af05dcf97b4d934a|PENDING|70.0|null#
-Watch|Uttara|01722222222|P007|0.4|user2@test.com|Ue6aa70451c704c09af05dcf97b4d934a|PENDING|50.0|null#
-Gift|Bashundhara|01722222223|P008|1.2|user2@test.com|Ue6aa70451c704c09af05dcf97b4d934a|PENDING|80.0|null#
-Computer Parts|Farmgate|01722222224|P009|4.0|user2@test.com|Ue6aa70451c704c09af05dcf97b4d934a|PENDING|150.0|null#
-Documents|Tejgaon|01722222225|P010|0.3|user2@test.com|Ue6aa70451c704c09af05dcf97b4d934a|ACCEPTED|50.0|Rbbe92de22b0c4caaaaa4a7f7bfe78c26#
-Bangladesh|America|dsdf|Pf565139d6485471b970e9581574b5e98|12.0|user1@test.com|Uda9bcf7e137146509e3af1a828d5e1a6|PENDING|120.0|null#
+Book|Chottogram|01812211221|P34128|2.5|ibrahim12@gmail.com|U20433|PENDING|25.0|null#
+Laptop|Dhaka|01711122233|P34129|1.8|john.smith@gmail.com|U20434|ASSIGNED|150.0|R30101#
+Headphones|Sylhet|01922334455|P34130|0.5|emma.watson@gmail.com|U20435|IN TRANSIT|60.0|R30102#
+Smartwatch|Rajshahi|01833445566|P34131|0.3|michael.brown@gmail.com|U20436|DELIVERED|50.0|R30101#
+Keyboard|Khulna|01544556677|P34132|1.2|sophia.garcia@gmail.com|U20437|PENDING|80.0|null#
+Monitor|Barishal|01655667788|P34133|4.5|david.miller@gmail.com|U20438|ASSIGNED|220.0|R30103#
+Winter Jacket|Rangpur|01766778899|P34134|1.0|olivia.johnson@gmail.com|U20439|IN TRANSIT|70.0|R30102#
+Shoes|Comilla|01877889900|P34135|1.1|ibrahim12@gmail.com|U20433|DELIVERED|75.0|R30103#
+Smartphone|Mymensingh|01988990011|P34136|0.4|john.smith@gmail.com|U20434|CANCELLED|0.0|null#
+Camera Lens|Gazipur|01399001122|P34137|0.8|emma.watson@gmail.com|U20435|PENDING|90.0|null#
+Gaming Mouse|Narayanganj|01400112233|P34138|0.2|michael.brown@gmail.com|U20436|ASSIGNED|45.0|R30101#
+Backpack|Bogura|01511223344|P34139|1.5|sophia.garcia@gmail.com|U20437|IN TRANSIT|85.0|R30103#
+Perfume Set|Cox's Bazar|01622334455|P34140|0.6|david.miller@gmail.com|U20438|DELIVERED|100.0|R30102#
+Bluetooth Speaker|Feni|01733445566|P34141|0.9|olivia.johnson@gmail.com|U20439|PENDING|65.0|null#
+Drone Kit|Noakhali|01844556677|P34142|3.2|ibrahim12@gmail.com|U20433|ASSIGNED|300.0|R30102#
+Mechanical Keyboard|Jessore|01955667788|P34143|1.4|john.smith@gmail.com|U20434|IN TRANSIT|95.0|R30101#
+Desk Lamp|Pabna|01366778899|P34144|0.7|emma.watson@gmail.com|U20435|DELIVERED|55.0|R30103#
+Coffee Maker|Tangail|01477889900|P34145|2.8|michael.brown@gmail.com|U20436|CANCELLED|0.0|null#
+Power Bank|Dinajpur|01588990011|P34146|0.5|sophia.garcia@gmail.com|U20437|PENDING|50.0|null#
+Graphics Tablet|Kushtia|01699001122|P34147|1.1|david.miller@gmail.com|U20438|ASSIGNED|120.0|R30103#
+Sunglasses|Faridpur|01700112233|P34148|0.2|olivia.johnson@gmail.com|U20439|IN TRANSIT|40.0|R30101#
+External Hard Drive|Narsingdi|01811223344|P34149|0.3|ibrahim12@gmail.com|U20433|DELIVERED|60.0|R30102#
+Electric Kettle|Jamalpur|01922334455|P34150|1.6|john.smith@gmail.com|U20434|PENDING|85.0|null#
+Wrists Watch|Brahmanbaria|01333445566|P34151|0.3|emma.watson@gmail.com|U20435|ASSIGNED|50.0|R30102#
+Microphone|Naogaon|01444556677|P34152|0.8|michael.brown@gmail.com|U20436|IN TRANSIT|75.0|R30103#
+Action Camera|Bagerhat|01555667788|P34153|0.4|sophia.garcia@gmail.com|U20437|DELIVERED|110.0|R30101#
+Leather Wallet|Chapai Nawabganj|01666778899|P34154|0.1|david.miller@gmail.com|U20438|CANCELLED|0.0|null#
+Hair Dryer|Sirajganj|01777889900|P34155|0.9|olivia.johnson@gmail.com|U20439|PENDING|60.0|null#
+Trimmer|Netrokona|01888990011|P34156|0.5|ibrahim12@gmail.com|U20433|ASSIGNED|55.0|R30101#
+Wireless Earbuds|Chandpur|01999001122|P34157|0.2|john.smith@gmail.com|U20434|IN TRANSIT|45.0|R30102#
+Fitness Band|Lakshmipur|01300112233|P34158|0.2|emma.watson@gmail.com|U20435|DELIVERED|40.0|R30103#
+Tripod Stand|Kishoreganj|01411223344|P34159|1.3|michael.brown@gmail.com|U20436|PENDING|80.0|null#
+Webcam|Habiganj|01522334455|P34160|0.4|sophia.garcia@gmail.com|U20437|ASSIGNED|65.0|R30103#
+VR Headset|Moulvibazar|01633445566|P34161|1.7|david.miller@gmail.com|U20438|IN TRANSIT|180.0|R30101#
+Soundbar|Sunamganj|01744556677|P34162|3.0|olivia.johnson@gmail.com|U20439|DELIVERED|210.0|R30102#
+Blender|Satkhira|01855667788|P34163|2.1|ibrahim12@gmail.com|U20433|CANCELLED|0.0|null#
+Gaming Chair|Meherpur|01966778899|P34164|8.5|john.smith@gmail.com|U20434|PENDING|450.0|null#
+Router|Jhenaidah|01377889900|P34165|0.6|emma.watson@gmail.com|U20435|ASSIGNED|70.0|R30102#
+Projector|Magura|01488990011|P34166|2.3|michael.brown@gmail.com|U20436|IN TRANSIT|250.0|R30101#
+Induction Cooker|Patuakhali|01599001122|P34167|2.7|sophia.garcia@gmail.com|U20437|DELIVERED|190.0|R30103#
+Board Game|Bhola|01600112233|P34168|1.0|david.miller@gmail.com|U20438|PENDING|60.0|null#
+Desk Organizer|Pirojpur|01711223344|P34169|0.8|olivia.johnson@gmail.com|U20439|ASSIGNED|55.0|R30101#
+Portable Fan|Jhalokati|01822334455|P34170|0.7|ibrahim12@gmail.com|U20433|IN TRANSIT|50.0|R30103#
+Car Vacuum|Gopalganj|01933445566|P34171|1.2|john.smith@gmail.com|U20434|DELIVERED|95.0|R30102#
+Electric Toothbrush|Madaripur|01344556677|P34172|0.3|emma.watson@gmail.com|U20435|PENDING|45.0|null#

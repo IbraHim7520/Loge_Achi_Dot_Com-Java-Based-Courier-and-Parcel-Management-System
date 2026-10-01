@@ -3,6 +3,8 @@ package model;
 import custom_exception.NotFoundException;
 import file.UserFile;
 
+import java.time.LocalTime;
+import java.util.Random;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -91,9 +93,10 @@ public class User extends Authentication {
             return false;
         }
 
-        String emailPattern = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
-
-        return Pattern.matches(emailPattern, email.trim());
+       if(!email.contains("@") || !email.contains(".") || !email.contains(".com")) {
+           return false;
+       }
+        return true;
     }
 
     // Validate password
@@ -126,23 +129,18 @@ public class User extends Authentication {
         try {
 
             User loggedUser = userFile.loginUser(email, password);
-
-            // Copy logged-in user's information
             this.user_name = loggedUser.getUser_name();
             this.user_email = loggedUser.getUser_email();
             this.user_pass = loggedUser.getUserPassword();
             this.user_role = loggedUser.getUser_role();
             this.user_id = loggedUser.getUser_id();
-
             return "User login successful.";
 
         } catch (NotFoundException e) {
-
             return "Failed to Login.\n" + e.getMessage();
         }
     }
 
-    // Registration
     @Override
     public String register(User user) {
 
@@ -150,9 +148,7 @@ public class User extends Authentication {
             return "Invalid user information.";
         }
 
-        if (user.getUser_name() == null
-                || user.getUser_name().trim().isEmpty()) {
-
+        if (user.getUser_name() == null || user.getUser_name().trim().isEmpty()) {
             return "Username cannot be empty.";
         }
 
@@ -169,21 +165,18 @@ public class User extends Authentication {
         boolean result = userFile.createNewUser(user);
 
         if (result) {
-
             return "User registered successfully.\n"
                     + "User ID: " + user.getUser_id()
                     + "\nRole: " + user.getUser_role();
         }
 
-        return "Failed to Register User.\n"
-                + "Email may already be registered.";
+        return "Failed to Register User.\n" + "Email may already be registered.";
     }
 
-    // Generate unique user ID
     public String generateUserID() {
-
-        return "U" + UUID.randomUUID()
-                .toString()
-                .replace("-", "");
+        LocalTime lt = LocalTime.now();
+        Random rnd = new Random();
+        int randomInt = rnd.nextInt(999);
+        return "U" + (lt.getSecond()*randomInt);
     }
 }

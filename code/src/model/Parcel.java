@@ -5,7 +5,9 @@ import custom_exception.NotFoundException;
 import custom_exception.UnauthorizedAccessException;
 import file.ParcelFile;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.UUID;
 
 public class Parcel {
@@ -23,89 +25,45 @@ public class Parcel {
     private String reciverAddress;
     private String reciverPhone;
     private String parcelID;
-
     private double weight;
-
     private String senderEmail;
     private String senderId;
-
     private String parcelStatus;
-
     private double deliveryCharge;
-
     private String riderId;
-
     private static final double CHARGE_PER_WEIGHT = 10.00;
 
 
-    // =========================================================
-    // Constructor for creating a new parcel
-    // =========================================================
-
-    public Parcel(User user)
-            throws UnauthorizedAccessException {
-
+    public Parcel(User user) throws UnauthorizedAccessException {
         if (!validateUser(user)) {
-            throw new UnauthorizedAccessException(
-                    "Unauthorized Access! Invalid user."
-            );
+            throw new UnauthorizedAccessException("Unauthorized Access! Invalid user.");
         }
-
         this.senderEmail = user.getUser_email();
         this.senderId = user.getUser_id();
-
-        this.parcelStatus =
-                String.valueOf(ParcelStatus.PENDING);
-
+        this.parcelStatus = String.valueOf(ParcelStatus.PENDING);
         this.parcelID = generateParcelID();
-
         this.riderId = null;
     }
 
 
-    // =========================================================
-    // Constructor for loading an existing parcel
-    // =========================================================
+    public Parcel(String parcelID, String senderId, String parcelName, String receiverAddress, double weight, double deliveryCharge) throws InvalidAmountException {
 
-    public Parcel(
-            String parcelID,
-            String senderId,
-            String parcelName,
-            String receiverAddress,
-            double weight,
-            double deliveryCharge
-    ) throws InvalidAmountException {
+        if (parcelID == null || parcelID.trim().isEmpty()) {
 
-        if (parcelID == null
-                || parcelID.trim().isEmpty()) {
-
-            throw new IllegalArgumentException(
-                    "Parcel ID cannot be empty."
-            );
+            throw new IllegalArgumentException("Parcel ID cannot be empty.");
         }
 
-        if (senderId == null
-                || senderId.trim().isEmpty()) {
+        if (senderId == null || senderId.trim().isEmpty()) {
 
-            throw new IllegalArgumentException(
-                    "Sender ID cannot be empty."
-            );
+            throw new IllegalArgumentException("Sender ID cannot be empty.");
         }
 
-        if (parcelName == null
-                || parcelName.trim().isEmpty()) {
-
-            throw new IllegalArgumentException(
-                    "Parcel name cannot be empty."
-            );
+        if (parcelName == null || parcelName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Parcel name cannot be empty.");
         }
 
-        if (receiverAddress == null
-                || receiverAddress.trim().isEmpty()) {
-
-            throw new IllegalArgumentException(
-                    "Receiver address cannot be empty."
-            );
+        if (receiverAddress == null || receiverAddress.trim().isEmpty()) {
+            throw new IllegalArgumentException("Receiver address cannot be empty.");
         }
 
         validateWeight(weight);
@@ -124,11 +82,6 @@ public class Parcel {
 
         this.riderId = null;
     }
-
-
-    // =========================================================
-    // Getters
-    // =========================================================
 
     public String getParcelName() {
         return parcelName;
@@ -174,57 +127,39 @@ public class Parcel {
 
     public void setParcelName(String parcelName) {
 
-        if (parcelName == null
-                || parcelName.trim().isEmpty()) {
-
+        if (parcelName == null || parcelName.trim().isEmpty()) {
             return;
         }
-
         this.parcelName = parcelName.trim();
     }
 
 
     public void setReciverAddress(String reciverAddress) {
-
-        if (reciverAddress == null
-                || reciverAddress.trim().isEmpty()) {
-
+        if (reciverAddress == null || reciverAddress.trim().isEmpty()) {
             return;
         }
-
         this.reciverAddress = reciverAddress.trim();
     }
 
 
     public void setReciverPhone(String reciverPhone) {
-
-        if (reciverPhone == null
-                || reciverPhone.trim().isEmpty()) {
-
+        if (reciverPhone == null || reciverPhone.trim().isEmpty()) {
             return;
         }
-
         this.reciverPhone = reciverPhone.trim();
     }
 
 
     public void setParcelID(String parcelID) {
-
-        if (parcelID == null
-                || parcelID.trim().isEmpty()) {
-
+        if (parcelID == null || parcelID.trim().isEmpty()) {
             return;
         }
-
         this.parcelID = parcelID.trim();
     }
 
 
-    public void setWeight(double weight)
-            throws InvalidAmountException {
-
+    public void setWeight(double weight) throws InvalidAmountException {
         validateWeight(weight);
-
         this.weight = weight;
     }
 
@@ -255,8 +190,7 @@ public class Parcel {
 
     public void setParcelStatus(String parcelStatus) {
 
-        if (parcelStatus == null
-                || parcelStatus.trim().isEmpty()) {
+        if (parcelStatus == null || parcelStatus.trim().isEmpty()) {
 
             return;
         }
@@ -271,13 +205,11 @@ public class Parcel {
 
         } catch (IllegalArgumentException e) {
 
-            // Ignore invalid status
         }
     }
 
 
-    public void setDeliveryCharge(double deliveryCharge)
-            throws InvalidAmountException {
+    public void setDeliveryCharge(double deliveryCharge) throws InvalidAmountException {
 
         validateDeliveryCharge(deliveryCharge);
 
@@ -287,9 +219,7 @@ public class Parcel {
 
     public void setRiderId(String riderId) {
 
-        if (riderId == null
-                || riderId.trim().isEmpty()
-                || riderId.trim().equalsIgnoreCase("null")) {
+        if (riderId == null || riderId.trim().isEmpty() || riderId.trim().equalsIgnoreCase("null")) {
 
             this.riderId = null;
             return;
@@ -300,35 +230,21 @@ public class Parcel {
 
 
 
-    public String sendOneParcel(
-            String parcelName,
-            String reciverAddress,
-            String reciverPhone,
-            double weight
-    ) throws InvalidAmountException {
+    public String sendOneParcel(String parcelName, String reciverAddress, String reciverPhone, double weight) throws InvalidAmountException {
 
-        if (parcelName == null
-                || parcelName.trim().isEmpty()) {
+        if (parcelName == null || parcelName.trim().isEmpty()) {
 
-            throw new IllegalArgumentException(
-                    "Parcel name cannot be empty."
-            );
+            throw new IllegalArgumentException("Parcel name cannot be empty.");
         }
 
-        if (reciverAddress == null
-                || reciverAddress.trim().isEmpty()) {
+        if (reciverAddress == null || reciverAddress.trim().isEmpty()) {
 
-            throw new IllegalArgumentException(
-                    "Receiver address cannot be empty."
-            );
+            throw new IllegalArgumentException("Receiver address cannot be empty.");
         }
 
-        if (reciverPhone == null
-                || reciverPhone.trim().isEmpty()) {
+        if (reciverPhone == null || reciverPhone.trim().isEmpty()) {
 
-            throw new IllegalArgumentException(
-                    "Receiver phone cannot be empty."
-            );
+            throw new IllegalArgumentException("Receiver phone cannot be empty.");
         }
 
         validateWeight(weight);
@@ -337,22 +253,12 @@ public class Parcel {
         this.reciverAddress = reciverAddress.trim();
         this.reciverPhone = reciverPhone.trim();
         this.weight = weight;
-
-        // A newly created parcel always starts as PENDING
-        this.parcelStatus =
-                String.valueOf(ParcelStatus.PENDING);
-
-        // ID should already exist from constructor,
-        // but generate one if necessary.
-        if (this.parcelID == null
-                || this.parcelID.trim().isEmpty()) {
-
+        this.parcelStatus = String.valueOf(ParcelStatus.PENDING);
+        if (this.parcelID == null || this.parcelID.trim().isEmpty()) {
             this.parcelID = generateParcelID();
         }
 
-        // Calculate delivery charge
-        this.deliveryCharge =
-                weight * CHARGE_PER_WEIGHT;
+        this.deliveryCharge = weight * CHARGE_PER_WEIGHT;
 
         boolean result = ParcelFile.saveParcel(
                 getParcelName(),
@@ -376,22 +282,14 @@ public class Parcel {
 
 
 
-    public ArrayList<String> getMyAllParcels()
-            throws NotFoundException {
+    public ArrayList<String> getMyAllParcels() throws NotFoundException {
 
-        return ParcelFile.getMyAllParcels(
-                getSenderId()
-        );
+        return ParcelFile.getMyAllParcels(getSenderId());
     }
 
 
-    public boolean cancelParcel(String parcelId)
-            throws NotFoundException {
-
-        return ParcelFile.cancelParcel(
-                parcelId,
-                getSenderId()
-        );
+    public boolean cancelParcel(String parcelId) throws NotFoundException {
+        return ParcelFile.cancelParcel(parcelId, getSenderId());
     }
 
 
@@ -400,33 +298,23 @@ public class Parcel {
             throws NotFoundException,
             UnauthorizedAccessException,
             InvalidAmountException {
-
-        return ParcelFile.trackParcel(
-                parcelId,
-                getSenderId()
-        );
+        return ParcelFile.trackParcel(parcelId, getSenderId());
     }
 
 
 
 
-    public boolean deleteMyParcel(String parcelID)
-            throws NotFoundException {
-
-        return ParcelFile.deleteParcel(
-                parcelID,
-                getSenderId()
-        );
+    public boolean deleteMyParcel(String parcelID) throws NotFoundException {
+        return ParcelFile.deleteParcel(parcelID, getSenderId());
     }
 
 
 
     public String generateParcelID() {
-
-        return "P"
-                + UUID.randomUUID()
-                .toString()
-                .replace("-", "");
+        LocalTime lt = LocalTime.now();
+        Random rnd = new Random();
+        int randomInt = rnd.nextInt(999);
+        return "P" + (lt.getSecond()*randomInt);
     }
 
 
@@ -437,9 +325,7 @@ public class Parcel {
             return false;
         }
 
-        if (user.getUser_id() == null
-                || user.getUser_id().trim().isEmpty()) {
-
+        if (user.getUser_id() == null || user.getUser_id().trim().isEmpty()) {
             return false;
         }
 
@@ -447,23 +333,15 @@ public class Parcel {
             return false;
         }
 
-        return user.getUser_role()
-                .equalsIgnoreCase(
-                        String.valueOf(User.UserRole.USER)
-                );
+        return user.getUser_role().equalsIgnoreCase(String.valueOf(User.UserRole.USER));
     }
 
 
 
-    private void validateWeight(double weight)
-            throws InvalidAmountException {
+    private void validateWeight(double weight) throws InvalidAmountException {
 
-        if (!Double.isFinite(weight)
-                || weight <= 0) {
-
-            throw new InvalidAmountException(
-                    "Weight must be greater than zero!"
-            );
+        if (!Double.isFinite(weight) || weight <= 0) {
+            throw new InvalidAmountException("Weight must be greater than zero!");
         }
     }
 

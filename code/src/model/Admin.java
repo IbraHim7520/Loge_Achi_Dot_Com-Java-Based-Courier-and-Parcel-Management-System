@@ -263,103 +263,40 @@ public class Admin {
         } else {
 
             throw new NotFoundException(
-                    "Parcel not found or status update failed!"
-            );
+                    "Parcel not found or status update failed!");
         }
     }
 
 
-    private void printParcel(
-            Parcel parcel
-    ) {
-
-        System.out.println(
-                "Parcel ID: " + parcel.getParcelID()
-        );
-
-        System.out.println(
-                "Parcel Name: " + parcel.getParcelName()
-        );
-
-        System.out.println(
-                "Receiver Address: "
-                        + parcel.getReciverAddress()
-        );
-
-        System.out.println(
-                "Receiver Phone: "
-                        + parcel.getReciverPhone()
-        );
-
-        System.out.println(
-                "Weight: " + parcel.getWeight()
-        );
-
-        System.out.println(
-                "Sender Email: "
-                        + parcel.getSenderEmail()
-        );
-
-        System.out.println(
-                "Sender ID: "
-                        + parcel.getSenderId()
-        );
-
-        System.out.println(
-                "Status: "
-                        + parcel.getParcelStatus()
-        );
-
-        System.out.println(
-                "Delivery Charge: "
-                        + parcel.getDeliveryCharge()
-        );
-
-        System.out.println(
-                "Rider ID: "
-                        + parcel.getRiderId()
-        );
+    private void printParcel(Parcel parcel) {
+        System.out.println("Parcel ID: " + parcel.getParcelID());
+        System.out.println("Parcel Name: " + parcel.getParcelName());
+        System.out.println("Receiver Address: " + parcel.getReciverAddress());
+        System.out.println("Receiver Phone: " + parcel.getReciverPhone());
+        System.out.println("Weight: " + parcel.getWeight());
+        System.out.println("Sender Email: " + parcel.getSenderEmail());
+        System.out.println("Sender ID: " + parcel.getSenderId());
+        System.out.println("Status: " + parcel.getParcelStatus());
+        System.out.println("Delivery Charge: " + parcel.getDeliveryCharge());
+        System.out.println("Rider ID: " + parcel.getRiderId());
     }
 
 
 
-    private void validateUser(User user)
-            throws UnauthorizedAccessException {
-
+    private void validateUser(User user) throws UnauthorizedAccessException {
         if (user == null) {
-
-            throw new UnauthorizedAccessException(
-                    "Unauthorized Access! User not found."
-            );
+            throw new UnauthorizedAccessException("Unauthorized Access! User not found.");
         }
 
-        if (user.getUser_id() == null
-                || user.getUser_id()
-                .trim()
-                .isEmpty()) {
-
-            throw new UnauthorizedAccessException(
-                    "Unauthorized Access! Invalid user ID."
-            );
+        if (user.getUser_id() == null || user.getUser_id().trim().isEmpty()) {
+            throw new UnauthorizedAccessException("Unauthorized Access! Invalid user ID.");
         }
 
-        if (user.getUser_role() == null
-                || user.getUser_role()
-                .trim()
-                .isEmpty()) {
-
-            throw new UnauthorizedAccessException(
-                    "Unauthorized Access! User role not found."
-            );
+        if (user.getUser_role() == null || user.getUser_role().trim().isEmpty()) {
+            throw new UnauthorizedAccessException("Unauthorized Access! User role not found.");
         }
-
-        if (!user.getUser_role().equalsIgnoreCase(
-                String.valueOf(User.UserRole.ADMIN)
-        )) {
-
-            throw new UnauthorizedAccessException(
-                    "Unauthorized Access! Only Admin can access this feature."
-            );
+        if (!user.getUser_role().equalsIgnoreCase(String.valueOf(User.UserRole.ADMIN))) {
+            throw new UnauthorizedAccessException("Unauthorized Access! Only Admin can access this feature.");
         }
     }
 }

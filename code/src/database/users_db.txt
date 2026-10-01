@@ -1,7 +1,11 @@
-Test User 1|user1@test.com|123456|USER|Uda9bcf7e137146509e3af1a828d5e1a6#
-Test User 2|user2@test.com|123456|USER|Ue6aa70451c704c09af05dcf97b4d934a#
-Test User 3|user3@test.com|123456|USER|U28a32de252e741f79357394c9c28c120#
-Test User 4|user4@test.com|123456|ADMIN|U60029eaf648d4a63bf1ada0e8086273b#
-Test User 5|user5@test.com|123456|USER|U98c157b1b35c47e78be5d8b27a307b2e#
-Test Rider|rider@test.com|123456|RIDER|Rbbe92de22b0c4caaaaa4a7f7bfe78c26#
-admin|admin1@gmail.com|123456|ADMIN|Ud8dcb2f5e78b4dde89c858a941667b10#
+IBRAHIM|ibrahim12@gmail.com|123456|USER|U20433#
+Arafat Rahman|arafat.r@gmail.com|123456|USER|U20434#
+Tanvir Ahmed|tanvir.ahmed@gmail.com|123456|USER|U20435#
+Nadia Islam|nadia.islam@gmail.com|123456|USER|U20436#
+Sabbir Hossain|sabbir.h@gmail.com|123456|USER|U20437#
+Mehedi Hasan|mehedi.hasan@gmail.com|123456|USER|U20438#
+Farhana Yeasmin|farhana.y@gmail.com|123456|USER|U20439#
+Kazi Rakib|rakib.rider@gmail.com|123456|RIDER|R30101#
+Sumon Chowdhury|sumon.rider@gmail.com|123456|RIDER|R30102#
+Imran Khan|imran.rider@gmail.com|123456|RIDER|R30103#
+Mahmudul Alam|admin.mahmud@gmail.com|123456|ADMIN|A10001#

@@ -1246,27 +1246,10 @@ public class RegisterFrame extends JPanel {
                 Component.LEFT_ALIGNMENT
         );
 
-        // =====================================================
-        // NAME
-        // =====================================================
-
-        JLabel nameLabel =
-                createFieldLabel(
-                        "FULL NAME *"
-                );
 
         nameField =
                 createInputField(
                         "Enter your full name"
-                );
-
-        // =====================================================
-        // EMAIL
-        // =====================================================
-
-        JLabel emailLabel =
-                createFieldLabel(
-                        "EMAIL ADDRESS *"
                 );
 
         emailField =
@@ -1274,28 +1257,13 @@ public class RegisterFrame extends JPanel {
                         "Enter your email address"
                 );
 
-        // =====================================================
-        // PASSWORD
-        // =====================================================
 
-        JLabel passwordLabel =
-                createFieldLabel(
-                        "PASSWORD *"
-                );
 
         passwordField =
                 createPasswordField(
                         "Enter password"
                 );
 
-        // =====================================================
-        // CONFIRM PASSWORD
-        // =====================================================
-
-        JLabel confirmLabel =
-                createFieldLabel(
-                        "CONFIRM PASSWORD *"
-                );
 
         confirmPasswordField =
                 createPasswordField(
@@ -1369,9 +1337,6 @@ public class RegisterFrame extends JPanel {
                 Box.createVerticalStrut(25)
         );
 
-        form.add(
-                nameLabel
-        );
 
         form.add(
                 Box.createVerticalStrut(6)
@@ -1385,9 +1350,7 @@ public class RegisterFrame extends JPanel {
                 Box.createVerticalStrut(12)
         );
 
-        form.add(
-                emailLabel
-        );
+
 
         form.add(
                 Box.createVerticalStrut(6)
@@ -1401,9 +1364,7 @@ public class RegisterFrame extends JPanel {
                 Box.createVerticalStrut(12)
         );
 
-        form.add(
-                passwordLabel
-        );
+
 
         form.add(
                 Box.createVerticalStrut(6)
@@ -1417,9 +1378,6 @@ public class RegisterFrame extends JPanel {
                 Box.createVerticalStrut(12)
         );
 
-        form.add(
-                confirmLabel
-        );
 
         form.add(
                 Box.createVerticalStrut(6)
